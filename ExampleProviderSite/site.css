@@ -1,0 +1,28 @@
+﻿#passwordList tr th
+{
+    border-style: groove;
+    border-width: 1px;
+    background-color: Gray;
+    color: White;
+}
+
+#passwordList tr td
+{
+    border-style: groove;
+    border-width: 1px;
+}
+
+#passwordList
+{
+    width: 400px;
+    empty-cells: show;
+    padding: 1px;
+    margin: 1px;
+    border-style: inset;
+    border-width: 1px;
+}
+
+body
+{
+    font-family: Arial, Helvetica, sans-serif;
+}
