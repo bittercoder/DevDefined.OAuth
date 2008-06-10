@@ -6,7 +6,7 @@ using System.Net;
 using System.Web;
 using System.Xml.Linq;
 using Castle.Core;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 
 namespace DevDefined.OAuth.Consumer
 {
@@ -120,40 +120,6 @@ namespace DevDefined.OAuth.Consumer
             return FromStream(stream => new StreamReader(stream).ReadToEnd());
         }
 
-        private HttpWebResponse GetResponse(OAuthContext context, IToken accessToken)
-        {
-            // TODO: refactor this, seems clunky
-            if (accessToken != null)
-            {
-                _consumerContext.SignContextWithToken(context, accessToken);
-            }
-            else
-            {
-                _consumerContext.SignContext(context);
-            }
-
-            Uri uri = context.GenerateUri();
-
-            var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.Method = context.RequestMethod;
-
-            if ((context.FormEncodedParameters != null) && (context.FormEncodedParameters.Count > 0))
-            {
-                request.ContentType = "application/x-www-form-urlencoded";
-                using (var writer = new StreamWriter(request.GetRequestStream()))
-                {
-                    writer.Write(UriUtility.FormatQueryString(context.FormEncodedParameters));
-                }
-            }
-
-            if (_consumerContext.UseHeaderForOAuthParameters)
-            {
-                request.Headers[Parameters.OAuth_Authorization_Header] = context.GenerateOAuthParametersForHeader();
-            }
-
-            return (HttpWebResponse)request.GetResponse();
-        }
-
         public XDocument ToDocument()
         {
             return FromStream(stream => XDocument.Load(new StreamReader(stream)));
@@ -170,10 +136,8 @@ namespace DevDefined.OAuth.Consumer
         }
 
         private T FromStream<T>(Func<Stream, T> streamParser)
-        {            
-            HttpWebResponse response = GetResponse(_context, _token);
-
-            using (Stream stream = response.GetResponseStream())
+        {
+            using (Stream stream = ToWebResponse().GetResponseStream())
             {
                 return streamParser(stream);
             }
@@ -196,15 +160,44 @@ namespace DevDefined.OAuth.Consumer
 
         public HttpWebRequest ToWebRequest()
         {
-            var request = (HttpWebRequest) WebRequest.Create(_context.GenerateUri());
+            if (string.IsNullOrEmpty(_context.Signature))
+            {
+                if (_token != null)
+                {
+                    _consumerContext.SignContextWithToken(_context, _token);
+                }
+                else
+                {
+                    _consumerContext.SignContext(_context);
+                }
+            }
 
+            Uri uri = _context.GenerateUri();
+
+            var request = (HttpWebRequest) WebRequest.Create(uri);
             request.Method = _context.RequestMethod;
 
-            if (_context.Headers != null) request.Headers.Add(_context.Headers);
+            if ((_context.FormEncodedParameters != null) && (_context.FormEncodedParameters.Count > 0))
+            {
+                request.ContentType = "application/x-www-form-urlencoded";
+                using (var writer = new StreamWriter(request.GetRequestStream()))
+                {
+                    writer.Write(UriUtility.FormatQueryString(_context.FormEncodedParameters));
+                }
+            }
 
-            // TODO: implement support for cookies
+            if (_consumerContext.UseHeaderForOAuthParameters)
+            {
+                request.Headers[Parameters.OAuth_Authorization_Header] = _context.GenerateOAuthParametersForHeader();
+            }
 
             return request;
+        }
+
+        public HttpWebResponse ToWebResponse()
+        {
+            HttpWebRequest request = ToWebRequest();
+            return (HttpWebResponse) request.GetResponse();
         }
 
         public NameValueCollection ToBodyParameters()
@@ -242,6 +235,7 @@ namespace DevDefined.OAuth.Consumer
 
         public ConsumerRequest SignWithoutToken()
         {
+            EnsureRequestHasNotBeenSignedYet();
             _consumerContext.SignContext(_context);
             return this;
         }
@@ -253,8 +247,17 @@ namespace DevDefined.OAuth.Consumer
 
         public ConsumerRequest SignWithToken(IToken token)
         {
+            EnsureRequestHasNotBeenSignedYet();
             _consumerContext.SignContextWithToken(_context, token);
             return this;
+        }
+
+        private void EnsureRequestHasNotBeenSignedYet()
+        {
+            if (!string.IsNullOrEmpty(_context.Signature))
+            {
+                throw Error.ThisConsumerRequestHasAlreadyBeenSigned();
+            }
         }
 
         public static implicit operator OAuthContext(ConsumerRequest request)

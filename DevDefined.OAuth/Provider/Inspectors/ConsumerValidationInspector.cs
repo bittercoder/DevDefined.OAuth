@@ -1,14 +1,14 @@
 ﻿using System;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage;
 
-namespace DevDefined.OAuth.Provider
+namespace DevDefined.OAuth.Provider.Inspectors
 {
-    public class IsValidConsumerInspector : IContextInspector
+    public class ConsumerValidationInspector : IContextInspector
     {
         private readonly IConsumerStore _consumerStore;
 
-        public IsValidConsumerInspector(IConsumerStore consumerStore)
+        public ConsumerValidationInspector(IConsumerStore consumerStore)
         {
             if (consumerStore == null) throw new ArgumentNullException("consumerStore");
             _consumerStore = consumerStore;

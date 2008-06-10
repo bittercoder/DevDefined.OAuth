@@ -1,5 +1,5 @@
 ﻿using System.Security.Cryptography.X509Certificates;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 
 namespace DevDefined.OAuth.Tests
 {

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage;
 
 namespace DevDefined.OAuth.Testing

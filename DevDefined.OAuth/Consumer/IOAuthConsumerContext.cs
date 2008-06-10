@@ -1,5 +1,5 @@
 using System.Security.Cryptography;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 
 namespace DevDefined.OAuth.Consumer
 {

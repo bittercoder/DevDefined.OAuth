@@ -1,8 +1,8 @@
 ﻿using System;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage;
 
-namespace DevDefined.OAuth.Provider
+namespace DevDefined.OAuth.Provider.Inspectors
 {
     public class NonceStoreInspector : IContextInspector
     {

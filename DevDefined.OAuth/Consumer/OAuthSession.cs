@@ -1,85 +1,110 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
-using System.IO;
-using System.Net;
 using System.Web;
 using Castle.Core;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 
 namespace DevDefined.OAuth.Consumer
 {
+    public interface IOAuthSession
+    {
+        IOAuthConsumerContext ConsumerContext { get; set; }
+        Uri RequestTokenUri { get; set; }
+        Uri AccessTokenUri { get; set; }
+        Uri UserAuthorizeUri { get; set; }
+        IToken AccessToken { get; set; }
+        ConsumerRequest Request();
+        IToken GetRequestToken();
+        IToken ExchangeRequestTokenForAccessToken(IToken requestToken);
+        ConsumerRequest BuildRequestTokenContext();
+        ConsumerRequest BuildExchangeRequestTokenForAccessTokenContext(IToken requestToken);
+        string GetUserAuthorizationUrlForToken(IToken token, string callbackUrl);
+        OAuthSession WithFormParameters(IDictionary dictionary);
+        OAuthSession WithFormParameters(object anonymousClass);
+        OAuthSession WithQueryParameters(IDictionary dictionary);
+        OAuthSession WithQueryParameters(object anonymousClass);
+        OAuthSession WithCookies(IDictionary dictionary);
+        OAuthSession WithCookies(object anonymousClass);
+        OAuthSession WithHeaders(IDictionary dictionary);
+        OAuthSession WithHeaders(object anonymousClass);
+    }
+
     public class OAuthSession : IOAuthSession
     {
         private readonly NameValueCollection _cookies = new NameValueCollection();
         private readonly NameValueCollection _formParameters = new NameValueCollection();
         private readonly NameValueCollection _headers = new NameValueCollection();
         private readonly NameValueCollection _queryParameters = new NameValueCollection();
-        
-        public IOAuthConsumerContext ConsumerContext { get; set;}
+
+        public OAuthSession(IOAuthConsumerContext consumerContext, Uri requestTokenUri, Uri userAuthorizeUri,
+                            Uri accessTokenUri)
+        {
+            ConsumerContext = consumerContext;
+            RequestTokenUri = requestTokenUri;
+            AccessTokenUri = accessTokenUri;
+            UserAuthorizeUri = userAuthorizeUri;
+        }
+
+        public OAuthSession(IOAuthConsumerContext consumerContext, string requestTokenUrl, string userAuthorizeUrl,
+                            string accessTokenUrl)
+            : this(consumerContext, new Uri(requestTokenUrl), new Uri(userAuthorizeUrl), new Uri(accessTokenUrl))
+        {
+        }
+
+        #region IOAuthSession Members
+
+        public IOAuthConsumerContext ConsumerContext { get; set; }
         public Uri RequestTokenUri { get; set; }
         public Uri AccessTokenUri { get; set; }
         public Uri UserAuthorizeUri { get; set; }
         public IToken AccessToken { get; set; }
 
-        public OAuthSession(IOAuthConsumerContext consumerContext, Uri requestTokenUri, Uri userAuthorizeUri, Uri accessTokenUri)
-        {
-            ConsumerContext = consumerContext;
-            RequestTokenUri = requestTokenUri;
-            AccessTokenUri = accessTokenUri;
-            UserAuthorizeUri = userAuthorizeUri;            
-        }
-
-        public OAuthSession(IOAuthConsumerContext consumerContext, string requestTokenUrl, string userAuthorizeUrl, string accessTokenUrl)
-            : this(consumerContext, new Uri(requestTokenUrl), new Uri(userAuthorizeUrl), new Uri(accessTokenUrl))
-        {
-        }
-        
         public ConsumerRequest Request()
         {
-            OAuthContext context = new OAuthContext();
+            var context = new OAuthContext();
 
-            context.UseAuthorizationHeader = ConsumerContext.UseHeaderForOAuthParameters;            
+            context.UseAuthorizationHeader = ConsumerContext.UseHeaderForOAuthParameters;
             context.Cookies.Add(_cookies);
             context.FormEncodedParameters.Add(_formParameters);
             context.Headers.Add(_headers);
             context.QueryParameters.Add(_queryParameters);
-            
+
             return new ConsumerRequest(context, ConsumerContext, AccessToken);
         }
 
         public IToken GetRequestToken()
         {
             return BuildRequestTokenContext().Select(collection =>
-   new TokenBase
-       {
-           ConsumerKey = ConsumerContext.ConsumerKey,
-           Token =
-               ParseResponseParameter(collection,
-                                      Parameters.OAuth_Token),
-           TokenSecret =
-               ParseResponseParameter(collection,
-                                      Parameters.
-                                          OAuth_Token_Secret)
-       });
+                                                     new TokenBase
+                                                         {
+                                                             ConsumerKey = ConsumerContext.ConsumerKey,
+                                                             Token =
+                                                                 ParseResponseParameter(collection,
+                                                                                        Parameters.OAuth_Token),
+                                                             TokenSecret =
+                                                                 ParseResponseParameter(collection,
+                                                                                        Parameters.
+                                                                                            OAuth_Token_Secret)
+                                                         });
         }
 
         public IToken ExchangeRequestTokenForAccessToken(IToken requestToken)
         {
-            var token = BuildExchangeRequestTokenForAccessTokenContext(requestToken)
+            TokenBase token = BuildExchangeRequestTokenForAccessTokenContext(requestToken)
                 .Select(collection =>
-                 new TokenBase
-                     {
-                         ConsumerKey = requestToken.ConsumerKey,
-                         Token =
-                             ParseResponseParameter(collection,
-                                                    Parameters.
-                                                        OAuth_Token),
-                         TokenSecret =
-                             ParseResponseParameter(collection,
-                                                    Parameters.
-                                                        OAuth_Token_Secret)
-                     });
+                        new TokenBase
+                            {
+                                ConsumerKey = requestToken.ConsumerKey,
+                                Token =
+                                    ParseResponseParameter(collection,
+                                                           Parameters.
+                                                               OAuth_Token),
+                                TokenSecret =
+                                    ParseResponseParameter(collection,
+                                                           Parameters.
+                                                               OAuth_Token_Secret)
+                            });
 
             AccessToken = token;
 
@@ -95,13 +120,13 @@ namespace DevDefined.OAuth.Consumer
         {
             return Request().Get().ForUri(AccessTokenUri).SignWithToken(requestToken);
         }
-        
+
         public string GetUserAuthorizationUrlForToken(IToken token, string callbackUrl)
         {
-            UriBuilder builder = new UriBuilder(UserAuthorizeUri);
-            
-            NameValueCollection collection = new NameValueCollection();
-            
+            var builder = new UriBuilder(UserAuthorizeUri);
+
+            var collection = new NameValueCollection();
+
             if (builder.Query != null)
             {
                 collection.Add(HttpUtility.ParseQueryString(builder.Query));
@@ -110,7 +135,7 @@ namespace DevDefined.OAuth.Consumer
             if (_queryParameters != null) collection.Add(_queryParameters);
 
             collection[Parameters.OAuth_Token] = token.Token;
-            
+
             if (!string.IsNullOrEmpty(callbackUrl))
             {
                 collection[Parameters.OAuth_Callback] = callbackUrl;
@@ -118,15 +143,9 @@ namespace DevDefined.OAuth.Consumer
 
             builder.Query = "";
 
-            return builder.Uri + "?" + UriUtility.FormatQueryStringWithUrlEncoding(collection);
+            return builder.Uri + "?" + UriUtility.FormatQueryString(collection);
         }
 
-        private static string ParseResponseParameter(NameValueCollection collection, string parameter)
-        {
-            string value = (collection[parameter] ?? "").Trim();
-            return (value.Length > 0) ? value : null;
-        }
-          
         public OAuthSession WithFormParameters(IDictionary dictionary)
         {
             return AddItems(_formParameters, dictionary);
@@ -165,6 +184,14 @@ namespace DevDefined.OAuth.Consumer
         public OAuthSession WithHeaders(object anonymousClass)
         {
             return AddItems(_headers, anonymousClass);
+        }
+
+        #endregion
+
+        private static string ParseResponseParameter(NameValueCollection collection, string parameter)
+        {
+            string value = (collection[parameter] ?? "").Trim();
+            return (value.Length > 0) ? value : null;
         }
 
         private OAuthSession AddItems(NameValueCollection destination, object anonymousClass)

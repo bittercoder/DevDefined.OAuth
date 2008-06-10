@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
+using DevDefined.OAuth.Provider.Inspectors;
 using DevDefined.OAuth.Storage;
 
 namespace DevDefined.OAuth.Provider
@@ -8,7 +9,7 @@ namespace DevDefined.OAuth.Provider
     public class OAuthProvider : IOAuthProvider
     {
         private readonly List<IContextInspector> _inspectors = new List<IContextInspector>();
-        private readonly ITokenStore _tokenStore;        
+        private readonly ITokenStore _tokenStore;
 
         public OAuthProvider(ITokenStore tokenStore, params IContextInspector[] inspectors)
         {

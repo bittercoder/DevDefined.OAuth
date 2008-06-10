@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage;
 using DevDefined.OAuth.Tests;
 

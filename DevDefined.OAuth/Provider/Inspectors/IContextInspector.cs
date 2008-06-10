@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DevDefined.OAuth.Core;
+﻿using DevDefined.OAuth.Framework;
 
-namespace DevDefined.OAuth.Provider
+namespace DevDefined.OAuth.Provider.Inspectors
 {
     public interface IContextInspector
     {

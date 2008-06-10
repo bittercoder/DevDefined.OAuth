@@ -1,7 +1,10 @@
-﻿using DevDefined.OAuth.Core;
+﻿using DevDefined.OAuth.Framework;
 
 namespace DevDefined.OAuth.Storage
 {
+    /// <summary>
+    /// A nonce store is used to avoid requests being "replayed".
+    /// </summary>
     public interface INonceStore
     {
         /// <summary>

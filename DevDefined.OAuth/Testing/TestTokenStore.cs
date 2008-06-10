@@ -1,5 +1,5 @@
 ﻿using System;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage;
 
 namespace DevDefined.OAuth.Testing
@@ -23,13 +23,6 @@ namespace DevDefined.OAuth.Testing
             if (requestContext.Token != "requestkey")
                 throw new OAuthException(requestContext, OAuthProblems.TokenRejected,
                                          "The supplied request token is unknown to teh provider.");
-        }
-
-        public IToken CreateAccessTokenForRequestToken(OAuthContext requestContext)
-        {
-            EnsureTestConsumer(requestContext);
-
-            return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = "accesssecret"};
         }
 
         public void ConsumeAccessToken(OAuthContext accessContext)
@@ -60,6 +53,13 @@ namespace DevDefined.OAuth.Testing
         }
 
         #endregion
+
+        public IToken CreateAccessTokenForRequestToken(OAuthContext requestContext)
+        {
+            EnsureTestConsumer(requestContext);
+
+            return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = "accesssecret"};
+        }
 
         private static void EnsureTestConsumer(IConsumer consumer)
         {

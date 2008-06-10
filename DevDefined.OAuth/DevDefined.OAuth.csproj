@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30428</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{61B700B6-3911-4CEF-8751-7F42CA765068}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -50,14 +50,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\OAuthContext.cs" />
-    <Compile Include="Core\OAuthContextBuilder.cs" />
-    <Compile Include="Core\Error.cs" />
-    <Compile Include="Core\NonceGenerator.cs" />
-    <Compile Include="Core\Parameters.cs" />
+    <Compile Include="Framework\OAuthContext.cs" />
+    <Compile Include="Framework\OAuthContextBuilder.cs" />
+    <Compile Include="Framework\Error.cs" />
+    <Compile Include="Framework\NonceGenerator.cs" />
+    <Compile Include="Framework\Parameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Provider\IOAuthProvider.cs" />
-    <Compile Include="Core\SignatureMethod.cs" />
+    <Compile Include="Framework\SignatureMethod.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Consumer\ConsumerRequest.cs" />
@@ -65,32 +65,31 @@
     <Compile Include="Consumer\OAuthSession.cs" />
     <Compile Include="Consumer\IOAuthConsumerContext.cs" />
     <Compile Include="Consumer\OAuthConsumerContext.cs" />
-    <Compile Include="Core\AccessDeniedException.cs" />
-    <Compile Include="Core\CertificateUtility.cs" />
-    <Compile Include="Core\DateTimeUtility.cs" />
-    <Compile Include="Core\IConsumer.cs" />
-    <Compile Include="Core\INonceGenerator.cs" />
-    <Compile Include="Core\IToken.cs" />
-    <Compile Include="Core\OAuthException.cs" />
-    <Compile Include="Core\OAuthProblemReport.cs" />
-    <Compile Include="Core\OAuthProblems.cs" />
-    <Compile Include="Core\Signing\HmacSha1SignatureImplementation.cs" />
-    <Compile Include="Core\Signing\IContextSignatureImplementation.cs" />
-    <Compile Include="Core\OAuthContextSigner.cs" />
-    <Compile Include="Core\Signing\PlainTextSignatureImplementation.cs" />
-    <Compile Include="Core\QueryParameter.cs" />
-    <Compile Include="Core\QueryParameterComparer.cs" />
-    <Compile Include="Core\Signing\RsaSha1SignatureImplementation.cs" />
-    <Compile Include="Core\SigningContext.cs" />
-    <Compile Include="Core\TokenBase.cs" />
-    <Compile Include="Core\UriUtility.cs" />
-    <Compile Include="Core\With.cs" />
+    <Compile Include="Framework\AccessDeniedException.cs" />
+    <Compile Include="Framework\CertificateUtility.cs" />
+    <Compile Include="Framework\DateTimeUtility.cs" />
+    <Compile Include="Framework\IConsumer.cs" />
+    <Compile Include="Framework\INonceGenerator.cs" />
+    <Compile Include="Framework\Signing\IOAuthContextSigner.cs" />
+    <Compile Include="Framework\IToken.cs" />
+    <Compile Include="Framework\OAuthException.cs" />
+    <Compile Include="Framework\OAuthProblemReport.cs" />
+    <Compile Include="Framework\OAuthProblems.cs" />
+    <Compile Include="Framework\Signing\HmacSha1SignatureImplementation.cs" />
+    <Compile Include="Framework\Signing\IContextSignatureImplementation.cs" />
+    <Compile Include="Framework\Signing\OAuthContextSigner.cs" />
+    <Compile Include="Framework\Signing\PlainTextSignatureImplementation.cs" />
+    <Compile Include="Framework\Signing\RsaSha1SignatureImplementation.cs" />
+    <Compile Include="Framework\SigningContext.cs" />
+    <Compile Include="Framework\TokenBase.cs" />
+    <Compile Include="Framework\UriUtility.cs" />
+    <Compile Include="Framework\With.cs" />
     <Compile Include="KeyInterop\AsnKeyParser.cs" />
     <Compile Include="KeyInterop\BerDecodeError.cs" />
     <Compile Include="KeyInterop\BigInteger.cs" />
     <Compile Include="Provider\AccessOutcome.cs" />
     <Compile Include="Provider\Inspectors\IContextInspector.cs" />
-    <Compile Include="Provider\Inspectors\IsValidConsumerInspector.cs" />
+    <Compile Include="Provider\Inspectors\ConsumerValidationInspector.cs" />
     <Compile Include="Provider\Inspectors\NonceStoreInspector.cs" />
     <Compile Include="Provider\OAuthProvider.cs" />
     <Compile Include="Provider\Inspectors\SignatureValidationInspector.cs" />

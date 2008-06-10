@@ -1,23 +1,17 @@
 using System;
 using System.Security.Cryptography;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
+using DevDefined.OAuth.Framework.Signing;
 
 namespace DevDefined.OAuth.Consumer
 {
     public class OAuthConsumerContext : IOAuthConsumerContext
     {
         private INonceGenerator _nonceGenerator = new GuidNonceGenerator();
-        
-        public string Realm { get; set; }
-        public string ConsumerKey { get; set; }
-        public string ConsumerSecret { get; set; }
-        public string SignatureMethod { get; set; }
-        public AsymmetricAlgorithm Key { get; set; }
-        public bool UseHeaderForOAuthParameters { get; set; }
-        
+
         public OAuthConsumerContext()
         {
-            SignatureMethod = Core.SignatureMethod.PlainText;
+            SignatureMethod = Framework.SignatureMethod.PlainText;
         }
 
         public INonceGenerator NonceGenerator
@@ -26,6 +20,15 @@ namespace DevDefined.OAuth.Consumer
             set { _nonceGenerator = value; }
         }
 
+        #region IOAuthConsumerContext Members
+
+        public string Realm { get; set; }
+        public string ConsumerKey { get; set; }
+        public string ConsumerSecret { get; set; }
+        public string SignatureMethod { get; set; }
+        public AsymmetricAlgorithm Key { get; set; }
+        public bool UseHeaderForOAuthParameters { get; set; }
+
         public void SignContext(OAuthContext context)
         {
             EnsureStateIsValid();
@@ -33,7 +36,7 @@ namespace DevDefined.OAuth.Consumer
             var signer = new OAuthContextSigner();
 
             context.UseAuthorizationHeader = UseHeaderForOAuthParameters;
-            context.Nonce = _nonceGenerator.GenerateNonce(context);            
+            context.Nonce = _nonceGenerator.GenerateNonce(context);
             context.ConsumerKey = ConsumerKey;
             context.Realm = Realm;
             context.SignatureMethod = SignatureMethod;
@@ -45,7 +48,8 @@ namespace DevDefined.OAuth.Consumer
             string signatureBase = context.GenerateSignatureBase();
 
             signer.SignContext(context,
-                               new SigningContext { Algorithm = Key, SignatureBase = signatureBase, ConsumerSecret = ConsumerSecret });
+                               new SigningContext
+                                   {Algorithm = Key, SignatureBase = signatureBase, ConsumerSecret = ConsumerSecret});
         }
 
         public void SignContextWithToken(OAuthContext context, IToken token)
@@ -56,11 +60,13 @@ namespace DevDefined.OAuth.Consumer
             SignContext(context);
         }
 
+        #endregion
+
         private void EnsureStateIsValid()
         {
             if (string.IsNullOrEmpty(ConsumerKey)) throw Error.EmptyConsumerKey();
             if (string.IsNullOrEmpty(SignatureMethod)) throw Error.UnknownSignatureMethod(SignatureMethod);
-            if ((SignatureMethod == Core.SignatureMethod.RsaSha1)
+            if ((SignatureMethod == Framework.SignatureMethod.RsaSha1)
                 && (Key == null)) throw Error.ForRsaSha1SignatureMethodYouMustSupplyAssymetricKeyParameter();
         }
     }

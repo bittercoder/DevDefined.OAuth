@@ -1,7 +1,7 @@
 ﻿using System;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 
-namespace DevDefined.OAuth.Provider
+namespace DevDefined.OAuth.Provider.Inspectors
 {
     public class TimestampRangeInspector : IContextInspector
     {

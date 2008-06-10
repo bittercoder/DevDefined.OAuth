@@ -1,17 +1,24 @@
 ﻿using System.Security.Cryptography.X509Certificates;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
+using DevDefined.OAuth.Framework.Signing;
 using DevDefined.OAuth.Storage;
 
-namespace DevDefined.OAuth.Provider
+namespace DevDefined.OAuth.Provider.Inspectors
 {
     public class SignatureValidationInspector : IContextInspector
     {
         private readonly IConsumerStore _consumerStore;
-        private readonly OAuthContextSigner _signer = new OAuthContextSigner();
+        private readonly IOAuthContextSigner _signer;
 
         public SignatureValidationInspector(IConsumerStore consumerStore)
+            : this(consumerStore, new OAuthContextSigner())
+        {
+        }
+
+        public SignatureValidationInspector(IConsumerStore consumerStore, IOAuthContextSigner signer)
         {
             _consumerStore = consumerStore;
+            _signer = signer;
         }
 
         #region IContextInspector Members
