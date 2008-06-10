@@ -4,8 +4,9 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Web;
+using QueryParameter = System.Collections.Generic.KeyValuePair<string, string>;
 
-namespace DevDefined.OAuth.Core
+namespace DevDefined.OAuth.Framework
 {
     public class OAuthContext : IToken
     {
@@ -98,8 +99,8 @@ namespace DevDefined.OAuth.Core
             set
             {
                 _rawUri = value;
-                
-                var newParameters = HttpUtility.ParseQueryString(_rawUri.Query);
+
+                NameValueCollection newParameters = HttpUtility.ParseQueryString(_rawUri.Query);
 
                 // TODO: tidy this up, bit clunky
 
@@ -203,11 +204,13 @@ namespace DevDefined.OAuth.Core
             var builder = new StringBuilder();
 
             if (Realm != null) builder.Append("realm=\"").Append(Realm).Append("\"");
-        
-            foreach (QueryParameter parameter in AuthorizationHeaderParameters.ToQueryParameters().Where(p=>p.Name != Parameters.Realm))
+
+            foreach (
+                var parameter in AuthorizationHeaderParameters.ToQueryParameters().Where(p => p.Key != Parameters.Realm)
+                )
             {
                 if (builder.Length > 0) builder.Append(",");
-                builder.Append(UriUtility.UrlEncode(parameter.Name)).Append("=\"").Append(
+                builder.Append(UriUtility.UrlEncode(parameter.Key)).Append("=\"").Append(
                     UriUtility.UrlEncode(parameter.Value)).Append("\"");
             }
 
@@ -221,7 +224,7 @@ namespace DevDefined.OAuth.Core
             var builder = new UriBuilder(NormalizedRequestUrl);
 
             NameValueCollection parameters = QueryParameters.ToQueryParameters()
-                .Where(q => !q.Name.StartsWith(Parameters.OAuthParameterPrefix))
+                .Where(q => !q.Key.StartsWith(Parameters.OAuthParameterPrefix))
                 .ToNameValueCollection();
 
             builder.Query = UriUtility.FormatQueryString(parameters);
@@ -259,11 +262,11 @@ namespace DevDefined.OAuth.Core
             if (Cookies != null) allParameters.AddRange(Cookies.ToQueryParameters());
             if (AuthorizationHeaderParameters != null)
                 allParameters.AddRange(
-                    AuthorizationHeaderParameters.ToQueryParameters().Where(q => q.Name != Parameters.Realm));
+                    AuthorizationHeaderParameters.ToQueryParameters().Where(q => q.Key != Parameters.Realm));
 
             // remove the signature parameter
 
-            allParameters.RemoveAll(param => param.Name == Parameters.OAuth_Signature);
+            allParameters.RemoveAll(param => param.Key == Parameters.OAuth_Signature);
 
             // build the uri
 

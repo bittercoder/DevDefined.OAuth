@@ -1,5 +1,5 @@
 ﻿using System;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 
 namespace DevDefined.OAuth
 {
@@ -10,9 +10,13 @@ namespace DevDefined.OAuth
     {
         protected Random random = new Random();
 
+        #region INonceGenerator Members
+
         public string GenerateNonce(OAuthContext context)
         {
             return Guid.NewGuid().ToString();
         }
+
+        #endregion
     }
 }

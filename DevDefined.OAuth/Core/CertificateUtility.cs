@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using DevDefined.OAuth.KeyInterop;
 
-namespace DevDefined.OAuth.Core
+namespace DevDefined.OAuth.Framework
 {
     public static class CertificateUtility
     {

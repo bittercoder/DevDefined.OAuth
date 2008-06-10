@@ -1,8 +1,7 @@
 namespace DevDefined.OAuth.Framework.Signing
 {
-    public interface IContextSignatureImplementation
+    public interface IOAuthContextSigner
     {
-        string MethodName { get; }
         void SignContext(OAuthContext authContext, SigningContext signingContext);
         bool ValidateSignature(OAuthContext authContext, SigningContext signingContext);
     }

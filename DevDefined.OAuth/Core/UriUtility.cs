@@ -3,13 +3,20 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Web;
+using QueryParameter = System.Collections.Generic.KeyValuePair<string, string>;
 
-namespace DevDefined.OAuth.Core
+namespace DevDefined.OAuth.Framework
 {
     public static class UriUtility
     {
         private const string UnreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 
+        /// <summary>
+        /// Extracts all the parameters from the supplied encoded parameters. 
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public static List<QueryParameter> GetQueryParameters(string parameters)
         {
             if (parameters.StartsWith("?"))
@@ -42,6 +49,13 @@ namespace DevDefined.OAuth.Core
             return result;
         }
 
+        /// <summary>
+        /// An OAuth specific implementation of Url Encoding - we need this to produce consistent base
+        /// strings to other platforms such as php or ruby, as the <see cref="HttpUtility.UrlEncode" />
+        /// doesn't encode in the same way.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string UrlEncode(string value)
         {
             if (value == null) return null;
@@ -63,48 +77,34 @@ namespace DevDefined.OAuth.Core
             return result.ToString();
         }
 
-        public static string FormatQueryStringWithUrlEncoding(NameValueCollection parameters)
+        /// <summary>
+        /// Formats a set of query parameters, as per query string encoding.
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public static string FormatQueryString(NameValueCollection parameters)
         {
             var builder = new StringBuilder();
-            
+
             if (parameters != null)
             {
                 foreach (string key in parameters.Keys)
                 {
                     if (builder.Length > 0) builder.Append("&");
-                    builder.Append(key).Append("=");
-
-                    string urlEncoded = UrlEncode(parameters[key]);
-                    if (!key.StartsWith("oauth_", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        urlEncoded = UrlEncode(urlEncoded);
-                    }
-
-                    builder.Append(urlEncoded);
+                    builder.Append(key).Append("=").Append(UrlEncode(parameters[key]));
                 }
             }
 
             return builder.ToString();
         }
 
-        public static string FormatQueryString(NameValueCollection parameters)
-        {
-            var builder = new StringBuilder();
-
-            foreach (string key in parameters.Keys)
-            {
-                if (builder.Length > 0) builder.Append("&");
-                builder.Append(key).Append("=").Append(UrlEncode(parameters[key]));
-            }
-
-            return builder.ToString();
-        }
-
-        public static string FormatParameters(string httpMethod, Uri url)
-        {
-            return FormatParameters(httpMethod, url, GetQueryParameters(url.Query));
-        }
-
+        /// <summary>
+        /// Takes an http method, url and a set of parameters and formats them as a signature base as per the OAuth core spec.
+        /// </summary>
+        /// <param name="httpMethod"></param>
+        /// <param name="url"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public static string FormatParameters(string httpMethod, Uri url, List<QueryParameter> parameters)
         {
             string normalizedRequestParameters = NormalizeRequestParameters(parameters);
@@ -118,29 +118,40 @@ namespace DevDefined.OAuth.Core
             return signatureBase.ToString();
         }
 
-        public static string NormalizeRequestParameters(IList<QueryParameter> parameters)
+        /// <summary>
+        /// Normalizes a sequence of key/value pair parameters as per the OAuth core specification.
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public static string NormalizeRequestParameters(IEnumerable<QueryParameter> parameters)
         {
             IEnumerable<QueryParameter> orderedParameters = parameters
-                .OrderBy(x => x.Name)
+                .OrderBy(x => x.Key)
                 .ThenBy(x => x.Value)
                 .Select(
                 x =>
-                (x.Name.StartsWith(Parameters.OAuthParameterPrefix))
+                (x.Key.StartsWith(Parameters.OAuthParameterPrefix))
                     ? x
-                    : new QueryParameter(x.Name, UrlEncode(x.Value)));
+                    : new QueryParameter(x.Key, UrlEncode(x.Value)));
 
-            var sb = new StringBuilder();
+            var builder = new StringBuilder();
 
-            foreach (QueryParameter p in orderedParameters)
+            foreach (var parameter in orderedParameters)
             {
-                if (sb.Length > 0) sb.Append("&");
+                if (builder.Length > 0) builder.Append("&");
 
-                sb.Append(p.Name).Append("=").Append(p.Value);
+                builder.Append(parameter.Key).Append("=").Append(parameter.Value);
             }
 
-            return sb.ToString();
+            return builder.ToString();
         }
 
+        /// <summary>
+        /// Normalizes a Url according to the OAuth specification (this ensures http or https on a default port is not displayed
+        /// with the :XXX following the host in the url).
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <returns></returns>
         public static string NormalizeUri(Uri uri)
         {
             string normalizedUrl = string.Format("{0}://{1}", uri.Scheme, uri.Host);
@@ -166,9 +177,9 @@ namespace DevDefined.OAuth.Core
         {
             var collection = new NameValueCollection();
 
-            foreach (QueryParameter parameter in source)
+            foreach (var parameter in source)
             {
-                collection[parameter.Name] = parameter.Value;
+                collection[parameter.Key] = parameter.Value;
             }
 
             return collection;

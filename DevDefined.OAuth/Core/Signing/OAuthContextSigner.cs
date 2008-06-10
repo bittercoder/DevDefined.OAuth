@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DevDefined.OAuth.Core.Signing;
+using DevDefined.OAuth.Framework.Signing;
 
-namespace DevDefined.OAuth.Core
+namespace DevDefined.OAuth.Framework.Signing
 {
-    public class OAuthContextSigner
+    public class OAuthContextSigner : IOAuthContextSigner
     {
         private readonly List<IContextSignatureImplementation> _implementations =
             new List<IContextSignatureImplementation>();

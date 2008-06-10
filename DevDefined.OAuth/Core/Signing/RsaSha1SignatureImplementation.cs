@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace DevDefined.OAuth.Core.Signing
+namespace DevDefined.OAuth.Framework.Signing
 {
     public class RsaSha1SignatureImplementation : IContextSignatureImplementation
     {

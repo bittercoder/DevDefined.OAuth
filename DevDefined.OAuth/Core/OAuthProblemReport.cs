@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 
-namespace DevDefined.OAuth.Core
+namespace DevDefined.OAuth.Framework
 {
     public class OAuthProblemReport
-    {        
+    {
+        public OAuthProblemReport()
+        {
+            ParametersRejected = new List<string>();
+            ParametersAbsent = new List<string>();
+        }
+
         public string AcceptableVersionTo { get; set; }
         public string AcceptableVersionFrom { get; set; }
         public List<string> ParametersRejected { get; set; }
@@ -15,12 +21,6 @@ namespace DevDefined.OAuth.Core
         public string Problem { get; set; }
         public DateTime? AcceptableTimeStampsTo { get; set; }
         public DateTime? AcceptableTimeStampsFrom { get; set; }
-
-        public OAuthProblemReport()
-        {
-            ParametersRejected = new List<string>();
-            ParametersAbsent = new List<string>();
-        }
 
         public override string ToString()
         {

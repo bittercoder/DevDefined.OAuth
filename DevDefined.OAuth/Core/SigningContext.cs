@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace DevDefined.OAuth.Core
+namespace DevDefined.OAuth.Framework
 {
     public class SigningContext
     {

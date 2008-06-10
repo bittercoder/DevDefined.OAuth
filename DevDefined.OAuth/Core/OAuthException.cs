@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace DevDefined.OAuth.Core
-{   
+namespace DevDefined.OAuth.Framework
+{
     public class OAuthException : Exception
     {
         public OAuthException()
@@ -27,6 +27,6 @@ namespace DevDefined.OAuth.Core
         }
 
         public OAuthProblemReport Report { get; set; }
-        public OAuthContext Context { get; set; }        
+        public OAuthContext Context { get; set; }
     }
 }

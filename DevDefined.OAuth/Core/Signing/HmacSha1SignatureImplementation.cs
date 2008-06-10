@@ -2,7 +2,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace DevDefined.OAuth.Core.Signing
+namespace DevDefined.OAuth.Framework.Signing
 {
     public class HmacSha1SignatureImplementation : IContextSignatureImplementation
     {
@@ -25,7 +25,7 @@ namespace DevDefined.OAuth.Core.Signing
 
         #endregion
 
-        private string GenerateSignature(OAuthContext authContext, SigningContext signingContext)
+        private static string GenerateSignature(IToken authContext, SigningContext signingContext)
         {
             string consumerSecret = (signingContext.ConsumerSecret != null)
                                         ? UriUtility.UrlEncode(signingContext.ConsumerSecret)
@@ -35,14 +35,12 @@ namespace DevDefined.OAuth.Core.Signing
                                      : null;
             string hashSource = string.Format("{0}&{1}", consumerSecret, tokenSecret);
 
-            var hashAlgorithm = new HMACSHA1();
-
-            hashAlgorithm.Key = Encoding.ASCII.GetBytes(hashSource);
+            var hashAlgorithm = new HMACSHA1 {Key = Encoding.ASCII.GetBytes(hashSource)};
 
             return ComputeHash(hashAlgorithm, signingContext.SignatureBase);
         }
 
-        private string ComputeHash(HashAlgorithm hashAlgorithm, string data)
+        private static string ComputeHash(HashAlgorithm hashAlgorithm, string data)
         {
             if (hashAlgorithm == null)
             {

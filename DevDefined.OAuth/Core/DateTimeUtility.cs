@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DevDefined.OAuth.Core
+namespace DevDefined.OAuth.Framework
 {
     public static class DateTimeUtility
     {

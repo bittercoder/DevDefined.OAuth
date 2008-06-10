@@ -5,7 +5,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace DevDefined.OAuth.Core
+namespace DevDefined.OAuth.Framework
 {
     public class OAuthContextBuilder
     {
@@ -24,13 +24,13 @@ namespace DevDefined.OAuth.Core
         public OAuthContext FromHttpRequest(HttpRequest request)
         {
             var context = new OAuthContext
-            {
-                RawUri = request.Url,
-                Cookies = CollectCookies(request),
-                Headers = request.Headers,
-                RequestMethod = request.HttpMethod,
-                FormEncodedParameters = request.Form                 
-            };
+                              {
+                                  RawUri = request.Url,
+                                  Cookies = CollectCookies(request),
+                                  Headers = request.Headers,
+                                  RequestMethod = request.HttpMethod,
+                                  FormEncodedParameters = request.Form
+                              };
 
             return context;
         }

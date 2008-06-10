@@ -1,4 +1,4 @@
-namespace DevDefined.OAuth.Core.Signing
+namespace DevDefined.OAuth.Framework.Signing
 {
     public class PlainTextSignatureImplementation : IContextSignatureImplementation
     {

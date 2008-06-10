@@ -1,7 +1,7 @@
 using System;
 using DevDefined.OAuth.Provider;
 
-namespace DevDefined.OAuth.Core
+namespace DevDefined.OAuth.Framework
 {
     public class AccessDeniedException : Exception
     {

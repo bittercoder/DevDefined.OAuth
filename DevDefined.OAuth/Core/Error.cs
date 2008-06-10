@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using DevDefined.OAuth.Provider;
 
-namespace DevDefined.OAuth.Core
+namespace DevDefined.OAuth.Framework
 {
     public static class Error
     {
@@ -11,7 +11,7 @@ namespace DevDefined.OAuth.Core
         {
             var exception = new OAuthException(context, OAuthProblems.ParameterAbset,
                                                string.Format("Missing required parameter : {0}", parameterName));
-            
+
             exception.Report.ParametersAbsent.Add(parameterName);
 
             return exception;
@@ -77,12 +77,14 @@ namespace DevDefined.OAuth.Core
 
         public static Exception FailedToValidateSignature(OAuthContext context)
         {
-            return new OAuthException(context, OAuthProblems.SignatureInvalid, "Failed to validate signature");            
+            return new OAuthException(context, OAuthProblems.SignatureInvalid, "Failed to validate signature");
         }
-       
+
         public static Exception UnknownConsumerKey(OAuthContext context)
         {
-            return new OAuthException(context, OAuthProblems.ConsumerKeyUnknown, string.Format("Unknown Consumer (Realm: {0}, Key: {1})", context.Realm, context.ConsumerKey));
+            return new OAuthException(context, OAuthProblems.ConsumerKeyUnknown,
+                                      string.Format("Unknown Consumer (Realm: {0}, Key: {1})", context.Realm,
+                                                    context.ConsumerKey));
         }
 
         public static Exception AlgorithmPropertyNotSetOnSigningContext()
@@ -136,6 +138,11 @@ namespace DevDefined.OAuth.Core
         {
             return new OAuthException(context, OAuthProblems.NonceUsed,
                                       string.Format("The nonce value \"{0}\" has already been used", context.Nonce));
+        }
+
+        public static Exception ThisConsumerRequestHasAlreadyBeenSigned()
+        {
+            return new Exception("The consumer request for consumer \"{0}\" has already been signed");
         }
     }
 }
