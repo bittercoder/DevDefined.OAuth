@@ -8,10 +8,17 @@ namespace DevDefined.OAuth.Consumer
     public class OAuthConsumerContext : IOAuthConsumerContext
     {
         private INonceGenerator _nonceGenerator = new GuidNonceGenerator();
+        private IOAuthContextSigner _signer = new OAuthContextSigner();
 
         public OAuthConsumerContext()
         {
             SignatureMethod = Framework.SignatureMethod.PlainText;
+        }
+
+        public IOAuthContextSigner Signer
+        {
+            get { return _signer; }
+            set { _signer = value; }
         }
 
         public INonceGenerator NonceGenerator
@@ -33,7 +40,6 @@ namespace DevDefined.OAuth.Consumer
         {
             EnsureStateIsValid();
 
-            var signer = new OAuthContextSigner();
 
             context.UseAuthorizationHeader = UseHeaderForOAuthParameters;
             context.Nonce = _nonceGenerator.GenerateNonce(context);
@@ -47,9 +53,9 @@ namespace DevDefined.OAuth.Consumer
 
             string signatureBase = context.GenerateSignatureBase();
 
-            signer.SignContext(context,
-                               new SigningContext
-                                   {Algorithm = Key, SignatureBase = signatureBase, ConsumerSecret = ConsumerSecret});
+            _signer.SignContext(context,
+                                new SigningContext
+                                    {Algorithm = Key, SignatureBase = signatureBase, ConsumerSecret = ConsumerSecret});
         }
 
         public void SignContextWithToken(OAuthContext context, IToken token)

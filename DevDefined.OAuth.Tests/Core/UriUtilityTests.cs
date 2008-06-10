@@ -14,8 +14,8 @@ namespace DevDefined.OAuth.Tests.Core
         {
             List<QueryParameter> parameters = UriUtility.GetQueryParameters("key1=value1&key2=value2");
             Assert.AreEqual(2, parameters.Count);
-            Assert.AreEqual("value1", Enumerable.Single(parameters, p => p.Key == "key1").Value);
-            Assert.AreEqual("value2", Enumerable.Single(parameters, p => p.Key == "key2").Value);
+            Assert.AreEqual("value1", Enumerable.Single<QueryParameter>(parameters, p => p.Key == "key1").Value);
+            Assert.AreEqual("value2", Enumerable.Single<QueryParameter>(parameters, p => p.Key == "key2").Value);
         }
 
         [Test]
@@ -23,8 +23,8 @@ namespace DevDefined.OAuth.Tests.Core
         {
             List<QueryParameter> parameters = UriUtility.GetQueryParameters("?key1=value1&key2=value2");
             Assert.AreEqual(2, parameters.Count);
-            Assert.AreEqual("value1", Enumerable.Single(parameters, p => p.Key == "key1").Value);
-            Assert.AreEqual("value2", Enumerable.Single(parameters, p => p.Key == "key2").Value);
+            Assert.AreEqual("value1", Enumerable.Single<QueryParameter>(parameters, p => p.Key == "key1").Value);
+            Assert.AreEqual("value2", Enumerable.Single<QueryParameter>(parameters, p => p.Key == "key2").Value);
         }
     }
 }

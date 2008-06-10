@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Specialized;
-using System.IO;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Security.Cryptography.X509Certificates;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using NUnit.Framework;
@@ -17,11 +14,11 @@ namespace DevDefined.OAuth.Tests.Consumer
         private IOAuthSession CreateGoogleContactsSession()
         {
             var consumerContext = new OAuthConsumerContext
-              {
-                  ConsumerKey = "weitu.googlepages.com",
-                  SignatureMethod = SignatureMethod.RsaSha1,
-                  Key = certificate.PrivateKey
-              };
+                                      {
+                                          ConsumerKey = "weitu.googlepages.com",
+                                          SignatureMethod = SignatureMethod.RsaSha1,
+                                          Key = certificate.PrivateKey
+                                      };
 
             return new OAuthSession(consumerContext, "https://www.google.com/accounts/OAuthGetRequestToken",
                                     "https://www.google.com/accounts/accounts/OAuthAuthorizeToken",
@@ -30,38 +27,25 @@ namespace DevDefined.OAuth.Tests.Consumer
         }
 
         [Test]
-        public void RequestTokenForRsaSha1()
-        {
-            // simple test, just requests a token using RSHA1... 
-            
-            var session = CreateGoogleContactsSession();
-
-            var token = session.GetRequestToken();
-            Assert.AreEqual("weitu.googlepages.com", token.ConsumerKey);
-            Assert.IsTrue(token.Token.Length > 0);
-            Assert.IsNull(token.TokenSecret);
-        }
-
-        [Test]
         public void RequestContacts()
-        {     
+        {
             // this test does a full end-to-end integration (request token, user authoriazation, exchanging request token
             // for an access token and then using then access token to retrieve some data).
 
             // the access token is directly associated with a google user, by them logging in and granting access
             // for your request - thus the client is never exposed to the users credentials (not even their login).
 
-            var consumer = CreateGoogleContactsSession();
+            IOAuthSession consumer = CreateGoogleContactsSession();
 
             using (With.NoCertificateValidation())
             {
-                var requestToken = consumer.GetRequestToken();
+                IToken requestToken = consumer.GetRequestToken();
 
                 string userAuthorize = consumer.GetUserAuthorizationUrlForToken(requestToken, null);
 
-                using (IE ie = new IE(userAuthorize))
+                using (var ie = new IE(userAuthorize))
                 {
-                    var overrideLink = ie.Link("overridelink");
+                    Link overrideLink = ie.Link("overridelink");
                     if (overrideLink.Exists) overrideLink.Click();
 
                     if (ie.Form("gaia_loginform").Exists)
@@ -78,12 +62,26 @@ namespace DevDefined.OAuth.Tests.Consumer
 
                 // this will implicitly set AccessToken on the current session... 
 
-                var accessToken = consumer.ExchangeRequestTokenForAccessToken(requestToken);
+                IToken accessToken = consumer.ExchangeRequestTokenForAccessToken(requestToken);
 
-                string responseText = consumer.Request().Get().ForUrl("http://www.google.com/m8/feeds/contacts/default/base").ToString();
-                    
-                Assert.IsTrue(responseText.Contains("alex@devdefined.com"));                
+                string responseText =
+                    consumer.Request().Get().ForUrl("http://www.google.com/m8/feeds/contacts/default/base").ToString();
+
+                Assert.IsTrue(responseText.Contains("alex@devdefined.com"));
             }
+        }
+
+        [Test]
+        public void RequestTokenForRsaSha1()
+        {
+            // simple test, just requests a token using RSHA1... 
+
+            IOAuthSession session = CreateGoogleContactsSession();
+
+            IToken token = session.GetRequestToken();
+            Assert.AreEqual("weitu.googlepages.com", token.ConsumerKey);
+            Assert.IsTrue(token.Token.Length > 0);
+            Assert.IsNull(token.TokenSecret);
         }
     }
 }

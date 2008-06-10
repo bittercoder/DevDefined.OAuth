@@ -1,5 +1,4 @@
 ﻿using DevDefined.OAuth.Framework;
-using DevDefined.OAuth.Provider.Inspectors;
 using DevDefined.OAuth.Storage;
 using NUnit.Framework;
 using Rhino.Mocks;
