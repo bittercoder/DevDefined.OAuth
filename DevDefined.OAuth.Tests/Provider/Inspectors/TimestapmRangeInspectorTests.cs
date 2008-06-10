@@ -16,7 +16,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
                                                         () => new DateTime(2008, 1, 1, 12, 0, 0));
 
             var context = new OAuthContext();
-            context.Timestamp = new DateTime(2008, 1, 1, 13, 0, 1).EpocString();
+            context.Timestamp = new DateTime(2008, 1, 1, 13, 0, 1).Epoch().ToString();
 
             inspector.InspectContext(context);
         }
@@ -29,7 +29,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
                                                         () => new DateTime(2008, 1, 1, 12, 0, 0));
 
             var context = new OAuthContext();
-            context.Timestamp = new DateTime(2008, 1, 1, 10, 59, 59).EpocString();
+            context.Timestamp = new DateTime(2008, 1, 1, 10, 59, 59).Epoch().ToString();
 
             inspector.InspectContext(context);
         }
@@ -41,7 +41,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
                                                         () => new DateTime(2008, 1, 1, 12, 0, 0));
 
             var context = new OAuthContext();
-            context.Timestamp = new DateTime(2008, 1, 1, 13, 0, 0).EpocString();
+            context.Timestamp = new DateTime(2008, 1, 1, 13, 0, 0).Epoch().ToString();
 
             inspector.InspectContext(context);
         }
@@ -53,7 +53,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
                                                         () => new DateTime(2008, 1, 1, 12, 0, 0));
 
             var context = new OAuthContext();
-            context.Timestamp = new DateTime(2008, 1, 1, 11, 0, 0).EpocString();
+            context.Timestamp = new DateTime(2008, 1, 1, 11, 0, 0).Epoch().ToString();
 
             inspector.InspectContext(context);
         }

@@ -14,16 +14,17 @@ namespace DevDefined.OAuth.Tests.Consumer
         [Test]
         public void GetUserAuthorizationUriForTokenWithoutCallback()
         {
-            OAuthConsumer consumer = new OAuthConsumer("http://localhost/request", "http://localhost/userauth", "http://localhost/access");
-            string actual = consumer.GetUserAuthorizationUrlForToken(new TokenBase { Token = "token" }, null, null);
+
+            OAuthSession session = new OAuthSession(new OAuthConsumerContext(), "http://localhost/request", "http://localhost/userauth", "http://localhost/access");
+            string actual = session.GetUserAuthorizationUrlForToken(new TokenBase { Token = "token" }, null);
             Assert.AreEqual("http://localhost/userauth?oauth_token=token", actual);
         }
 
         [Test]
         public void GetUserAuthorizationUriForTokenWithCallback()
         {
-            OAuthConsumer consumer = new OAuthConsumer("http://localhost/request", "http://localhost/userauth", "http://localhost/access");
-            string actual = consumer.GetUserAuthorizationUrlForToken(new TokenBase { Token = "token" }, "http://localhost/callback", null);
+            OAuthSession session = new OAuthSession(new OAuthConsumerContext(), "http://localhost/request", "http://localhost/userauth", "http://localhost/access");
+            string actual = session.GetUserAuthorizationUrlForToken(new TokenBase { Token = "token" }, "http://localhost/callback");
             Assert.AreEqual("http://localhost/userauth?oauth_token=token&oauth_callback=http%3A%2F%2Flocalhost%2Fcallback", actual);
         }
     }

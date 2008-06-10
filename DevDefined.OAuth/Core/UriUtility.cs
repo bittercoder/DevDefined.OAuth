@@ -10,11 +10,6 @@ namespace DevDefined.OAuth.Core
     {
         private const string UnreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 
-        /// <summary>
-        /// Internal function to cut out all non oauth query string parameters (all parameters not begining with "oauth_")
-        /// </summary>
-        /// <param name="parameters">The query string part of the Url</param>
-        /// <returns>A list of QueryParameter each containing the parameter name and value</returns>
         public static List<QueryParameter> GetQueryParameters(string parameters)
         {
             if (parameters.StartsWith("?"))
@@ -47,12 +42,6 @@ namespace DevDefined.OAuth.Core
             return result;
         }
 
-        /// <summary>
-        /// This is a different Url Encode implementation since the default .NET one outputs the percent encoding in lower case.
-        /// While this is not a problem with the percent encoding spec, it is used in upper case throughout OAuth
-        /// </summary>
-        /// <param name="value">The value to Url encode</param>
-        /// <returns>Returns a Url encoded string</returns>
         public static string UrlEncode(string value)
         {
             if (value == null) return null;
@@ -129,11 +118,6 @@ namespace DevDefined.OAuth.Core
             return signatureBase.ToString();
         }
 
-        /// <summary>
-        /// Normalizes the request parameters according to the spec
-        /// </summary>
-        /// <param name="parameters">The list of parameters already sorted</param>
-        /// <returns>a string representing the normalized parameters</returns>
         public static string NormalizeRequestParameters(IList<QueryParameter> parameters)
         {
             IEnumerable<QueryParameter> orderedParameters = parameters

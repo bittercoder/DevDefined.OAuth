@@ -9,7 +9,7 @@ namespace ExampleProviderSite
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            OAuthContext context = new OAuthContextFactory().FromHttpRequest(Request);
+            OAuthContext context = new OAuthContextBuilder().FromHttpRequest(Request);
 
             IOAuthProvider provider = OAuthServicesLocator.Services.Provider;
 

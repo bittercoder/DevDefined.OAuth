@@ -9,11 +9,6 @@ namespace DevDefined.OAuth.Core
             return (long) (d.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalSeconds;
         }
 
-        public static string EpocString(this DateTime d)
-        {
-            return Epoch(d).ToString();
-        }
-
         public static DateTime FromEpoch(long epoch)
         {
             var d = new DateTime(1970, 1, 1);

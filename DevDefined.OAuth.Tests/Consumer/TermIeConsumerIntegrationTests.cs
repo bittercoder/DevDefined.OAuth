@@ -18,29 +18,32 @@ namespace DevDefined.OAuth.Tests.Consumer
     {
         private readonly X509Certificate2 certificate = TestCertificates.OAuthTestCertificate();
 
-        private OAuthConsumer CreateConsumer(string signatureMethod)
+        private IOAuthSession CreateConsumer(string signatureMethod)
         {
-            return new OAuthConsumer("http://term.ie/oauth/example/request_token.php",
-                                     "http://localhost/authorize",
-                                     "http://term.ie/oauth/example/access_token.php")
-                       {
-                           SignatureMethod = signatureMethod,
-                           ConsumerKey = "key",
-                           ConsumerSecret = "secret",
-                           Key = certificate.PrivateKey
-                       };
+            var consumerContext = new OAuthConsumerContext
+                  {
+                      SignatureMethod = signatureMethod,
+                      ConsumerKey = "key",
+                      ConsumerSecret = "secret",
+                      Key = certificate.PrivateKey,
+                      Realm = "http://term.ie/"
+                  };
+
+            return new OAuthSession(consumerContext, "http://term.ie/oauth/example/request_token.php",
+                                           "http://localhost/authorize",
+                                           "http://term.ie/oauth/example/access_token.php");                   
         }
 
         [Test]
         public void ExchangeRequestTokenForAccessTokenRsaSha1()
         {
-            OAuthConsumer consumer = CreateConsumer(SignatureMethod.RsaSha1);
+            var session = CreateConsumer(SignatureMethod.RsaSha1);
 
-            var requestToken = consumer.RequestToken(null);
+            var requestToken = session.GetRequestToken();
 
             // now exchange the token
 
-            var accessToken = consumer.ExchangeRequestTokenForAccessToken(requestToken, null);
+            var accessToken = session.ExchangeRequestTokenForAccessToken(requestToken);
 
             Assert.AreEqual("key", accessToken.ConsumerKey);
             Assert.AreEqual("accesskey", accessToken.Token);
@@ -50,49 +53,38 @@ namespace DevDefined.OAuth.Tests.Consumer
         [Test]
         public void MakeAuthenticatedCallForTokenRsaSha1WithPost()
         {
-            var accessToken = new TokenBase {ConsumerKey = "key", Token = "accesskey", TokenSecret = "accesssecret"};
-            OAuthConsumer consumer = CreateConsumer(SignatureMethod.RsaSha1);
+            var session = CreateConsumer(SignatureMethod.RsaSha1);
+            session.AccessToken = new TokenBase { ConsumerKey = "key", Token = "accesskey", TokenSecret = "accesssecret" };
 
-            var factory = new OAuthContextFactory();
-            OAuthContext context = factory.FromUri("POST", new Uri("http://term.ie/oauth/example/echo_api.php"));
-            context.FormEncodedParameters.Add("success", "true");
+            string contents = session.Request().Post().ForUrl("http://term.ie/oauth/example/echo_api.php")
+                .WithFormParameters(new {success = "true"})
+                .ToString();
 
-            HttpWebResponse response = consumer.GetResponse(context, accessToken);
-
-            using (var reader = new StreamReader(response.GetResponseStream()))
-            {
-                string contents = reader.ReadToEnd();
-                Assert.AreEqual("success=true", contents);
-            }
+            Assert.AreEqual("success=true", contents);            
         }
 
         [Test]
         public void MakeAuthenticatedCallForTokenRsaSha1WithPostAndHeaders()
         {
-            var accessToken = new TokenBase {ConsumerKey = "key", Token = "accesskey", TokenSecret = "accesssecret"};
-            OAuthConsumer consumer = CreateConsumer(SignatureMethod.RsaSha1);
-            consumer.UseHeaderForOAuthParameters = true;
+            var session = CreateConsumer(SignatureMethod.RsaSha1);
+            session.AccessToken = new TokenBase { ConsumerKey = "key", Token = "accesskey", TokenSecret = "accesssecret" };
+            session.ConsumerContext.UseHeaderForOAuthParameters = true;
 
-            var factory = new OAuthContextFactory();
-            OAuthContext context = factory.FromUri("POST", new Uri("http://term.ie/oauth/example/echo_api.php"));
-            context.FormEncodedParameters.Add("success", "true");
-            context.Realm = "http://term.ie/";
+            var context = session.Request().Post().ForUrl("http://term.ie/oauth/example/echo_api.php")
+                .WithFormParameters(new { success = "true" })
+                .SignWithToken();
 
-            HttpWebResponse response = consumer.GetResponse(context, accessToken);
+            string contents = context.ToString();
 
-            using (var reader = new StreamReader(response.GetResponseStream()))
-            {
-                string contents = reader.ReadToEnd();
-                Assert.AreEqual("success=true", contents);
-            }
+            Assert.AreEqual("success=true", contents);
         }
 
         [Test]
         public void RequestTokenForHmacSha1()
         {
-            OAuthConsumer consumer = CreateConsumer(SignatureMethod.HmacSha1);
+            var session = CreateConsumer(SignatureMethod.HmacSha1);
 
-            var token = consumer.RequestToken(null);
+            var token = session.GetRequestToken();
 
             Assert.AreEqual("key", token.ConsumerKey);
             Assert.AreEqual("requestkey", token.Token);
@@ -102,9 +94,9 @@ namespace DevDefined.OAuth.Tests.Consumer
         [Test]
         public void RequestTokenForPlainText()
         {
-            OAuthConsumer consumer = CreateConsumer(SignatureMethod.PlainText);
+            var session = CreateConsumer(SignatureMethod.PlainText);
 
-            var token = consumer.RequestToken(null);
+            var token = session.GetRequestToken();
 
             Assert.AreEqual("key", token.ConsumerKey);
             Assert.AreEqual("requestkey", token.Token);
@@ -114,9 +106,9 @@ namespace DevDefined.OAuth.Tests.Consumer
         [Test]
         public void RequestTokenForRsaSha1()
         {
-            OAuthConsumer consumer = CreateConsumer(SignatureMethod.RsaSha1);
+            var session = CreateConsumer(SignatureMethod.RsaSha1);
 
-            var token = consumer.RequestToken(null);
+            var token = session.GetRequestToken();
 
             Assert.AreEqual("key", token.ConsumerKey);
             Assert.AreEqual("requestkey", token.Token);
@@ -126,14 +118,10 @@ namespace DevDefined.OAuth.Tests.Consumer
         [Test]
         public void RequestTokenForRsaSha1WithAddtionalQueryParameters()
         {
-            OAuthConsumer consumer = CreateConsumer(SignatureMethod.RsaSha1);
-
-            var parameters = new NameValueCollection
-                                 {
-                                     {"scope", "http://www.google.com/m8/feeds"}
-                                 };
-
-            var token = consumer.RequestToken(parameters);
+            var token = CreateConsumer(SignatureMethod.RsaSha1)
+                .WithQueryParameters(new {scope = "http://term.ie/apps/subscriptions"})
+                .GetRequestToken();
+                
             Assert.AreEqual("key", token.ConsumerKey);
             Assert.AreEqual("requestkey", token.Token);
             Assert.AreEqual("requestsecret", token.TokenSecret);

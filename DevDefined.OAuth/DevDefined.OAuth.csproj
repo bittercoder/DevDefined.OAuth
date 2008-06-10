@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\shared-libs\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -46,9 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Consumer\OAuthConsumer.cs" />
     <Compile Include="Core\OAuthContext.cs" />
-    <Compile Include="Core\OAuthContextFactory.cs" />
+    <Compile Include="Core\OAuthContextBuilder.cs" />
     <Compile Include="Core\Error.cs" />
     <Compile Include="Core\NonceGenerator.cs" />
     <Compile Include="Core\Parameters.cs" />
@@ -57,7 +60,11 @@
     <Compile Include="Core\SignatureMethod.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Consumer\IOAuthConsumer.cs" />
+    <Compile Include="Consumer\ConsumerRequest.cs" />
+    <Compile Include="Consumer\IOAuthSession.cs" />
+    <Compile Include="Consumer\OAuthSession.cs" />
+    <Compile Include="Consumer\IOAuthConsumerContext.cs" />
+    <Compile Include="Consumer\OAuthConsumerContext.cs" />
     <Compile Include="Core\AccessDeniedException.cs" />
     <Compile Include="Core\CertificateUtility.cs" />
     <Compile Include="Core\DateTimeUtility.cs" />

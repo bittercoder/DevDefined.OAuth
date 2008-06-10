@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Web;
 
@@ -19,7 +17,12 @@ namespace DevDefined.OAuth.Core
         private readonly BoundParameter _token;
         private readonly BoundParameter _tokenSecret;
         private readonly BoundParameter _version;
+        private NameValueCollection _authorizationHeaderParameters;
+        private NameValueCollection _cookies;
+        private NameValueCollection _formEncodedParameters;
+        private NameValueCollection _headers;
         private string _normalizedRequestUrl;
+        private NameValueCollection _queryParameters;
         private Uri _rawUri;
 
         public OAuthContext()
@@ -39,11 +42,55 @@ namespace DevDefined.OAuth.Core
             AuthorizationHeaderParameters = new NameValueCollection();
         }
 
-        public NameValueCollection Headers { get; set; }
-        public NameValueCollection QueryParameters { get; set; }
-        public NameValueCollection Cookies { get; set; }
-        public NameValueCollection FormEncodedParameters { get; set; }
-        public NameValueCollection AuthorizationHeaderParameters { get; set; }
+        public NameValueCollection Headers
+        {
+            get
+            {
+                if (_headers == null) _headers = new NameValueCollection();
+                return _headers;
+            }
+            set { _headers = value; }
+        }
+
+        public NameValueCollection QueryParameters
+        {
+            get
+            {
+                if (_queryParameters == null) _queryParameters = new NameValueCollection();
+                return _queryParameters;
+            }
+            set { _queryParameters = value; }
+        }
+
+        public NameValueCollection Cookies
+        {
+            get
+            {
+                if (_cookies == null) _cookies = new NameValueCollection();
+                return _cookies;
+            }
+            set { _cookies = value; }
+        }
+
+        public NameValueCollection FormEncodedParameters
+        {
+            get
+            {
+                if (_formEncodedParameters == null) _formEncodedParameters = new NameValueCollection();
+                return _formEncodedParameters;
+            }
+            set { _formEncodedParameters = value; }
+        }
+
+        public NameValueCollection AuthorizationHeaderParameters
+        {
+            get
+            {
+                if (_authorizationHeaderParameters == null) _authorizationHeaderParameters = new NameValueCollection();
+                return _authorizationHeaderParameters;
+            }
+            set { _authorizationHeaderParameters = value; }
+        }
 
         public Uri RawUri
         {
@@ -51,8 +98,15 @@ namespace DevDefined.OAuth.Core
             set
             {
                 _rawUri = value;
+                
+                var newParameters = HttpUtility.ParseQueryString(_rawUri.Query);
 
-                QueryParameters = HttpUtility.ParseQueryString(_rawUri.Query);
+                // TODO: tidy this up, bit clunky
+
+                foreach (string parameter in newParameters)
+                {
+                    QueryParameters[parameter] = newParameters[parameter];
+                }
 
                 _normalizedRequestUrl = UriUtility.NormalizeUri(_rawUri);
             }
@@ -148,7 +202,9 @@ namespace DevDefined.OAuth.Core
         {
             var builder = new StringBuilder();
 
-            foreach (QueryParameter parameter in AuthorizationHeaderParameters.ToQueryParameters())
+            if (Realm != null) builder.Append("realm=\"").Append(Realm).Append("\"");
+        
+            foreach (QueryParameter parameter in AuthorizationHeaderParameters.ToQueryParameters().Where(p=>p.Name != Parameters.Realm))
             {
                 if (builder.Length > 0) builder.Append(",");
                 builder.Append(UriUtility.UrlEncode(parameter.Name)).Append("=\"").Append(
@@ -173,47 +229,6 @@ namespace DevDefined.OAuth.Core
             return builder.Uri;
         }
 
-        public HttpWebRequest GenerateHttpWebRequest()
-        {
-            var request = (HttpWebRequest) WebRequest.Create(GenerateUri());
-
-            request.Method = RequestMethod;
-
-            if (Headers != null) request.Headers.Add(Headers);
-
-            // TODO: implement support for cookies
-
-            return request;
-        }
-
-        public T InvokeHttpWebRequest<T>(Func<NameValueCollection, T> selectFunc)
-        {
-            try
-            {
-                HttpWebRequest request = GenerateHttpWebRequest();
-                var response = (HttpWebResponse) request.GetResponse();
-
-                using (var reader = new StreamReader(response.GetResponseStream()))
-                {
-                    string encodedFormParameters = reader.ReadToEnd();
-
-                    try
-                    {
-                        NameValueCollection responseValues = HttpUtility.ParseQueryString(encodedFormParameters);
-
-                        return selectFunc(responseValues);
-                    }
-                    catch (ArgumentNullException)
-                    {
-                        throw Error.FailedToParseResponse(encodedFormParameters);
-                    }
-                }
-            }
-            catch (WebException webEx)
-            {
-                throw Error.RequestFailed(webEx);
-            }
-        }
 
         public string GenerateSignatureBase()
         {

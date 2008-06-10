@@ -14,16 +14,19 @@ namespace DevDefined.OAuth.Tests.Consumer
     {
         private readonly X509Certificate2 certificate = TestCertificates.OAuthTestCertificate();
 
-        private OAuthConsumer CreateGoogleContactsConsumer()
+        private IOAuthSession CreateGoogleContactsSession()
         {
-            return new OAuthConsumer("https://www.google.com/accounts/OAuthGetRequestToken",
-                                        "https://www.google.com/accounts/accounts/OAuthAuthorizeToken",
-                                             "https://www.google.com/accounts/OAuthGetAccessToken ")
-            {
-                ConsumerKey = "weitu.googlepages.com",
-                SignatureMethod = SignatureMethod.RsaSha1,
-                Key = certificate.PrivateKey
-            };
+            var consumerContext = new OAuthConsumerContext
+              {
+                  ConsumerKey = "weitu.googlepages.com",
+                  SignatureMethod = SignatureMethod.RsaSha1,
+                  Key = certificate.PrivateKey
+              };
+
+            return new OAuthSession(consumerContext, "https://www.google.com/accounts/OAuthGetRequestToken",
+                                    "https://www.google.com/accounts/accounts/OAuthAuthorizeToken",
+                                    "https://www.google.com/accounts/OAuthGetAccessToken ")
+                .WithQueryParameters(new {scope = "http://www.google.com/m8/feeds"});
         }
 
         [Test]
@@ -31,14 +34,10 @@ namespace DevDefined.OAuth.Tests.Consumer
         {
             // simple test, just requests a token using RSHA1... 
 
-            var consumer = CreateGoogleContactsConsumer();
 
-            var parameters = new NameValueCollection
-                                 {
-                                     {"scope", "http://www.google.com/m8/feeds"}
-                                 };
+            var session = CreateGoogleContactsSession();
 
-            var token = consumer.RequestToken(parameters);
+            var token = session.GetRequestToken();
             Assert.AreEqual("weitu.googlepages.com", token.ConsumerKey);
             Assert.IsTrue(token.Token.Length > 0);
             Assert.IsNull(token.TokenSecret);
@@ -52,19 +51,14 @@ namespace DevDefined.OAuth.Tests.Consumer
 
             // note the access token is directly associated with a google user, by them logging in and granting access
             // for your request - thus the client is never exposed to the users credentials (not even their login).
-            
-            var consumer = CreateGoogleContactsConsumer();
 
-            var parameters = new NameValueCollection
-                                 {
-                                     {"scope", "http://www.google.com/m8/feeds"}
-                                 };
+            var consumer = CreateGoogleContactsSession();
 
             using (With.NoCertificateValidation())
             {
-                var requestToken = consumer.RequestToken(parameters);
+                var requestToken = consumer.GetRequestToken();
 
-                string userAuthorize = consumer.GetUserAuthorizationUrlForToken(requestToken, null, null);
+                string userAuthorize = consumer.GetUserAuthorizationUrlForToken(requestToken, null);
 
                 using (IE ie = new IE(userAuthorize))
                 {
@@ -83,25 +77,13 @@ namespace DevDefined.OAuth.Tests.Consumer
                     Assert.IsTrue(ie.Html.Contains("Authorized"));
                 }
 
-                var accessToken = consumer.ExchangeRequestTokenForAccessToken(requestToken, parameters);
+                // this will implicitly set AccessToken on the session... 
 
-                // access some protected resource
+                var accessToken = consumer.ExchangeRequestTokenForAccessToken(requestToken);
 
-                OAuthContext context = new OAuthContextFactory().FromUri("GET", new Uri("http://www.google.com/m8/feeds/contacts/default/base"));
-                context.QueryParameters.Add(parameters);
-
-                var response = consumer.GetResponse(context, accessToken);
-                using (var stream = response.GetResponseStream())
-                {
-                    using (var streamReader = new StreamReader(stream))
-                    {
-                        string content = streamReader.ReadToEnd();
-                        
-                        // check to see if one of the sample contacts was returned in the list
-
-                        Assert.IsTrue(content.Contains("alex@devdefined.com"));
-                    }
-                }
+                string responseText = consumer.Request().Get().ForUrl("http://www.google.com/m8/feeds/contacts/default/base").ToString();
+                    
+                Assert.IsTrue(responseText.Contains("alex@devdefined.com"));                
             }
         }
     }

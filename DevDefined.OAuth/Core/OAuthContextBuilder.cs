@@ -7,7 +7,7 @@ using System.Web;
 
 namespace DevDefined.OAuth.Core
 {
-    public class OAuthContextFactory
+    public class OAuthContextBuilder
     {
         public OAuthContext FromUri(string httpMethod, Uri uri)
         {

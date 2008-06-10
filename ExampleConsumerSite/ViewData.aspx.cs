@@ -31,7 +31,7 @@ namespace ExampleConsumerSite
 
             var accessToken = (IToken)Session[accessTokenString];
 
-            var dataContext = new OAuthContextFactory().FromUri("GET", new Uri(Settings.Default.DataUrl));
+            var dataContext = new OAuthContextBuilder().FromUri("GET", new Uri(Settings.Default.DataUrl));
 
             try
             {
