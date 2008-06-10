@@ -1,12 +1,12 @@
 ﻿using System;
-using DevDefined.OAuth.Core;
-using DevDefined.OAuth.Provider;
+using DevDefined.OAuth.Framework;
+using DevDefined.OAuth.Provider.Inspectors;
 using NUnit.Framework;
 
 namespace DevDefined.OAuth.Tests.Provider.Inspectors
 {
     [TestFixture]
-    public class TimestapmRangeInspectorTests
+    public class TimestampRangeInspectorTests
     {
         [Test]
         [ExpectedException(typeof (OAuthException))]

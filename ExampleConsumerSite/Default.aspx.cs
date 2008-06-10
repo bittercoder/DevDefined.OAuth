@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Web;
-using System.Web.UI;
 using DevDefined.OAuth.Consumer;
-using DevDefined.OAuth.Core;
-using DevDefined.OAuth.Tests;
-using ExampleConsumerSite.Properties;
+using DevDefined.OAuth.Framework;
 
 namespace ExampleConsumerSite
 {
@@ -12,24 +9,22 @@ namespace ExampleConsumerSite
     {
         protected void oauthRequest_Click(object sender, EventArgs e)
         {
-            OAuthConsumer consumer = CreateConsumer();
+            OAuthSession session = CreateSession();
 
-            IToken requestToken = consumer.RequestToken(null);
+            IToken requestToken = session.GetRequestToken();
 
             if (string.IsNullOrEmpty(requestToken.Token))
             {
                 throw new Exception("The request token was null or empty");
             }
 
-            // throw the request token in the session, so we can grab it upon call-back
-
             Session[requestToken.Token] = requestToken;
 
             string callBackUrl = "http://localhost:" + HttpContext.Current.Request.Url.Port + "/Callback.aspx";
 
-            string authorizationUrl = consumer.GetUserAuthorizationUrlForToken(requestToken, callBackUrl, null);
+            string authorizationUrl = session.GetUserAuthorizationUrlForToken(requestToken, callBackUrl);
 
-            Response.Redirect(authorizationUrl, true);            
+            Response.Redirect(authorizationUrl, true);
         }
     }
 }

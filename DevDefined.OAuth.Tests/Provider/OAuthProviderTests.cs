@@ -1,7 +1,8 @@
 ﻿using System;
 using DevDefined.OAuth.Consumer;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Provider;
+using DevDefined.OAuth.Provider.Inspectors;
 using NUnit.Framework;
 using DevDefined.OAuth.Testing;
 
@@ -23,7 +24,7 @@ namespace DevDefined.OAuth.Tests.Provider
                                          new SignatureValidationInspector(consumerStore),
                                          new NonceStoreInspector(nonceStore),
                                          new TimestampRangeInspector(new TimeSpan(1, 0, 0)),
-                                         new IsValidConsumerInspector(consumerStore));                
+                                         new ConsumerValidationInspector(consumerStore));                
         }
 
         private IOAuthSession CreateConsumer(string signatureMethod)

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Web.UI;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Provider;
 
 namespace ExampleProviderSite

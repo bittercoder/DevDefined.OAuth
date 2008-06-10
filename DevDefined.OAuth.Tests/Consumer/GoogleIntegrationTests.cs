@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using DevDefined.OAuth.Consumer;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 using NUnit.Framework;
 using WatiN.Core;
 
@@ -33,8 +33,7 @@ namespace DevDefined.OAuth.Tests.Consumer
         public void RequestTokenForRsaSha1()
         {
             // simple test, just requests a token using RSHA1... 
-
-
+            
             var session = CreateGoogleContactsSession();
 
             var token = session.GetRequestToken();
@@ -46,10 +45,10 @@ namespace DevDefined.OAuth.Tests.Consumer
         [Test]
         public void RequestContacts()
         {     
-            // this test does a full end-to-end demo (request token, user authoriazation, exchanging request token
+            // this test does a full end-to-end integration (request token, user authoriazation, exchanging request token
             // for an access token and then using then access token to retrieve some data).
 
-            // note the access token is directly associated with a google user, by them logging in and granting access
+            // the access token is directly associated with a google user, by them logging in and granting access
             // for your request - thus the client is never exposed to the users credentials (not even their login).
 
             var consumer = CreateGoogleContactsSession();
@@ -77,7 +76,7 @@ namespace DevDefined.OAuth.Tests.Consumer
                     Assert.IsTrue(ie.Html.Contains("Authorized"));
                 }
 
-                // this will implicitly set AccessToken on the session... 
+                // this will implicitly set AccessToken on the current session... 
 
                 var accessToken = consumer.ExchangeRequestTokenForAccessToken(requestToken);
 

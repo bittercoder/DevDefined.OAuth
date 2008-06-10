@@ -1,20 +1,20 @@
 ﻿using System;
 using DevDefined.OAuth.Consumer;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 
 namespace ExampleConsumerSite
 {
-    public partial class Callback1 : OAuthPage
+    public partial class Callback : OAuthPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            OAuthConsumer consumer = CreateConsumer();
+            var session = CreateSession();
 
             string requestTokenString = Request["oauth_token"];
 
             var requestToken = (IToken) Session[requestTokenString];
 
-            IToken accessToken = consumer.ExchangeRequestTokenForAccessToken(requestToken, null);
+            IToken accessToken = session.ExchangeRequestTokenForAccessToken(requestToken);
 
             Session[requestTokenString] = null;
             Session[accessToken.Token] = accessToken;

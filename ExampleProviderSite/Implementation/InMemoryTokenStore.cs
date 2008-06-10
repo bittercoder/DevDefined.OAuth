@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Web;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage;
 using ExampleProviderSite.Repositories;
 

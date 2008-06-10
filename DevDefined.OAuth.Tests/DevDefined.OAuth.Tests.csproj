@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30428</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{86815C8E-3E6E-4176-9548-B40B2C691144}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -43,6 +43,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\shared-libs\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Rhino.Mocks, Version=3.4.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\shared-libs\Rhino.Mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -62,11 +66,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Consumer\OAuthConsumerTests.cs" />
+    <Compile Include="Consumer\OAuthSessionTests.cs" />
     <Compile Include="Core\DateTimeUtilityTests.cs" />
     <Compile Include="Core\OAuthProblemReportTests.cs" />
     <Compile Include="Core\UriUtilityTests.cs" />
-    <Compile Include="Provider\Inspectors\TimestapmRangeInspectorTests.cs" />
+    <Compile Include="Provider\Inspectors\ConsumerValidationInspector.cs" />
+    <Compile Include="Provider\Inspectors\NonceStoreInspector.cs" />
+    <Compile Include="Provider\Inspectors\SignatureValidationInspectorTests.cs" />
+    <Compile Include="Provider\Inspectors\TimestampRangeInspectorTests.cs" />
     <Compile Include="Provider\OAuthProviderTests.cs" />
     <Compile Include="Consumer\GoogleIntegrationTests.cs" />
     <Compile Include="Consumer\TermIeConsumerIntegrationTests.cs" />

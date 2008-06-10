@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Security;
 using System.Web.SessionState;
 using DevDefined.OAuth.Provider;
+using DevDefined.OAuth.Provider.Inspectors;
 using DevDefined.OAuth.Storage;
 using DevDefined.OAuth.Testing;
 using ExampleProviderSite.Implementation;
@@ -42,7 +43,7 @@ namespace ExampleProviderSite
                 new SignatureValidationInspector(consumerStore),
                 new NonceStoreInspector(nonceStore),
                 new TimestampRangeInspector(new TimeSpan(1, 0, 0)),
-                new IsValidConsumerInspector(consumerStore)); 
+                new ConsumerValidationInspector(consumerStore)); 
         }
 
         public IOAuthProvider Provider

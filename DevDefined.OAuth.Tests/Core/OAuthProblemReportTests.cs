@@ -1,5 +1,5 @@
 ﻿using System;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 using NUnit.Framework;
 
 namespace DevDefined.OAuth.Tests.Core

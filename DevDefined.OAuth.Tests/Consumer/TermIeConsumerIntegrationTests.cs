@@ -4,7 +4,7 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using DevDefined.OAuth.Consumer;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 using NUnit.Framework;
 
 namespace DevDefined.OAuth.Tests.Consumer
@@ -118,7 +118,9 @@ namespace DevDefined.OAuth.Tests.Consumer
         [Test]
         public void RequestTokenForRsaSha1WithAddtionalQueryParameters()
         {
-            var token = CreateConsumer(SignatureMethod.RsaSha1)
+            var session = CreateConsumer(SignatureMethod.RsaSha1);
+            
+            var token = session
                 .WithQueryParameters(new {scope = "http://term.ie/apps/subscriptions"})
                 .GetRequestToken();
                 

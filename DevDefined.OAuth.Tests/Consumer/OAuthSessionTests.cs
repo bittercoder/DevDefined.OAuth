@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DevDefined.OAuth.Consumer;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 using NUnit.Framework;
 
 namespace DevDefined.OAuth.Tests.Consumer
 {
     [TestFixture]
-    public class OAuthConsumerTests
+    public class OAuthSessionTests
     {
         [Test]
         public void GetUserAuthorizationUriForTokenWithoutCallback()

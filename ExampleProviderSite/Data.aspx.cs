@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Web.UI;
 using System.Xml.Linq;
-using DevDefined.OAuth.Core;
+using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Provider;
 using ExampleProviderSite.Repositories;
 
