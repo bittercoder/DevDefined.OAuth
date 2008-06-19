@@ -19,7 +19,11 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-﻿using System.Security.Cryptography.X509Certificates;
+using System;
+using System.IO;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Web;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using NUnit.Framework;
@@ -44,7 +48,7 @@ namespace DevDefined.OAuth.Tests.Consumer
             return new OAuthSession(consumerContext, "https://www.google.com/accounts/OAuthGetRequestToken",
                                     "https://www.google.com/accounts/accounts/OAuthAuthorizeToken",
                                     "https://www.google.com/accounts/OAuthGetAccessToken ")
-                .WithQueryParameters(new {scope = "http://www.google.com/m8/feeds"});
+                .WithQueryParameters(new {scope = "https://www.google.com/m8/feeds"});
         }
 
         /*
@@ -108,31 +112,45 @@ string responseText = session.Request().Get().ForUrl("http://www.google.com/m8/f
 
                     ie.Button("allow").Click();
 
-                    Assert.IsTrue(ie.Html.Contains("Authorized"));
+                    Assert.IsTrue(ie.Html.Contains("Authorized") || ie.Html.Contains("successfully granted"));
                 }
 
                 // this will implicitly set AccessToken on the current session... 
 
                 IToken accessToken = consumer.ExchangeRequestTokenForAccessToken(requestToken);
 
-                string responseText =
-                    consumer.Request().Get().ForUrl("http://www.google.com/m8/feeds/contacts/default/base").ToString();
-
-                Assert.IsTrue(responseText.Contains("alex@devdefined.com"));
+                try
+                {
+                    string responseText = consumer.Request().Get().ForUrl("https://www.google.com/m8/feeds/contacts/default/base").ToString();
+                    
+                    Assert.IsTrue(responseText.Contains("alex@devdefined.com"));
+                }
+                catch (WebException webEx)
+                {
+                    HttpWebResponse response = (HttpWebResponse)webEx.Response;
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        Console.WriteLine(reader.ReadToEnd());
+                    }
+                    Assert.Fail();
+                }
             }
         }
 
         [Test]
         public void RequestTokenForRsaSha1()
         {
-            // simple test, just requests a token using RSHA1... 
+            using (With.NoCertificateValidation())
+            {
+                // simple test, just requests a token using RSHA1... 
 
-            IOAuthSession session = CreateGoogleContactsSession();
+                IOAuthSession session = CreateGoogleContactsSession();
 
-            IToken token = session.GetRequestToken();
-            Assert.AreEqual("weitu.googlepages.com", token.ConsumerKey);
-            Assert.IsTrue(token.Token.Length > 0);
-            Assert.IsNull(token.TokenSecret);
+                IToken token = session.GetRequestToken();
+                Assert.AreEqual("weitu.googlepages.com", token.ConsumerKey);
+                Assert.IsTrue(token.Token.Length > 0);
+                Assert.IsNull(token.TokenSecret);
+            }
         }
     }
 }

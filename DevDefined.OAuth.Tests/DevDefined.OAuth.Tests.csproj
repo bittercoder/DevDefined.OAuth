@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Consumer\OAuthSessionTests.cs" />
     <Compile Include="Core\DateTimeUtilityTests.cs" />
+    <Compile Include="Core\OAuthContextTests.cs" />
     <Compile Include="Core\OAuthProblemReportTests.cs" />
     <Compile Include="Core\UriUtilityTests.cs" />
     <Compile Include="Provider\Inspectors\ConsumerValidationInspector.cs" />

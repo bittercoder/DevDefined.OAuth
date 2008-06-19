@@ -112,7 +112,8 @@ namespace DevDefined.OAuth.Framework
                 foreach (string key in parameters.Keys)
                 {
                     if (builder.Length > 0) builder.Append("&");
-                    builder.Append(key).Append("=").Append(UrlEncode(parameters[key]));
+                    builder.Append(key).Append("=");
+                    builder.Append(UrlEncode(parameters[key]));                    
                 }
             }
 
@@ -150,10 +151,7 @@ namespace DevDefined.OAuth.Framework
                 .OrderBy(x => x.Key)
                 .ThenBy(x => x.Value)
                 .Select(
-                x =>
-                (x.Key.StartsWith(Parameters.OAuthParameterPrefix))
-                    ? x
-                    : new QueryParameter(x.Key, UrlEncode(x.Value)));
+                x => new QueryParameter(x.Key, UrlEncode(x.Value)));
 
             var builder = new StringBuilder();
 

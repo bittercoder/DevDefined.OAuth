@@ -229,7 +229,7 @@ namespace DevDefined.OAuth.Consumer
 
                 try
                 {
-                    return HttpUtility.ParseQueryString(encodedFormParameters);
+                    return HttpUtility.ParseQueryString(encodedFormParameters);                        
                 }
                 catch (ArgumentNullException)
                 {
@@ -284,6 +284,11 @@ namespace DevDefined.OAuth.Consumer
         public static implicit operator OAuthContext(ConsumerRequest request)
         {
             return request._context;
+        }
+
+        public OAuthContext Context
+        {
+            get { return this._context; }
         }
     }
 }
