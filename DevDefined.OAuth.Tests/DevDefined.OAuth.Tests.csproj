@@ -67,10 +67,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Consumer\OAuthSessionTests.cs" />
-    <Compile Include="Core\DateTimeUtilityTests.cs" />
-    <Compile Include="Core\OAuthContextTests.cs" />
-    <Compile Include="Core\OAuthProblemReportTests.cs" />
-    <Compile Include="Core\UriUtilityTests.cs" />
+    <Compile Include="Framework\DateTimeUtilityTests.cs" />
+    <Compile Include="Framework\OAuthContextTests.cs" />
+    <Compile Include="Framework\OAuthProblemReportTests.cs" />
+    <Compile Include="Framework\UriUtilityTests.cs" />
     <Compile Include="Provider\Inspectors\ConsumerValidationInspector.cs" />
     <Compile Include="Provider\Inspectors\NonceStoreInspector.cs" />
     <Compile Include="Provider\Inspectors\SignatureValidationInspectorTests.cs" />

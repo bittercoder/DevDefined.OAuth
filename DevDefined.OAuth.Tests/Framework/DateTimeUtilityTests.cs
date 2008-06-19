@@ -19,33 +19,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-﻿using System.Collections.Generic;
-using System.Linq;
+using System;
 using DevDefined.OAuth.Framework;
 using NUnit.Framework;
-using QueryParameter = System.Collections.Generic.KeyValuePair<string, string>;
 
-namespace DevDefined.OAuth.Tests.Core
+namespace DevDefined.OAuth.Tests.Framework
 {
     [TestFixture]
-    public class UriUtilityTests
+    public class DateTimeUtilityTests
     {
         [Test]
-        public void GetQueryParametersWithoutQuestionMark()
+        public void RoundTripEpoch()
         {
-            List<QueryParameter> parameters = UriUtility.GetQueryParameters("key1=value1&key2=value2");
-            Assert.AreEqual(2, parameters.Count);
-            Assert.AreEqual("value1", Enumerable.Single<QueryParameter>(parameters, p => p.Key == "key1").Value);
-            Assert.AreEqual("value2", Enumerable.Single<QueryParameter>(parameters, p => p.Key == "key2").Value);
-        }
+            var newYears = new DateTime(2008, 1, 1, 0, 0, 0);
 
-        [Test]
-        public void GetQueryParametersWithQuestionMark()
-        {
-            List<QueryParameter> parameters = UriUtility.GetQueryParameters("?key1=value1&key2=value2");
-            Assert.AreEqual(2, parameters.Count);
-            Assert.AreEqual("value1", Enumerable.Single<QueryParameter>(parameters, p => p.Key == "key1").Value);
-            Assert.AreEqual("value2", Enumerable.Single<QueryParameter>(parameters, p => p.Key == "key2").Value);
+            long epoch = newYears.Epoch();
+
+            DateTime fromEpoch = DateTimeUtility.FromEpoch((int) epoch);
+
+            Assert.AreEqual(newYears, fromEpoch);
         }
     }
 }

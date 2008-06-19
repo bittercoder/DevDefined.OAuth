@@ -23,7 +23,7 @@
 using DevDefined.OAuth.Framework;
 using NUnit.Framework;
 
-namespace DevDefined.OAuth.Tests.Core
+namespace DevDefined.OAuth.Tests.Framework
 {
     [TestFixture]
     public class OAuthProblemReportTests
