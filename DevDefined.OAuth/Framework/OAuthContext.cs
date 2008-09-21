@@ -289,9 +289,38 @@ namespace DevDefined.OAuth.Framework
 
             allParameters.RemoveAll(param => param.Key == Parameters.OAuth_Signature);
 
+          //allParameters.RemoveAll(param => param.Key == Parameters.OAuth_Token && string.IsNullOrEmpty(param.Value));
+
             // build the uri
 
             return UriUtility.FormatParameters(RequestMethod, new Uri(NormalizedRequestUrl), allParameters);
+        }
+
+        public override string ToString()
+        {/*
+          StringBuilder builder = new StringBuilder();
+
+          builder.AppendFormat("")
+            this.ConsumerKey
+              this.Nonce
+                this.RawUri
+                  this.Realm
+                            this.RequestMethod
+                              this.Signature
+                                this.SignatureMethod
+                                  this.Timestamp
+                                    this.Token
+                                      this.TokenSecret
+                                        this.UseAuthorizationHeader
+                                          this.Version
+          
+          this.AuthorizationHeaderParameters          
+              this.Cookies
+              this.FormEncodedParameters
+                this.Headers                  
+                    this.NormalizedRequestUrl
+                      this.QueryParameters                                                          */
+          return base.ToString();
         }
 
         #region Nested type: BoundParameter

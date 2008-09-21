@@ -32,6 +32,8 @@ namespace DevDefined.OAuth.Framework
     {
         public OAuthContext FromUri(string httpMethod, Uri uri)
         {
+            uri = CleanUri(uri);
+            
             if (httpMethod == null) throw new ArgumentNullException("httpMethod");
             if (uri == null) throw new ArgumentNullException("uri");
 
@@ -42,11 +44,20 @@ namespace DevDefined.OAuth.Framework
                        };
         }
 
+        private static Uri CleanUri(Uri uri)
+        {            
+            // this is a fix for OpenSocial platforms sometimes appending an empty query string parameter
+            // to their url.
+
+            var originalUrl = uri.OriginalString;
+            return originalUrl.EndsWith("&") ? new Uri(originalUrl.Substring(0, originalUrl.Length - 1)) : uri;
+        }
+
         public OAuthContext FromHttpRequest(HttpRequest request)
         {
             var context = new OAuthContext
                               {
-                                  RawUri = request.Url,
+                                  RawUri = CleanUri(request.Url),
                                   Cookies = CollectCookies(request),
                                   Headers = request.Headers,
                                   RequestMethod = request.HttpMethod,
@@ -68,7 +79,7 @@ namespace DevDefined.OAuth.Framework
         {
             var context = new OAuthContext
                               {
-                                  RawUri = request.RequestUri,
+                                  RawUri = CleanUri(request.RequestUri),
                                   Cookies = CollectCookies(request),
                                   Headers = request.Headers,
                                   RequestMethod = request.Method

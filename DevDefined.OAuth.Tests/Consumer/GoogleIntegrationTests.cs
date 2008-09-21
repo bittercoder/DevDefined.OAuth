@@ -149,7 +149,7 @@ string responseText = session.Request().Get().ForUrl("http://www.google.com/m8/f
                 IToken token = session.GetRequestToken();
                 Assert.AreEqual("weitu.googlepages.com", token.ConsumerKey);
                 Assert.IsTrue(token.Token.Length > 0);
-                Assert.IsNull(token.TokenSecret);
+                Assert.IsNotNull(token.TokenSecret); // interesting - secret used to be null, now it's a randomly generated value... hmmm
             }
         }
     }

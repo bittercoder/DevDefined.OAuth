@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleConsumerSite", "Exam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleProviderSite", "ExampleProviderSite\ExampleProviderSite.csproj", "{3FADF6FA-2155-45B1-9BA8-04C46267022E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSocialProviderSite", "OpenSocialProviderSite\OpenSocialProviderSite.csproj", "{569CCCC4-E3A9-4C7B-914A-88192405B510}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{3FADF6FA-2155-45B1-9BA8-04C46267022E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FADF6FA-2155-45B1-9BA8-04C46267022E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FADF6FA-2155-45B1-9BA8-04C46267022E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{569CCCC4-E3A9-4C7B-914A-88192405B510}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{569CCCC4-E3A9-4C7B-914A-88192405B510}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{569CCCC4-E3A9-4C7B-914A-88192405B510}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{569CCCC4-E3A9-4C7B-914A-88192405B510}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

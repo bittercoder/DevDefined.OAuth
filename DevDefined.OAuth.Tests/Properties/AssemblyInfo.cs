@@ -29,9 +29,9 @@ using System.Runtime.InteropServices;
 [assembly : AssemblyTitle("DevDefined.OAuth.Tests")]
 [assembly : AssemblyDescription("")]
 [assembly : AssemblyConfiguration("")]
-[assembly : AssemblyCompany("Microsoft")]
+[assembly : AssemblyCompany("DevDefined Limited")]
 [assembly : AssemblyProduct("DevDefined.OAuth.Tests")]
-[assembly : AssemblyCopyright("Copyright © Microsoft 2008")]
+[assembly: AssemblyCopyright("Copyright © DevDefined Limited 2008")]
 [assembly : AssemblyTrademark("")]
 [assembly : AssemblyCulture("")]
 

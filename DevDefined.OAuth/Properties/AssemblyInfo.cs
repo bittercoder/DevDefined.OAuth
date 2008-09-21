@@ -29,9 +29,9 @@ using System.Runtime.InteropServices;
 [assembly : AssemblyTitle("DevDefined.OAuth")]
 [assembly : AssemblyDescription("")]
 [assembly : AssemblyConfiguration("")]
-[assembly : AssemblyCompany("Microsoft")]
+[assembly : AssemblyCompany("DevDefined Limited")]
 [assembly : AssemblyProduct("DevDefined.OAuth")]
-[assembly : AssemblyCopyright("Copyright © Microsoft 2008")]
+[assembly : AssemblyCopyright("Copyright © DevDefined Limited 2008")]
 [assembly : AssemblyTrademark("")]
 [assembly : AssemblyCulture("")]
 
