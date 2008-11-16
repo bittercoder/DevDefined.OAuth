@@ -4,7 +4,7 @@ using System.IdentityModel.Claims;
 using System.IdentityModel.Policy;
 using System.Security.Principal;
 
-namespace OAuthChannel
+namespace DevDefined.OAuth.Wcf
 {
   public class PrincipalAuthorizationPolicy : IAuthorizationPolicy
   {

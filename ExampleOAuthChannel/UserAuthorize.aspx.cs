@@ -32,7 +32,7 @@ using DevDefined.OAuth.Wcf.Repositories;
 
 namespace ExampleOAuthChannel
 {
-  public class UserAuthorize : Page
+  public partial class UserAuthorize : Page
   {
     ITokenRepository<DevDefined.OAuth.Wcf.Models.AccessToken> AccessTokenRepository
     {

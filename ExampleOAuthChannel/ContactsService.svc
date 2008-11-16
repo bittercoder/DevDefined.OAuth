@@ -1,9 +1,10 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="ExampleExampleOAuthChannel.FeedService" Factory="ExampleExampleOAuthChannel.AppServiceHostFactory"%>
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="ExampleOAuthChannel.FeedService" Factory="ExampleOAuthChannel.AppServiceHostFactory"%>
 
 using System;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using Microsoft.ServiceModel.Web;
+using DevDefined.OAuth.Wcf;
 
 namespace ExampleOAuthChannel 
 {
@@ -12,7 +13,7 @@ namespace ExampleOAuthChannel
     protected override ServiceHost CreateServiceHost(Type serviceType, Uri[] baseAddresses)
     {
         WebServiceHost2 result = new WebServiceHost2(serviceType, true, baseAddresses);
-        result.Interceptors.Add(new ExampleOAuthChannel.OAuthInterceptor(
+        result.Interceptors.Add(new OAuthInterceptor(
 			OAuthServicesLocator.Provider, OAuthServicesLocator.AccessTokenRepository));
         return result;
     }

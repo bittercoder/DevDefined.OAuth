@@ -8,7 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-
-
-public partial class AccessToken {
+namespace ExampleOAuthChannel {
+    
+    
+    public partial class AccessToken {
+    }
 }

@@ -27,7 +27,7 @@
 using System.Security.Principal;
 using DevDefined.OAuth.Framework;
 
-namespace OAuthChannel
+namespace DevDefined.OAuth.Wcf
 {
   public class TokenPrincipal : GenericPrincipal
   {

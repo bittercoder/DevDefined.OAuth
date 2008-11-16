@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ExampleExampleOAuthChannel {
+namespace ExampleOAuthChannel {
     
     
     public partial class _Default {

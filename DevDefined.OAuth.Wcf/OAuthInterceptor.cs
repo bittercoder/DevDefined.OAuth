@@ -41,7 +41,7 @@ using DevDefined.OAuth.Wcf.Models;
 using DevDefined.OAuth.Wcf.Repositories;
 using Microsoft.ServiceModel.Web;
 
-namespace OAuthChannel
+namespace DevDefined.OAuth.Wcf
 {
   public class OAuthInterceptor : RequestInterceptor
   {
@@ -103,6 +103,8 @@ namespace OAuthChannel
 
     static XElement GetHtmlFormattedErrorReport(OAuthException authEx)
     {
+      // TODO: Review OAuth error reporting extension, I don't think it allows for html formatting of the error report.
+
       string reportAsHtmlDocument = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
                                     "<html xmlns=\"http://www.w3.org/1999/xhtml\" version=\"-//W3C//DTD XHTML 2.0//EN\" xml:lang=\"en\" " +
                                     "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
