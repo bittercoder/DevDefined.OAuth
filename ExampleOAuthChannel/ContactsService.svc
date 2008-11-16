@@ -1,0 +1,20 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="ExampleExampleOAuthChannel.FeedService" Factory="ExampleExampleOAuthChannel.AppServiceHostFactory"%>
+
+using System;
+using System.ServiceModel;
+using System.ServiceModel.Activation;
+using Microsoft.ServiceModel.Web;
+
+namespace ExampleOAuthChannel 
+{
+  class AppServiceHostFactory : ServiceHostFactory
+  {
+    protected override ServiceHost CreateServiceHost(Type serviceType, Uri[] baseAddresses)
+    {
+        WebServiceHost2 result = new WebServiceHost2(serviceType, true, baseAddresses);
+        result.Interceptors.Add(new ExampleOAuthChannel.OAuthInterceptor(
+			OAuthServicesLocator.Provider, OAuthServicesLocator.AccessTokenRepository));
+        return result;
+    }
+  }
+}
