@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,11 +21,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#endregion
+
 namespace DevDefined.OAuth.Framework.Signing
 {
-    public interface IOAuthContextSigner
-    {
-        void SignContext(OAuthContext authContext, SigningContext signingContext);
-        bool ValidateSignature(OAuthContext authContext, SigningContext signingContext);
-    }
+  public interface IOAuthContextSigner
+  {
+    void SignContext(OAuthContext authContext, SigningContext signingContext);
+    bool ValidateSignature(OAuthContext authContext, SigningContext signingContext);
+  }
 }

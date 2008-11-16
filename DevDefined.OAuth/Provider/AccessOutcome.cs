@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,14 +21,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#endregion
+
 using DevDefined.OAuth.Framework;
 
 namespace DevDefined.OAuth.Provider
 {
-    public class AccessOutcome
-    {
-        public bool Granted { get; set; }
-        public string AdditionalInfo { get; set; }
-        public OAuthContext Context { get; set; }
-    }
+  public class AccessOutcome
+  {
+    public bool Granted { get; set; }
+    public string AdditionalInfo { get; set; }
+    public OAuthContext Context { get; set; }
+  }
 }

@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,11 +21,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#endregion
+
 using System;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
-using System.Web;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using NUnit.Framework;
@@ -31,27 +35,27 @@ using WatiN.Core;
 
 namespace DevDefined.OAuth.Tests.Consumer
 {
-    [TestFixture]
-    public class GoogleIntegrationTests
+  [TestFixture]
+  public class GoogleIntegrationTests
+  {
+    readonly X509Certificate2 certificate = TestCertificates.OAuthTestCertificate();
+
+    IOAuthSession CreateGoogleContactsSession()
     {
-        private readonly X509Certificate2 certificate = TestCertificates.OAuthTestCertificate();
-
-        private IOAuthSession CreateGoogleContactsSession()
+      var consumerContext = new OAuthConsumerContext
         {
-            var consumerContext = new OAuthConsumerContext
-                                      {
-                                          ConsumerKey = "weitu.googlepages.com",
-                                          SignatureMethod = SignatureMethod.RsaSha1,
-                                          Key = certificate.PrivateKey
-                                      };
+          ConsumerKey = "weitu.googlepages.com",
+          SignatureMethod = SignatureMethod.RsaSha1,
+          Key = certificate.PrivateKey
+        };
 
-            return new OAuthSession(consumerContext, "https://www.google.com/accounts/OAuthGetRequestToken",
-                                    "https://www.google.com/accounts/accounts/OAuthAuthorizeToken",
-                                    "https://www.google.com/accounts/OAuthGetAccessToken ")
-                .WithQueryParameters(new {scope = "https://www.google.com/m8/feeds"});
-        }
+      return new OAuthSession(consumerContext, "https://www.google.com/accounts/OAuthGetRequestToken",
+                              "https://www.google.com/accounts/accounts/OAuthAuthorizeToken",
+                              "https://www.google.com/accounts/OAuthGetAccessToken ")
+        .WithQueryParameters(new {scope = "https://www.google.com/m8/feeds"});
+    }
 
-        /*
+    /*
         private void ExampleForWiki()
         {
 string requestUrl = "https://www.google.com/accounts/OAuthGetRequestToken";
@@ -81,76 +85,76 @@ IToken accessToken = session.ExchangeRequestTokenForAccessToken(requestToken);
 string responseText = session.Request().Get().ForUrl("http://www.google.com/m8/feeds/contacts/default/base").ToString();
         }*/
 
-        [Test]
-        public void RequestContacts()
+    [Test]
+    public void RequestContacts()
+    {
+      // this test does a full end-to-end integration (request token, user authoriazation, exchanging request token
+      // for an access token and then using then access token to retrieve some data).
+
+      // the access token is directly associated with a google user, by them logging in and granting access
+      // for your request - thus the client is never exposed to the users credentials (not even their login).
+
+      IOAuthSession consumer = CreateGoogleContactsSession();
+
+      using (With.NoCertificateValidation())
+      {
+        IToken requestToken = consumer.GetRequestToken();
+
+        string userAuthorize = consumer.GetUserAuthorizationUrlForToken(requestToken, null);
+
+        using (var ie = new IE(userAuthorize))
         {
-            // this test does a full end-to-end integration (request token, user authoriazation, exchanging request token
-            // for an access token and then using then access token to retrieve some data).
+          Link overrideLink = ie.Link("overridelink");
+          if (overrideLink.Exists) overrideLink.Click();
 
-            // the access token is directly associated with a google user, by them logging in and granting access
-            // for your request - thus the client is never exposed to the users credentials (not even their login).
+          if (ie.Form("gaia_loginform").Exists)
+          {
+            ie.TextField("Email").Value = "oauthdotnet@gmail.com";
+            ie.TextField("Passwd").Value = "oauth_password";
+            ie.Form("gaia_loginform").Submit();
+          }
 
-            IOAuthSession consumer = CreateGoogleContactsSession();
+          ie.Button("allow").Click();
 
-            using (With.NoCertificateValidation())
-            {
-                IToken requestToken = consumer.GetRequestToken();
-
-                string userAuthorize = consumer.GetUserAuthorizationUrlForToken(requestToken, null);
-
-                using (var ie = new IE(userAuthorize))
-                {
-                    Link overrideLink = ie.Link("overridelink");
-                    if (overrideLink.Exists) overrideLink.Click();
-
-                    if (ie.Form("gaia_loginform").Exists)
-                    {
-                        ie.TextField("Email").Value = "oauthdotnet@gmail.com";
-                        ie.TextField("Passwd").Value = "oauth_password";
-                        ie.Form("gaia_loginform").Submit();
-                    }
-
-                    ie.Button("allow").Click();
-
-                    Assert.IsTrue(ie.Html.Contains("Authorized") || ie.Html.Contains("successfully granted"));
-                }
-
-                // this will implicitly set AccessToken on the current session... 
-
-                IToken accessToken = consumer.ExchangeRequestTokenForAccessToken(requestToken);
-
-                try
-                {
-                    string responseText = consumer.Request().Get().ForUrl("https://www.google.com/m8/feeds/contacts/default/base").ToString();
-                    
-                    Assert.IsTrue(responseText.Contains("alex@devdefined.com"));
-                }
-                catch (WebException webEx)
-                {
-                    HttpWebResponse response = (HttpWebResponse)webEx.Response;
-                    using (var reader = new StreamReader(response.GetResponseStream()))
-                    {
-                        Console.WriteLine(reader.ReadToEnd());
-                    }
-                    Assert.Fail();
-                }
-            }
+          Assert.IsTrue(ie.Html.Contains("Authorized") || ie.Html.Contains("successfully granted"));
         }
 
-        [Test]
-        public void RequestTokenForRsaSha1()
+        // this will implicitly set AccessToken on the current session... 
+
+        IToken accessToken = consumer.ExchangeRequestTokenForAccessToken(requestToken);
+
+        try
         {
-            using (With.NoCertificateValidation())
-            {
-                // simple test, just requests a token using RSHA1... 
+          string responseText = consumer.Request().Get().ForUrl("https://www.google.com/m8/feeds/contacts/default/base").ToString();
 
-                IOAuthSession session = CreateGoogleContactsSession();
-
-                IToken token = session.GetRequestToken();
-                Assert.AreEqual("weitu.googlepages.com", token.ConsumerKey);
-                Assert.IsTrue(token.Token.Length > 0);
-                Assert.IsNotNull(token.TokenSecret); // interesting - secret used to be null, now it's a randomly generated value... hmmm
-            }
+          Assert.IsTrue(responseText.Contains("alex@devdefined.com"));
         }
+        catch (WebException webEx)
+        {
+          var response = (HttpWebResponse) webEx.Response;
+          using (var reader = new StreamReader(response.GetResponseStream()))
+          {
+            Console.WriteLine(reader.ReadToEnd());
+          }
+          Assert.Fail();
+        }
+      }
     }
+
+    [Test]
+    public void RequestTokenForRsaSha1()
+    {
+      using (With.NoCertificateValidation())
+      {
+        // simple test, just requests a token using RSHA1... 
+
+        IOAuthSession session = CreateGoogleContactsSession();
+
+        IToken token = session.GetRequestToken();
+        Assert.AreEqual("weitu.googlepages.com", token.ConsumerKey);
+        Assert.IsTrue(token.Token.Length > 0);
+        Assert.IsNotNull(token.TokenSecret); // interesting - secret used to be null, now it's a randomly generated value... hmmm
+      }
+    }
+  }
 }

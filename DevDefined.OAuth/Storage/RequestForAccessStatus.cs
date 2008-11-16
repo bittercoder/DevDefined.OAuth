@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,12 +21,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#endregion
+
 namespace DevDefined.OAuth.Storage
 {
-    public enum RequestForAccessStatus
-    {
-        Unknown = 0,
-        Denied = 2,
-        Granted = 3
-    }
+  public enum RequestForAccessStatus
+  {
+    Unknown = 0,
+    Denied = 2,
+    Granted = 3
+  }
 }

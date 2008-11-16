@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,7 +21,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-﻿using System;
+
+#endregion
+
+using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -27,25 +32,25 @@ using DevDefined.OAuth.KeyInterop;
 
 namespace DevDefined.OAuth.Framework
 {
-    public static class CertificateUtility
+  public static class CertificateUtility
+  {
+    /// <summary>
+    /// Loads a certificate given both it's private and public keys - generally used to 
+    /// load keys provided on the OAuth wiki's for verification of implementation correctness.
+    /// </summary>
+    /// <param name="privateKey"></param>
+    /// <param name="certificate"></param>
+    /// <returns></returns>
+    public static X509Certificate2 LoadCertificateFromStrings(string privateKey, string certificate)
     {
-        /// <summary>
-        /// Loads a certificate given both it's private and public keys - generally used to 
-        /// load keys provided on the OAuth wiki's for verification of implementation correctness.
-        /// </summary>
-        /// <param name="privateKey"></param>
-        /// <param name="certificate"></param>
-        /// <returns></returns>
-        public static X509Certificate2 LoadCertificateFromStrings(string privateKey, string certificate)
-        {
-            var parser = new AsnKeyParser(Convert.FromBase64String(privateKey));
-            RSAParameters parameters = parser.ParseRSAPrivateKey();
-            var x509 = new X509Certificate2(Encoding.ASCII.GetBytes(certificate));
-            var provider = new RSACryptoServiceProvider();
-            provider.ImportParameters(parameters);
-            x509.PrivateKey = provider;
+      var parser = new AsnKeyParser(Convert.FromBase64String(privateKey));
+      RSAParameters parameters = parser.ParseRSAPrivateKey();
+      var x509 = new X509Certificate2(Encoding.ASCII.GetBytes(certificate));
+      var provider = new RSACryptoServiceProvider();
+      provider.ImportParameters(parameters);
+      x509.PrivateKey = provider;
 
-            return x509;
-        }
+      return x509;
     }
+  }
 }

@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,7 +21,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-﻿using System.Collections.Generic;
+
+#endregion
+
+using System.Collections.Generic;
 using System.Linq;
 using DevDefined.OAuth.Framework;
 using NUnit.Framework;
@@ -27,25 +32,25 @@ using QueryParameter = System.Collections.Generic.KeyValuePair<string, string>;
 
 namespace DevDefined.OAuth.Tests.Framework
 {
-    [TestFixture]
-    public class UriUtilityTests
+  [TestFixture]
+  public class UriUtilityTests
+  {
+    [Test]
+    public void GetQueryParametersWithoutQuestionMark()
     {
-        [Test]
-        public void GetQueryParametersWithoutQuestionMark()
-        {
-            List<QueryParameter> parameters = UriUtility.GetQueryParameters("key1=value1&key2=value2");
-            Assert.AreEqual(2, parameters.Count);
-            Assert.AreEqual("value1", Enumerable.Single<QueryParameter>(parameters, p => p.Key == "key1").Value);
-            Assert.AreEqual("value2", Enumerable.Single<QueryParameter>(parameters, p => p.Key == "key2").Value);
-        }
-
-        [Test]
-        public void GetQueryParametersWithQuestionMark()
-        {
-            List<QueryParameter> parameters = UriUtility.GetQueryParameters("?key1=value1&key2=value2");
-            Assert.AreEqual(2, parameters.Count);
-            Assert.AreEqual("value1", Enumerable.Single<QueryParameter>(parameters, p => p.Key == "key1").Value);
-            Assert.AreEqual("value2", Enumerable.Single<QueryParameter>(parameters, p => p.Key == "key2").Value);
-        }
+      List<QueryParameter> parameters = UriUtility.GetQueryParameters("key1=value1&key2=value2");
+      Assert.AreEqual(2, parameters.Count);
+      Assert.AreEqual("value1", parameters.Single(p => p.Key == "key1").Value);
+      Assert.AreEqual("value2", parameters.Single(p => p.Key == "key2").Value);
     }
+
+    [Test]
+    public void GetQueryParametersWithQuestionMark()
+    {
+      List<QueryParameter> parameters = UriUtility.GetQueryParameters("?key1=value1&key2=value2");
+      Assert.AreEqual(2, parameters.Count);
+      Assert.AreEqual("value1", parameters.Single(p => p.Key == "key1").Value);
+      Assert.AreEqual("value2", parameters.Single(p => p.Key == "key2").Value);
+    }
+  }
 }

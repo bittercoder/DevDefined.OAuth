@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,25 +21,28 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#endregion
+
 using System;
 using DevDefined.OAuth.Framework;
 using NUnit.Framework;
 
 namespace DevDefined.OAuth.Tests.Framework
 {
-    [TestFixture]
-    public class DateTimeUtilityTests
+  [TestFixture]
+  public class DateTimeUtilityTests
+  {
+    [Test]
+    public void RoundTripEpoch()
     {
-        [Test]
-        public void RoundTripEpoch()
-        {
-            var newYears = new DateTime(2008, 1, 1, 0, 0, 0);
+      var newYears = new DateTime(2008, 1, 1, 0, 0, 0);
 
-            long epoch = newYears.Epoch();
+      long epoch = newYears.Epoch();
 
-            DateTime fromEpoch = DateTimeUtility.FromEpoch((int) epoch);
+      DateTime fromEpoch = DateTimeUtility.FromEpoch((int) epoch);
 
-            Assert.AreEqual(newYears, fromEpoch);
-        }
+      Assert.AreEqual(newYears, fromEpoch);
     }
+  }
 }

@@ -1,0 +1,8 @@
+17th November 2008
+------------------
+
+Added WCF code and example channel from Pablo Cibraro (http://weblogs.asp.net/cibrax/).
+Organised code into 2 solution folders - core implementation - and examples.
+Added changes file to track overall logical changes.
+Moved MIT license into code region, so it'll collapse.
+Signed the WCF and OAuth assemblies.

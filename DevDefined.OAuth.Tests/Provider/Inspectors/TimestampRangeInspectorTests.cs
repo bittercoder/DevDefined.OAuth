@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,64 +21,67 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-﻿using System;
+
+#endregion
+
+using System;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Provider.Inspectors;
 using NUnit.Framework;
 
 namespace DevDefined.OAuth.Tests.Provider.Inspectors
 {
-    [TestFixture]
-    public class TimestampRangeInspectorTests
+  [TestFixture]
+  public class TimestampRangeInspectorTests
+  {
+    [Test]
+    [ExpectedException(typeof (OAuthException))]
+    public void OutsideAfterRange()
     {
-        [Test]
-        [ExpectedException(typeof (OAuthException))]
-        public void OutsideAfterRange()
-        {
-            var inspector = new TimestampRangeInspector(new TimeSpan(0, 0, 0), new TimeSpan(1, 0, 0),
-                                                        () => new DateTime(2008, 1, 1, 12, 0, 0));
+      var inspector = new TimestampRangeInspector(new TimeSpan(0, 0, 0), new TimeSpan(1, 0, 0),
+                                                  () => new DateTime(2008, 1, 1, 12, 0, 0));
 
-            var context = new OAuthContext();
-            context.Timestamp = new DateTime(2008, 1, 1, 13, 0, 1).Epoch().ToString();
+      var context = new OAuthContext();
+      context.Timestamp = new DateTime(2008, 1, 1, 13, 0, 1).Epoch().ToString();
 
-            inspector.InspectContext(context);
-        }
-
-        [Test]
-        [ExpectedException(typeof (OAuthException))]
-        public void OutsideBeforeRange()
-        {
-            var inspector = new TimestampRangeInspector(new TimeSpan(1, 0, 0), new TimeSpan(0, 0, 0),
-                                                        () => new DateTime(2008, 1, 1, 12, 0, 0));
-
-            var context = new OAuthContext();
-            context.Timestamp = new DateTime(2008, 1, 1, 10, 59, 59).Epoch().ToString();
-
-            inspector.InspectContext(context);
-        }
-
-        [Test]
-        public void WithAfterRange()
-        {
-            var inspector = new TimestampRangeInspector(new TimeSpan(0, 0, 0), new TimeSpan(1, 0, 0),
-                                                        () => new DateTime(2008, 1, 1, 12, 0, 0));
-
-            var context = new OAuthContext();
-            context.Timestamp = new DateTime(2008, 1, 1, 13, 0, 0).Epoch().ToString();
-
-            inspector.InspectContext(context);
-        }
-
-        [Test]
-        public void WithinBeforeRange()
-        {
-            var inspector = new TimestampRangeInspector(new TimeSpan(1, 0, 0), new TimeSpan(0, 0, 0),
-                                                        () => new DateTime(2008, 1, 1, 12, 0, 0));
-
-            var context = new OAuthContext();
-            context.Timestamp = new DateTime(2008, 1, 1, 11, 0, 0).Epoch().ToString();
-
-            inspector.InspectContext(context);
-        }
+      inspector.InspectContext(context);
     }
+
+    [Test]
+    [ExpectedException(typeof (OAuthException))]
+    public void OutsideBeforeRange()
+    {
+      var inspector = new TimestampRangeInspector(new TimeSpan(1, 0, 0), new TimeSpan(0, 0, 0),
+                                                  () => new DateTime(2008, 1, 1, 12, 0, 0));
+
+      var context = new OAuthContext();
+      context.Timestamp = new DateTime(2008, 1, 1, 10, 59, 59).Epoch().ToString();
+
+      inspector.InspectContext(context);
+    }
+
+    [Test]
+    public void WithAfterRange()
+    {
+      var inspector = new TimestampRangeInspector(new TimeSpan(0, 0, 0), new TimeSpan(1, 0, 0),
+                                                  () => new DateTime(2008, 1, 1, 12, 0, 0));
+
+      var context = new OAuthContext();
+      context.Timestamp = new DateTime(2008, 1, 1, 13, 0, 0).Epoch().ToString();
+
+      inspector.InspectContext(context);
+    }
+
+    [Test]
+    public void WithinBeforeRange()
+    {
+      var inspector = new TimestampRangeInspector(new TimeSpan(1, 0, 0), new TimeSpan(0, 0, 0),
+                                                  () => new DateTime(2008, 1, 1, 12, 0, 0));
+
+      var context = new OAuthContext();
+      context.Timestamp = new DateTime(2008, 1, 1, 11, 0, 0).Epoch().ToString();
+
+      inspector.InspectContext(context);
+    }
+  }
 }

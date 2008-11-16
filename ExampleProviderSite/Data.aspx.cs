@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,7 +21,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-﻿using System;
+
+#endregion
+
+using System;
 using System.Linq;
 using System.Web.UI;
 using System.Xml.Linq;
@@ -29,50 +34,50 @@ using ExampleProviderSite.Repositories;
 
 namespace ExampleProviderSite
 {
-    public partial class Data : Page
+  public partial class Data : Page
+  {
+    protected void Page_Load(object sender, EventArgs e)
     {
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            OAuthContext context = new OAuthContextBuilder().FromHttpRequest(Request);
+      OAuthContext context = new OAuthContextBuilder().FromHttpRequest(Request);
 
-            IOAuthProvider provider = OAuthServicesLocator.Services.Provider;
+      IOAuthProvider provider = OAuthServicesLocator.Services.Provider;
 
-            TokenRepository tokenRepository = OAuthServicesLocator.Services.TokenRepository;
+      TokenRepository tokenRepository = OAuthServicesLocator.Services.TokenRepository;
 
-            try
-            {
-                provider.AccessProtectedResourceRequest(context);
+      try
+      {
+        provider.AccessProtectedResourceRequest(context);
 
-                Models.AccessToken accessToken = tokenRepository.GetAccessToken(context.Token);
+        Models.AccessToken accessToken = tokenRepository.GetAccessToken(context.Token);
 
-                string userName = accessToken.UserName;
+        string userName = accessToken.UserName;
 
-                XDocument contactsDocument = GetContactsForUser(userName);
+        XDocument contactsDocument = GetContactsForUser(userName);
 
-                Response.ContentType = "text/xml";
-                Response.Write(contactsDocument);
-                Response.End();
-            }
-            catch (OAuthException authEx)
-            {
-                // access was denied for some reason, so we set the status code to 403.
-                Response.StatusCode = 403;
-                Response.Write(authEx.Report.ToString());
-                Response.End();
-            }
-        }
-
-        public XDocument GetContactsForUser(string userName)
-        {
-            var repository = new ContactsRepository();
-
-            return new XDocument(
-                new XElement("contacts",
-                             new XAttribute("for", userName),
-                             repository.GetContactsForUser(userName)
-                                 .Select(contact => new XElement("contact",
-                                                                 new XAttribute("name", contact.FullName),
-                                                                 new XAttribute("email", contact.Email)))));
-        }
+        Response.ContentType = "text/xml";
+        Response.Write(contactsDocument);
+        Response.End();
+      }
+      catch (OAuthException authEx)
+      {
+        // access was denied for some reason, so we set the status code to 403.
+        Response.StatusCode = 403;
+        Response.Write(authEx.Report.ToString());
+        Response.End();
+      }
     }
+
+    public XDocument GetContactsForUser(string userName)
+    {
+      var repository = new ContactsRepository();
+
+      return new XDocument(
+        new XElement("contacts",
+                     new XAttribute("for", userName),
+                     repository.GetContactsForUser(userName)
+                       .Select(contact => new XElement("contact",
+                                                       new XAttribute("name", contact.FullName),
+                                                       new XAttribute("email", contact.Email)))));
+    }
+  }
 }

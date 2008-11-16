@@ -1,4 +1,6 @@
-﻿// The MIT License
+﻿#region License
+
+// The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
 // 
@@ -19,34 +21,37 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#endregion
+
 using System;
 using DevDefined.OAuth.Framework;
 using NUnit.Framework;
 
 namespace DevDefined.OAuth.Tests.Framework
 {
-    [TestFixture]
-    public class OAuthContextTests
+  [TestFixture]
+  public class OAuthContextTests
+  {
+    [Test]
+    public void GenerateSignatureWhenTokenIsUrlEncoded()
     {
-        [Test]
-        public void GenerateSignatureWhenTokenIsUrlEncoded()
+      var context = new OAuthContext
         {
-            var context = new OAuthContext
-                              {
-                                  RequestMethod = "GET",
-                                  RawUri = new Uri("https://www.google.com/m8/feeds/contacts/default/base"),
-                                  Token = "1/2",
-                                  ConsumerKey = "context",
-                                  SignatureMethod = SignatureMethod.RsaSha1
-                              };
+          RequestMethod = "GET",
+          RawUri = new Uri("https://www.google.com/m8/feeds/contacts/default/base"),
+          Token = "1/2",
+          ConsumerKey = "context",
+          SignatureMethod = SignatureMethod.RsaSha1
+        };
 
-            Assert.AreEqual(
-                "GET&https%3A%2F%2Fwww.google.com%2Fm8%2Ffeeds%2Fcontacts%2Fdefault%2Fbase&oauth_consumer_key%3Dcontext%26oauth_signature_method%3DRSA-SHA1%26oauth_token%3D1%252F2",
-                context.GenerateSignatureBase());
+      Assert.AreEqual(
+        "GET&https%3A%2F%2Fwww.google.com%2Fm8%2Ffeeds%2Fcontacts%2Fdefault%2Fbase&oauth_consumer_key%3Dcontext%26oauth_signature_method%3DRSA-SHA1%26oauth_token%3D1%252F2",
+        context.GenerateSignatureBase());
 
-            Assert.AreEqual(
-                "https://www.google.com/m8/feeds/contacts/default/base?oauth_token=1%2F2&oauth_consumer_key=context&oauth_signature_method=RSA-SHA1",
-                context.GenerateUrl());
-        }
+      Assert.AreEqual(
+        "https://www.google.com/m8/feeds/contacts/default/base?oauth_token=1%2F2&oauth_consumer_key=context&oauth_signature_method=RSA-SHA1",
+        context.GenerateUrl());
     }
+  }
 }

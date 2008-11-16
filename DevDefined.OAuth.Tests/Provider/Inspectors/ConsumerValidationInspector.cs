@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,53 +21,56 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-﻿using DevDefined.OAuth.Framework;
+
+#endregion
+
+using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage;
 using NUnit.Framework;
 using Rhino.Mocks;
 
 namespace DevDefined.OAuth.Tests.Provider.Inspectors
 {
-    [TestFixture]
-    public class ConsumerValidationInspector
+  [TestFixture]
+  public class ConsumerValidationInspector
+  {
+    [Test]
+    [ExpectedException]
+    public void InValidConsumerThrows()
     {
-        [Test]
-        [ExpectedException]
-        public void InValidConsumerThrows()
-        {
-            var repository = new MockRepository();
+      var repository = new MockRepository();
 
-            var consumerStore = repository.CreateMock<IConsumerStore>();
-            var context = new OAuthContext {ConsumerKey = "key"};
+      var consumerStore = repository.CreateMock<IConsumerStore>();
+      var context = new OAuthContext {ConsumerKey = "key"};
 
-            using (repository.Record())
-            {
-                Expect.Call(consumerStore.IsConsumer(context)).Return(false);
-            }
-            using (repository.Playback())
-            {
-                var inspector = new OAuth.Provider.Inspectors.ConsumerValidationInspector(consumerStore);
-                inspector.InspectContext(context);
-            }
-        }
-
-        [Test]
-        public void ValidConsumerPassesThrough()
-        {
-            var repository = new MockRepository();
-
-            var consumerStore = repository.CreateMock<IConsumerStore>();
-            var context = new OAuthContext {ConsumerKey = "key"};
-
-            using (repository.Record())
-            {
-                Expect.Call(consumerStore.IsConsumer(context)).Return(true);
-            }
-            using (repository.Playback())
-            {
-                var inspector = new OAuth.Provider.Inspectors.ConsumerValidationInspector(consumerStore);
-                inspector.InspectContext(context);
-            }
-        }
+      using (repository.Record())
+      {
+        Expect.Call(consumerStore.IsConsumer(context)).Return(false);
+      }
+      using (repository.Playback())
+      {
+        var inspector = new OAuth.Provider.Inspectors.ConsumerValidationInspector(consumerStore);
+        inspector.InspectContext(context);
+      }
     }
+
+    [Test]
+    public void ValidConsumerPassesThrough()
+    {
+      var repository = new MockRepository();
+
+      var consumerStore = repository.CreateMock<IConsumerStore>();
+      var context = new OAuthContext {ConsumerKey = "key"};
+
+      using (repository.Record())
+      {
+        Expect.Call(consumerStore.IsConsumer(context)).Return(true);
+      }
+      using (repository.Playback())
+      {
+        var inspector = new OAuth.Provider.Inspectors.ConsumerValidationInspector(consumerStore);
+        inspector.InspectContext(context);
+      }
+    }
+  }
 }

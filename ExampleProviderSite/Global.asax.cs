@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,62 +21,64 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+
+#endregion
+
+using System;
 using System.Web;
-using System.Web.Security;
-using System.Web.SessionState;
 using DevDefined.OAuth.Provider;
 using DevDefined.OAuth.Provider.Inspectors;
-using DevDefined.OAuth.Storage;
 using DevDefined.OAuth.Testing;
 using ExampleProviderSite.Implementation;
 using ExampleProviderSite.Repositories;
 
 namespace ExampleProviderSite
 {
-    public interface IOAuthServices
+  public interface IOAuthServices
+  {
+    IOAuthProvider Provider { get; }
+    TokenRepository TokenRepository { get; }
+  }
+
+  public static class OAuthServicesLocator
+  {
+    public static IOAuthServices Services
     {
-        IOAuthProvider Provider { get; }
-        TokenRepository TokenRepository { get; }
+      get { return (HttpContext.Current.ApplicationInstance as IOAuthServices); }
+    }
+  }
+
+  public class Global : HttpApplication, IOAuthServices
+  {
+    static IOAuthProvider _provider;
+    static TokenRepository _repository;
+
+    #region IOAuthServices Members
+
+    public IOAuthProvider Provider
+    {
+      get { return _provider; }
     }
 
-    public static class OAuthServicesLocator
+    public TokenRepository TokenRepository
     {
-        public static IOAuthServices Services
-        {
-            get { return (HttpContext.Current.ApplicationInstance as IOAuthServices); }
-        }
+      get { return _repository; }
     }
 
-    public class Global : System.Web.HttpApplication, IOAuthServices
+    #endregion
+
+    protected void Application_Start(object sender, EventArgs e)
     {
-        private static IOAuthProvider _provider;
-        private static TokenRepository _repository;
+      var consumerStore = new TestConsumerStore();
+      var nonceStore = new TestNonceStore();
+      _repository = new TokenRepository();
+      var tokenStore = new SimpleTokenStore(_repository);
 
-        protected void Application_Start(object sender, EventArgs e)
-        {
-            var consumerStore = new TestConsumerStore();
-            var nonceStore = new TestNonceStore();
-            _repository = new TokenRepository();
-            var tokenStore = new SimpleTokenStore(_repository);
-
-            _provider = new OAuthProvider(tokenStore,
-                new SignatureValidationInspector(consumerStore),
-                new NonceStoreInspector(nonceStore),
-                new TimestampRangeInspector(new TimeSpan(1, 0, 0)),
-                new ConsumerValidationInspector(consumerStore)); 
-        }
-
-        public IOAuthProvider Provider
-        {
-            get { return _provider; }
-        }
-
-        public TokenRepository TokenRepository
-        {
-            get { return _repository; }
-        }
+      _provider = new OAuthProvider(tokenStore,
+                                    new SignatureValidationInspector(consumerStore),
+                                    new NonceStoreInspector(nonceStore),
+                                    new TimestampRangeInspector(new TimeSpan(1, 0, 0)),
+                                    new ConsumerValidationInspector(consumerStore));
     }
+  }
 }

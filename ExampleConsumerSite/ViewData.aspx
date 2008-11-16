@@ -10,12 +10,8 @@
     <form id="form1" runat="server">
     <asp:Panel runat="server" ID="ResultsPanel">
         <p>
-            Contacts for user:
-            <asp:Label runat="server" ID="UserName"></asp:Label></p>
-        <div>
-            <asp:BulletedList ID="ContactsList" runat="server">
-            </asp:BulletedList>
-        </div>
+            Contacts Feed:
+            <asp:Xml runat="server" ID="xmlFeed"></asp:Xml>
     </asp:Panel>
     <asp:Label ID="ErrorInfo" runat="server"></asp:Label>
     </form>

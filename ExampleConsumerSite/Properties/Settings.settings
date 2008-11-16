@@ -3,16 +3,16 @@
   <Profiles />
   <Settings>
     <Setting Name="RequestTokenUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://localhost:17990/RequestToken.aspx</Value>
+      <Value Profile="(Default)">http://localhost:1897/RequestToken.aspx</Value>
     </Setting>
     <Setting Name="UserAuthorizationUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://localhost:17990/UserAuthorize.aspx</Value>
+      <Value Profile="(Default)">http://localhost:1897/UserAuthorize.aspx</Value>
     </Setting>
     <Setting Name="AccessTokenUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://localhost:17990/AccessToken.aspx</Value>
+      <Value Profile="(Default)">http://localhost:1897/AccessToken.aspx</Value>
     </Setting>
     <Setting Name="DataUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://localhost:17990/Data.aspx</Value>
+      <Value Profile="(Default)">http://localhost:1897/ContactsService.svc/GetContacts</Value>
     </Setting>
   </Settings>
 </SettingsFile>

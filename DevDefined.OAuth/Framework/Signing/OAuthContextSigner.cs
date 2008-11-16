@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,49 +21,55 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-﻿using System.Collections.Generic;
+
+#endregion
+
+using System.Collections.Generic;
 using System.Linq;
-using DevDefined.OAuth.Framework.Signing;
 
 namespace DevDefined.OAuth.Framework.Signing
 {
-    public class OAuthContextSigner : IOAuthContextSigner
+  public class OAuthContextSigner : IOAuthContextSigner
+  {
+    readonly List<IContextSignatureImplementation> _implementations =
+      new List<IContextSignatureImplementation>();
+
+    public OAuthContextSigner(params IContextSignatureImplementation[] implementations)
     {
-        private readonly List<IContextSignatureImplementation> _implementations =
-            new List<IContextSignatureImplementation>();
-
-        public OAuthContextSigner(params IContextSignatureImplementation[] implementations)
-        {
-            if (implementations != null) _implementations.AddRange(implementations);
-        }
-
-        public OAuthContextSigner()
-            : this(
-                new RsaSha1SignatureImplementation(), new HmacSha1SignatureImplementation(),
-                new PlainTextSignatureImplementation())
-        {
-        }
-
-        public void SignContext(OAuthContext authContext, SigningContext signingContext)
-        {
-            signingContext.SignatureBase = authContext.GenerateSignatureBase();
-            FindImplementationForAuthContext(authContext).SignContext(authContext, signingContext);
-        }
-
-        private IContextSignatureImplementation FindImplementationForAuthContext(OAuthContext authContext)
-        {
-            IContextSignatureImplementation impl =
-                _implementations.FirstOrDefault(i => i.MethodName == authContext.SignatureMethod);
-
-            if (impl != null) return impl;
-
-            throw Error.UnknownSignatureMethod(authContext.SignatureMethod);
-        }
-
-        public bool ValidateSignature(OAuthContext authContext, SigningContext signingContext)
-        {
-            signingContext.SignatureBase = authContext.GenerateSignatureBase();
-            return FindImplementationForAuthContext(authContext).ValidateSignature(authContext, signingContext);
-        }
+      if (implementations != null) _implementations.AddRange(implementations);
     }
+
+    public OAuthContextSigner()
+      : this(
+        new RsaSha1SignatureImplementation(), new HmacSha1SignatureImplementation(),
+        new PlainTextSignatureImplementation())
+    {
+    }
+
+    #region IOAuthContextSigner Members
+
+    public void SignContext(OAuthContext authContext, SigningContext signingContext)
+    {
+      signingContext.SignatureBase = authContext.GenerateSignatureBase();
+      FindImplementationForAuthContext(authContext).SignContext(authContext, signingContext);
+    }
+
+    public bool ValidateSignature(OAuthContext authContext, SigningContext signingContext)
+    {
+      signingContext.SignatureBase = authContext.GenerateSignatureBase();
+      return FindImplementationForAuthContext(authContext).ValidateSignature(authContext, signingContext);
+    }
+
+    #endregion
+
+    IContextSignatureImplementation FindImplementationForAuthContext(OAuthContext authContext)
+    {
+      IContextSignatureImplementation impl =
+        _implementations.FirstOrDefault(i => i.MethodName == authContext.SignatureMethod);
+
+      if (impl != null) return impl;
+
+      throw Error.UnknownSignatureMethod(authContext.SignatureMethod);
+    }
+  }
 }

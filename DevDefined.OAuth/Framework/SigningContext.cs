@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,14 +21,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#endregion
+
 using System.Security.Cryptography;
 
 namespace DevDefined.OAuth.Framework
 {
-    public class SigningContext
-    {
-        public AsymmetricAlgorithm Algorithm { get; set; }
-        public string ConsumerSecret { get; set; }
-        public string SignatureBase { get; set; }
-    }
+  public class SigningContext
+  {
+    public AsymmetricAlgorithm Algorithm { get; set; }
+    public string ConsumerSecret { get; set; }
+    public string SignatureBase { get; set; }
+  }
 }

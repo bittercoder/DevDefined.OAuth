@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,32 +21,35 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#endregion
+
 namespace DevDefined.OAuth.Framework.Signing
 {
-    public class PlainTextSignatureImplementation : IContextSignatureImplementation
+  public class PlainTextSignatureImplementation : IContextSignatureImplementation
+  {
+    #region IContextSignatureImplementation Members
+
+    public string MethodName
     {
-        #region IContextSignatureImplementation Members
-
-        public string MethodName
-        {
-            get { return SignatureMethod.PlainText; }
-        }
-
-        public void SignContext(OAuthContext authContext, SigningContext signingContext)
-        {
-            authContext.Signature = GenerateSignature(authContext, signingContext);
-        }
-
-        public bool ValidateSignature(OAuthContext authContext, SigningContext signingContext)
-        {
-            return (authContext.Signature == GenerateSignature(authContext, signingContext));
-        }
-
-        #endregion
-
-        private string GenerateSignature(OAuthContext authContext, SigningContext signingContext)
-        {
-            return UriUtility.UrlEncode(string.Format("{0}&{1}", signingContext.ConsumerSecret, authContext.TokenSecret));
-        }
+      get { return SignatureMethod.PlainText; }
     }
+
+    public void SignContext(OAuthContext authContext, SigningContext signingContext)
+    {
+      authContext.Signature = GenerateSignature(authContext, signingContext);
+    }
+
+    public bool ValidateSignature(OAuthContext authContext, SigningContext signingContext)
+    {
+      return (authContext.Signature == GenerateSignature(authContext, signingContext));
+    }
+
+    #endregion
+
+    string GenerateSignature(OAuthContext authContext, SigningContext signingContext)
+    {
+      return UriUtility.UrlEncode(string.Format("{0}&{1}", signingContext.ConsumerSecret, authContext.TokenSecret));
+    }
+  }
 }

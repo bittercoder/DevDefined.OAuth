@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,33 +21,36 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-﻿using DevDefined.OAuth.Consumer;
+
+#endregion
+
+using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using NUnit.Framework;
 
 namespace DevDefined.OAuth.Tests.Consumer
 {
-    [TestFixture]
-    public class OAuthSessionTests
+  [TestFixture]
+  public class OAuthSessionTests
+  {
+    [Test]
+    public void GetUserAuthorizationUriForTokenWithCallback()
     {
-        [Test]
-        public void GetUserAuthorizationUriForTokenWithCallback()
-        {
-            var session = new OAuthSession(new OAuthConsumerContext(), "http://localhost/request",
-                                           "http://localhost/userauth", "http://localhost/access");
-            string actual = session.GetUserAuthorizationUrlForToken(new TokenBase {Token = "token"},
-                                                                    "http://localhost/callback");
-            Assert.AreEqual(
-                "http://localhost/userauth?oauth_token=token&oauth_callback=http%3A%2F%2Flocalhost%2Fcallback", actual);
-        }
-
-        [Test]
-        public void GetUserAuthorizationUriForTokenWithoutCallback()
-        {
-            var session = new OAuthSession(new OAuthConsumerContext(), "http://localhost/request",
-                                           "http://localhost/userauth", "http://localhost/access");
-            string actual = session.GetUserAuthorizationUrlForToken(new TokenBase {Token = "token"}, null);
-            Assert.AreEqual("http://localhost/userauth?oauth_token=token", actual);
-        }
+      var session = new OAuthSession(new OAuthConsumerContext(), "http://localhost/request",
+                                     "http://localhost/userauth", "http://localhost/access");
+      string actual = session.GetUserAuthorizationUrlForToken(new TokenBase {Token = "token"},
+                                                              "http://localhost/callback");
+      Assert.AreEqual(
+        "http://localhost/userauth?oauth_token=token&oauth_callback=http%3A%2F%2Flocalhost%2Fcallback", actual);
     }
+
+    [Test]
+    public void GetUserAuthorizationUriForTokenWithoutCallback()
+    {
+      var session = new OAuthSession(new OAuthConsumerContext(), "http://localhost/request",
+                                     "http://localhost/userauth", "http://localhost/access");
+      string actual = session.GetUserAuthorizationUrlForToken(new TokenBase {Token = "token"}, null);
+      Assert.AreEqual("http://localhost/userauth?oauth_token=token", actual);
+    }
+  }
 }

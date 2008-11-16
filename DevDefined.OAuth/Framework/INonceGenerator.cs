@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,16 +21,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#endregion
+
 using DevDefined.OAuth.Framework;
 
 namespace DevDefined.OAuth
 {
-    /// <summary>
-    /// Generates a nonce, which should be unique for the selected consumer (i.e. never generated
-    /// by subsequent calls to <see cref="GenerateNonce" />)
-    /// </summary>
-    public interface INonceGenerator
-    {
-        string GenerateNonce(OAuthContext context);
-    }
+  /// <summary>
+  /// Generates a nonce, which should be unique for the selected consumer (i.e. never generated
+  /// by subsequent calls to <see cref="GenerateNonce" />)
+  /// </summary>
+  public interface INonceGenerator
+  {
+    string GenerateNonce(OAuthContext context);
+  }
 }

@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,78 +21,81 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-﻿using System;
+
+#endregion
+
+using System;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage;
 
 namespace DevDefined.OAuth.Testing
 {
-    public class TestTokenStore : ITokenStore
+  public class TestTokenStore : ITokenStore
+  {
+    #region ITokenStore Members
+
+    public IToken CreateRequestToken(OAuthContext context)
     {
-        #region ITokenStore Members
+      EnsureTestConsumer(context);
 
-        public IToken CreateRequestToken(OAuthContext context)
-        {
-            EnsureTestConsumer(context);
-
-            return new TokenBase
-                       {ConsumerKey = "key", Realm = null, Token = "requestkey", TokenSecret = "requestsecret"};
-        }
-
-        public void ConsumeRequestToken(OAuthContext requestContext)
-        {
-            EnsureTestConsumer(requestContext);
-
-            if (requestContext.Token != "requestkey")
-                throw new OAuthException(requestContext, OAuthProblems.TokenRejected,
-                                         "The supplied request token is unknown to teh provider.");
-        }
-
-        public void ConsumeAccessToken(OAuthContext accessContext)
-        {
-            EnsureTestConsumer(accessContext);
-
-            if (accessContext.Token != "accesskey")
-                throw new OAuthException(accessContext, OAuthProblems.TokenRejected,
-                                         "The supplied access token is unknown to teh provider.");
-        }
-
-        public IToken GetAccessTokenAssociatedWithRequestToken(OAuthContext requestContext)
-        {
-            EnsureTestConsumer(requestContext);
-
-            if (requestContext.Token != "requestkey")
-                throw new OAuthException(requestContext, OAuthProblems.TokenRejected, "Expected Token \"requestkey\"");
-
-            return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = "accesssecret"};
-        }
-
-        public RequestForAccessStatus GetStatusOfRequestForAccess(OAuthContext requestContext)
-        {
-            if (requestContext.ConsumerKey == "key" && requestContext.Token == "requestkey")
-                return RequestForAccessStatus.Granted;
-
-            return RequestForAccessStatus.Unknown;
-        }
-
-        #endregion
-
-        public IToken CreateAccessTokenForRequestToken(OAuthContext requestContext)
-        {
-            EnsureTestConsumer(requestContext);
-
-            return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = "accesssecret"};
-        }
-
-        private static void EnsureTestConsumer(IConsumer consumer)
-        {
-            if (consumer == null) throw new ArgumentNullException("consumer");
-            if (consumer.Realm != null)
-                throw new OAuthException(consumer as OAuthContext, OAuthProblems.ConsumerKeyRejected,
-                                         "supplied realm was unknown to the provider");
-            if (consumer.ConsumerKey != "key")
-                throw new OAuthException(consumer as OAuthContext, OAuthProblems.ConsumerKeyRejected,
-                                         "supplied consumer key was unknown to the provider");
-        }
+      return new TokenBase
+        {ConsumerKey = "key", Realm = null, Token = "requestkey", TokenSecret = "requestsecret"};
     }
+
+    public void ConsumeRequestToken(OAuthContext requestContext)
+    {
+      EnsureTestConsumer(requestContext);
+
+      if (requestContext.Token != "requestkey")
+        throw new OAuthException(requestContext, OAuthProblems.TokenRejected,
+                                 "The supplied request token is unknown to teh provider.");
+    }
+
+    public void ConsumeAccessToken(OAuthContext accessContext)
+    {
+      EnsureTestConsumer(accessContext);
+
+      if (accessContext.Token != "accesskey")
+        throw new OAuthException(accessContext, OAuthProblems.TokenRejected,
+                                 "The supplied access token is unknown to teh provider.");
+    }
+
+    public IToken GetAccessTokenAssociatedWithRequestToken(OAuthContext requestContext)
+    {
+      EnsureTestConsumer(requestContext);
+
+      if (requestContext.Token != "requestkey")
+        throw new OAuthException(requestContext, OAuthProblems.TokenRejected, "Expected Token \"requestkey\"");
+
+      return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = "accesssecret"};
+    }
+
+    public RequestForAccessStatus GetStatusOfRequestForAccess(OAuthContext requestContext)
+    {
+      if (requestContext.ConsumerKey == "key" && requestContext.Token == "requestkey")
+        return RequestForAccessStatus.Granted;
+
+      return RequestForAccessStatus.Unknown;
+    }
+
+    #endregion
+
+    public IToken CreateAccessTokenForRequestToken(OAuthContext requestContext)
+    {
+      EnsureTestConsumer(requestContext);
+
+      return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = "accesssecret"};
+    }
+
+    static void EnsureTestConsumer(IConsumer consumer)
+    {
+      if (consumer == null) throw new ArgumentNullException("consumer");
+      if (consumer.Realm != null)
+        throw new OAuthException(consumer as OAuthContext, OAuthProblems.ConsumerKeyRejected,
+                                 "supplied realm was unknown to the provider");
+      if (consumer.ConsumerKey != "key")
+        throw new OAuthException(consumer as OAuthContext, OAuthProblems.ConsumerKeyRejected,
+                                 "supplied consumer key was unknown to the provider");
+    }
+  }
 }

@@ -1,3 +1,5 @@
+#region License
+
 // The MIT License
 //
 // Copyright (c) 2006-2008 DevDefined Limited.
@@ -19,25 +21,28 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#endregion
+
 namespace DevDefined.OAuth.Framework
 {
-    public class TokenBase : IToken
+  public class TokenBase : IToken
+  {
+    #region IToken Members
+
+    public string TokenSecret { get; set; }
+
+    public string Token { get; set; }
+
+    public string ConsumerKey { get; set; }
+
+    public string Realm { get; set; }
+
+    #endregion
+
+    public override string ToString()
     {
-        #region IToken Members
-
-        public string TokenSecret { get; set; }
-
-        public string Token { get; set; }
-
-        public string ConsumerKey { get; set; }
-
-        public string Realm { get; set; }
-
-        #endregion
-
-        public override string ToString()
-        {
-            return UriUtility.FormatTokenForResponse(this);
-        }
+      return UriUtility.FormatTokenForResponse(this);
     }
+  }
 }
