@@ -49,7 +49,7 @@ namespace DevDefined.OAuth.Provider.Inspectors
 
     #region IContextInspector Members
 
-    public virtual void InspectContext(OAuthContext context)
+    public virtual void InspectContext(IOAuthContext context)
     {
       SigningContext signingContext = CreateSignatureContextForConsumer(context);
 
@@ -66,7 +66,7 @@ namespace DevDefined.OAuth.Provider.Inspectors
       return ((signatureMethod != SignatureMethod.HmacSha1) && (signatureMethod != SignatureMethod.PlainText));
     }
 
-    protected virtual SigningContext CreateSignatureContextForConsumer(OAuthContext context)
+    protected virtual SigningContext CreateSignatureContextForConsumer(IOAuthContext context)
     {
       var signingContext = new SigningContext {ConsumerSecret = _consumerStore.GetConsumerSecret(context)};
 

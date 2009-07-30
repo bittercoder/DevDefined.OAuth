@@ -26,11 +26,8 @@
 
 using System;
 using DevDefined.OAuth.Framework;
-using DevDefined.OAuth.Storage;
-using DevDefined.OAuth.Wcf.Models;
-using DevDefined.OAuth.Wcf.Repositories;
 
-namespace DevDefined.OAuth.Wcf.Implementation
+namespace DevDefined.OAuth.Storage.Basic
 {
   public class SimpleTokenStore : ITokenStore
   {
@@ -47,7 +44,7 @@ namespace DevDefined.OAuth.Wcf.Implementation
 
     #region ITokenStore Members
 
-    public IToken CreateRequestToken(OAuthContext context)
+    public IToken CreateRequestToken(IOAuthContext context)
     {
       if (context == null) throw new ArgumentNullException("context");
 
@@ -64,7 +61,7 @@ namespace DevDefined.OAuth.Wcf.Implementation
       return token;
     }
 
-    public void ConsumeRequestToken(OAuthContext requestContext)
+    public void ConsumeRequestToken(IOAuthContext requestContext)
     {
       if (requestContext == null) throw new ArgumentNullException("requestContext");
 
@@ -75,7 +72,7 @@ namespace DevDefined.OAuth.Wcf.Implementation
       _requestTokenRepository.SaveToken(requestToken);
     }
 
-    public void ConsumeAccessToken(OAuthContext accessContext)
+    public void ConsumeAccessToken(IOAuthContext accessContext)
     {
       AccessToken accessToken = _accessTokenRepository.GetToken(accessContext.Token);
 
@@ -86,13 +83,13 @@ namespace DevDefined.OAuth.Wcf.Implementation
       }
     }
 
-    public IToken GetAccessTokenAssociatedWithRequestToken(OAuthContext requestContext)
+    public IToken GetAccessTokenAssociatedWithRequestToken(IOAuthContext requestContext)
     {
       RequestToken request = _requestTokenRepository.GetToken(requestContext.Token);
       return request.AccessToken;
     }
 
-    public RequestForAccessStatus GetStatusOfRequestForAccess(OAuthContext accessContext)
+    public RequestForAccessStatus GetStatusOfRequestForAccess(IOAuthContext accessContext)
     {
       RequestToken request = _requestTokenRepository.GetToken(accessContext.Token);
 
@@ -103,9 +100,36 @@ namespace DevDefined.OAuth.Wcf.Implementation
       return RequestForAccessStatus.Granted;
     }
 
+    public string GetCallbackUrlForToken(IToken token)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void SetVerificationCodeForToken(IToken token, string verificationCode)
+    {
+      throw new NotImplementedException();
+    }
+
+    public string GetVerificationCodeForToken(IToken token)
+    {
+      throw new NotImplementedException();
+    }
+
+    public IToken GetToken(IOAuthContext context)
+    {
+      var token = (IToken) null;
+      if (!string.IsNullOrEmpty(context.Token))
+      {
+        token = _accessTokenRepository.GetToken(context.Token) ??
+                (IToken) _requestTokenRepository.GetToken(context.Token);
+      }
+      return token;
+
+    }
+
     #endregion
 
-    static void UseUpRequestToken(OAuthContext requestContext, RequestToken requestToken)
+    static void UseUpRequestToken(IOAuthContext requestContext, RequestToken requestToken)
     {
       if (requestToken.UsedUp)
       {

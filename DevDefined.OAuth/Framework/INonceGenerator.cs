@@ -34,6 +34,6 @@ namespace DevDefined.OAuth
   /// </summary>
   public interface INonceGenerator
   {
-    string GenerateNonce(OAuthContext context);
+    string GenerateNonce(IOAuthContext context);
   }
 }

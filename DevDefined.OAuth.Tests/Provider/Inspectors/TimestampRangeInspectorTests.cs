@@ -41,8 +41,10 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       var inspector = new TimestampRangeInspector(new TimeSpan(0, 0, 0), new TimeSpan(1, 0, 0),
                                                   () => new DateTime(2008, 1, 1, 12, 0, 0));
 
-      var context = new OAuthContext();
-      context.Timestamp = new DateTime(2008, 1, 1, 13, 0, 1).Epoch().ToString();
+      var context = new OAuthContext
+                      {
+                        Timestamp = new DateTime(2008, 1, 1, 13, 0, 1).Epoch().ToString()
+                      };
 
       inspector.InspectContext(context);
     }
@@ -54,8 +56,10 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       var inspector = new TimestampRangeInspector(new TimeSpan(1, 0, 0), new TimeSpan(0, 0, 0),
                                                   () => new DateTime(2008, 1, 1, 12, 0, 0));
 
-      var context = new OAuthContext();
-      context.Timestamp = new DateTime(2008, 1, 1, 10, 59, 59).Epoch().ToString();
+      var context = new OAuthContext
+                      {
+                        Timestamp = new DateTime(2008, 1, 1, 10, 59, 59).Epoch().ToString()
+                      };
 
       inspector.InspectContext(context);
     }
@@ -66,8 +70,10 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       var inspector = new TimestampRangeInspector(new TimeSpan(0, 0, 0), new TimeSpan(1, 0, 0),
                                                   () => new DateTime(2008, 1, 1, 12, 0, 0));
 
-      var context = new OAuthContext();
-      context.Timestamp = new DateTime(2008, 1, 1, 13, 0, 0).Epoch().ToString();
+      var context = new OAuthContext
+                      {
+                        Timestamp = new DateTime(2008, 1, 1, 13, 0, 0).Epoch().ToString()
+                      };
 
       inspector.InspectContext(context);
     }
@@ -78,8 +84,10 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       var inspector = new TimestampRangeInspector(new TimeSpan(1, 0, 0), new TimeSpan(0, 0, 0),
                                                   () => new DateTime(2008, 1, 1, 12, 0, 0));
 
-      var context = new OAuthContext();
-      context.Timestamp = new DateTime(2008, 1, 1, 11, 0, 0).Epoch().ToString();
+      var context = new OAuthContext
+                      {
+                        Timestamp = new DateTime(2008, 1, 1, 11, 0, 0).Epoch().ToString()
+                      };
 
       inspector.InspectContext(context);
     }

@@ -1,24 +1,23 @@
 using System;
 using DevDefined.OAuth.Provider;
 using DevDefined.OAuth.Provider.Inspectors;
+using DevDefined.OAuth.Storage.Basic;
 using DevDefined.OAuth.Testing;
-using DevDefined.OAuth.Wcf.Implementation;
-using DevDefined.OAuth.Wcf.Repositories;
 
 namespace ExampleOAuthChannel
 {
   public class OAuthServicesLocator
   {
-    static readonly ITokenRepository<DevDefined.OAuth.Wcf.Models.AccessToken> _accessTokenRepository;
+    static readonly ITokenRepository<DevDefined.OAuth.Storage.Basic.AccessToken> _accessTokenRepository;
     static readonly IOAuthProvider _provider;
-    static readonly ITokenRepository<DevDefined.OAuth.Wcf.Models.RequestToken> _requestTokenRepository;
+    static readonly ITokenRepository<DevDefined.OAuth.Storage.Basic.RequestToken> _requestTokenRepository;
 
     static OAuthServicesLocator()
     {
       var consumerStore = new TestConsumerStore();
       var nonceStore = new TestNonceStore();
-      _accessTokenRepository = new InMemoryTokenRepository<DevDefined.OAuth.Wcf.Models.AccessToken>();
-      _requestTokenRepository = new InMemoryTokenRepository<DevDefined.OAuth.Wcf.Models.RequestToken>();
+      _accessTokenRepository = new InMemoryTokenRepository<DevDefined.OAuth.Storage.Basic.AccessToken>();
+      _requestTokenRepository = new InMemoryTokenRepository<DevDefined.OAuth.Storage.Basic.RequestToken>();
 
       var tokenStore = new SimpleTokenStore(_accessTokenRepository, _requestTokenRepository);
 
@@ -34,12 +33,12 @@ namespace ExampleOAuthChannel
       get { return _provider; }
     }
 
-    public static ITokenRepository<DevDefined.OAuth.Wcf.Models.AccessToken> AccessTokenRepository
+    public static ITokenRepository<DevDefined.OAuth.Storage.Basic.AccessToken> AccessTokenRepository
     {
       get { return _accessTokenRepository; }
     }
 
-    public static ITokenRepository<DevDefined.OAuth.Wcf.Models.RequestToken> RequestTokenRepository
+    public static ITokenRepository<DevDefined.OAuth.Storage.Basic.RequestToken> RequestTokenRepository
     {
       get { return _requestTokenRepository; }
     }

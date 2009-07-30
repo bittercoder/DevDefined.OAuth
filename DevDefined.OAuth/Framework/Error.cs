@@ -33,7 +33,7 @@ namespace DevDefined.OAuth.Framework
 {
   public static class Error
   {
-    public static Exception MissingRequiredOAuthParameter(OAuthContext context, string parameterName)
+    public static Exception MissingRequiredOAuthParameter(IOAuthContext context, string parameterName)
     {
       var exception = new OAuthException(context, OAuthProblems.ParameterAbset,
                                          string.Format("Missing required parameter : {0}", parameterName));
@@ -101,12 +101,12 @@ namespace DevDefined.OAuth.Framework
       return new Exception(string.Format("The RequestMethod parameter \"{0}\" is null or empty.", parameter));
     }
 
-    public static Exception FailedToValidateSignature(OAuthContext context)
+    public static Exception FailedToValidateSignature(IOAuthContext context)
     {
       return new OAuthException(context, OAuthProblems.SignatureInvalid, "Failed to validate signature");
     }
 
-    public static Exception UnknownConsumerKey(OAuthContext context)
+    public static Exception UnknownConsumerKey(IOAuthContext context)
     {
       return new OAuthException(context, OAuthProblems.ConsumerKeyUnknown,
                                 string.Format("Unknown Consumer (Realm: {0}, Key: {1})", context.Realm,
@@ -143,13 +143,13 @@ namespace DevDefined.OAuth.Framework
                                                      uri, outcome.AdditionalInfo));
     }
 
-    public static Exception ConsumerHasNotBeenGrantedAccessYet(OAuthContext context)
+    public static Exception ConsumerHasNotBeenGrantedAccessYet(IOAuthContext context)
     {
       return new OAuthException(context, OAuthProblems.PermissionUnknown,
                                 "The decision to give access to the consumer has yet to be made, please try again later.");
     }
 
-    public static Exception ConsumerHasBeenDeniedAccess(OAuthContext context)
+    public static Exception ConsumerHasBeenDeniedAccess(IOAuthContext context)
     {
       return new OAuthException(context, OAuthProblems.PermissionDenied,
                                 "The consumer was denied access to this resource.");
@@ -160,7 +160,7 @@ namespace DevDefined.OAuth.Framework
       return new Exception("Can't build problem report when \"Problem\" property is null or empty");
     }
 
-    public static Exception NonceHasAlreadyBeenUsed(OAuthContext context)
+    public static Exception NonceHasAlreadyBeenUsed(IOAuthContext context)
     {
       return new OAuthException(context, OAuthProblems.NonceUsed,
                                 string.Format("The nonce value \"{0}\" has already been used", context.Nonce));
@@ -169,6 +169,11 @@ namespace DevDefined.OAuth.Framework
     public static Exception ThisConsumerRequestHasAlreadyBeenSigned()
     {
       return new Exception("The consumer request for consumer \"{0}\" has already been signed");
+    }
+
+    public static Exception CallbackWasNotConfirmed()
+    {
+      return new Exception("Callback was not confirmed");
     }
   }
 }

@@ -25,28 +25,18 @@
 #endregion
 
 using DevDefined.OAuth.Framework;
-using DevDefined.OAuth.Storage;
 
-namespace DevDefined.OAuth.Wcf.Repositories
+namespace DevDefined.OAuth.Storage.Basic
 {
   /// <summary>
-  /// A simplistic repository for access and request of token models - the example implementation of
-  /// <see cref="ITokenStore" /> relies on this repository - normally you would make use of repositories
-  /// wired up to your domain model i.e. NHibernate, Entity Framework etc.
-  /// </summary>    
-  public interface ITokenRepository<T> where T : TokenBase
+  /// Simple request token model, this provides information about a request token which has been issued, including
+  /// who it was issued to, if the token has been used up (a request token should only be presented once), and 
+  /// the associated access token (if a user has granted access to a consumer i.e. given them access).
+  /// </summary>
+  public class RequestToken : TokenBase
   {
-    /// <summary>
-    /// Gets an existing token from the underlying store
-    /// </summary>
-    /// <param name="token"></param>
-    /// <returns></returns>
-    T GetToken(string token);
-
-    /// <summary>
-    /// Saves the token in the underlying store
-    /// </summary>
-    /// <param name="token"></param>
-    void SaveToken(T token);
+    public bool AccessDenied { get; set; }
+    public bool UsedUp { get; set; }
+    public AccessToken AccessToken { get; set; }
   }
 }

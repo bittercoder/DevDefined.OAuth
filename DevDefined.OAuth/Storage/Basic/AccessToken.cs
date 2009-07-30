@@ -27,7 +27,7 @@
 using System;
 using DevDefined.OAuth.Framework;
 
-namespace DevDefined.OAuth.Wcf.Models
+namespace DevDefined.OAuth.Storage.Basic
 {
   /// <summary>
   /// Simple access token model, this would hold information required to enforce policies such as expiration, and association

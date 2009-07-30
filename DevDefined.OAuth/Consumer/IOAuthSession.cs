@@ -37,19 +37,22 @@ namespace DevDefined.OAuth.Consumer
     Uri AccessTokenUri { get; set; }
     Uri UserAuthorizeUri { get; set; }
     IToken AccessToken { get; set; }
-    ConsumerRequest Request();
+    IConsumerRequest Request();
     IToken GetRequestToken();
     IToken ExchangeRequestTokenForAccessToken(IToken requestToken);
-    ConsumerRequest BuildRequestTokenContext();
-    ConsumerRequest BuildExchangeRequestTokenForAccessTokenContext(IToken requestToken);
+    IToken ExchangeRequestTokenForAccessToken(IToken requestToken, string verificationCode);
+    IToken ExchangeRequestTokenForAccessToken(IToken requestToken, string method, string verificationCode);
+    IConsumerRequest BuildRequestTokenContext(string method);
+    IConsumerRequest BuildExchangeRequestTokenForAccessTokenContext(IToken requestToken, string method, string verificationCode);
     string GetUserAuthorizationUrlForToken(IToken token, string callbackUrl);
-    OAuthSession WithFormParameters(IDictionary dictionary);
-    OAuthSession WithFormParameters(object anonymousClass);
-    OAuthSession WithQueryParameters(IDictionary dictionary);
-    OAuthSession WithQueryParameters(object anonymousClass);
-    OAuthSession WithCookies(IDictionary dictionary);
-    OAuthSession WithCookies(object anonymousClass);
-    OAuthSession WithHeaders(IDictionary dictionary);
-    OAuthSession WithHeaders(object anonymousClass);
+    IOAuthSession WithFormParameters(IDictionary dictionary);
+    IOAuthSession WithFormParameters(object anonymousClass);
+    IOAuthSession WithQueryParameters(IDictionary dictionary);
+    IOAuthSession WithQueryParameters(object anonymousClass);
+    IOAuthSession WithCookies(IDictionary dictionary);
+    IOAuthSession WithCookies(object anonymousClass);
+    IOAuthSession WithHeaders(IDictionary dictionary);
+    IOAuthSession WithHeaders(object anonymousClass);
+    IOAuthSession RequiresCallbackConfirmation();
   }
 }

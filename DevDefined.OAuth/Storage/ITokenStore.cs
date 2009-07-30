@@ -35,32 +35,53 @@ namespace DevDefined.OAuth.Storage
     /// </summary>
     /// <param name="context"></param>
     /// <returns></returns>
-    IToken CreateRequestToken(OAuthContext context);
+    IToken CreateRequestToken(IOAuthContext context);
 
     /// <summary>
     /// Should consume a use of the request token, throwing a <see cref="OAuthException" /> on failure.
     /// </summary>
     /// <param name="requestContext"></param>
-    void ConsumeRequestToken(OAuthContext requestContext);
+    void ConsumeRequestToken(IOAuthContext requestContext);
 
     /// <summary>
     /// Should consume a use of an access token, throwing a <see cref="OAuthException" /> on failure.
     /// </summary>
     /// <param name="accessContext"></param>
-    void ConsumeAccessToken(OAuthContext accessContext);
+    void ConsumeAccessToken(IOAuthContext accessContext);
 
     /// <summary>
     /// Get the access token associated with a request token.
     /// </summary>
     /// <param name="requestContext"></param>
     /// <returns></returns>
-    IToken GetAccessTokenAssociatedWithRequestToken(OAuthContext requestContext);
+    IToken GetAccessTokenAssociatedWithRequestToken(IOAuthContext requestContext);
 
     /// <summary>
     /// Returns the status for a request to access a consumers resources.
     /// </summary>
     /// <param name="requestContext"></param>
     /// <returns></returns>
-    RequestForAccessStatus GetStatusOfRequestForAccess(OAuthContext requestContext);
+    RequestForAccessStatus GetStatusOfRequestForAccess(IOAuthContext requestContext);
+
+    /// <summary>
+    /// Returns the callback url that is stored against this token.
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    string GetCallbackUrlForToken(IToken token);
+
+    /// <summary>
+    /// Sets the verification code for a token
+    /// </summary>
+    /// <param name="token"></param>
+    /// <param name="verificationCode"></param>
+    void SetVerificationCodeForToken(IToken token, string verificationCode);
+
+    /// <summary>
+    /// Retrieves the verification code for a token
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns>verification code</returns>
+    string GetVerificationCodeForToken(IToken token);
   }
 }

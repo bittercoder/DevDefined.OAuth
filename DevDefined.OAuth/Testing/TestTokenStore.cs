@@ -32,9 +32,18 @@ namespace DevDefined.OAuth.Testing
 {
   public class TestTokenStore : ITokenStore
   {
+    public string CallbackUrl { get; set; }
+    public string VerificationCode { get; set; }
+
+    public TestTokenStore()
+    {
+      CallbackUrl = "http://localhost/callback";
+      VerificationCode = "GzvVb5WjWfHKa/0JuFupaMyn"; // this is a example google oauth verification code
+    }
+
     #region ITokenStore Members
 
-    public IToken CreateRequestToken(OAuthContext context)
+    public IToken CreateRequestToken(IOAuthContext context)
     {
       EnsureTestConsumer(context);
 
@@ -42,7 +51,7 @@ namespace DevDefined.OAuth.Testing
         {ConsumerKey = "key", Realm = null, Token = "requestkey", TokenSecret = "requestsecret"};
     }
 
-    public void ConsumeRequestToken(OAuthContext requestContext)
+    public void ConsumeRequestToken(IOAuthContext requestContext)
     {
       EnsureTestConsumer(requestContext);
 
@@ -51,7 +60,7 @@ namespace DevDefined.OAuth.Testing
                                  "The supplied request token is unknown to teh provider.");
     }
 
-    public void ConsumeAccessToken(OAuthContext accessContext)
+    public void ConsumeAccessToken(IOAuthContext accessContext)
     {
       EnsureTestConsumer(accessContext);
 
@@ -60,7 +69,7 @@ namespace DevDefined.OAuth.Testing
                                  "The supplied access token is unknown to teh provider.");
     }
 
-    public IToken GetAccessTokenAssociatedWithRequestToken(OAuthContext requestContext)
+    public IToken GetAccessTokenAssociatedWithRequestToken(IOAuthContext requestContext)
     {
       EnsureTestConsumer(requestContext);
 
@@ -70,7 +79,7 @@ namespace DevDefined.OAuth.Testing
       return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = "accesssecret"};
     }
 
-    public RequestForAccessStatus GetStatusOfRequestForAccess(OAuthContext requestContext)
+    public RequestForAccessStatus GetStatusOfRequestForAccess(IOAuthContext requestContext)
     {
       if (requestContext.ConsumerKey == "key" && requestContext.Token == "requestkey")
         return RequestForAccessStatus.Granted;
@@ -78,9 +87,24 @@ namespace DevDefined.OAuth.Testing
       return RequestForAccessStatus.Unknown;
     }
 
+    public string GetCallbackUrlForToken(IToken token)
+    {
+      return CallbackUrl;
+    }
+
+    public void SetVerificationCodeForToken(IToken token, string verificationCode)
+    {
+      VerificationCode = verificationCode;
+    }
+
+    public string GetVerificationCodeForToken(IToken token)
+    {
+      return VerificationCode;
+    }
+
     #endregion
 
-    public IToken CreateAccessTokenForRequestToken(OAuthContext requestContext)
+    public IToken CreateAccessTokenForRequestToken(IOAuthContext requestContext)
     {
       EnsureTestConsumer(requestContext);
 

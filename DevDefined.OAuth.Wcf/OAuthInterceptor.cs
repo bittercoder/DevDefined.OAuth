@@ -37,8 +37,7 @@ using System.Web;
 using System.Xml.Linq;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Provider;
-using DevDefined.OAuth.Wcf.Models;
-using DevDefined.OAuth.Wcf.Repositories;
+using DevDefined.OAuth.Storage.Basic;
 using Microsoft.ServiceModel.Web;
 
 namespace DevDefined.OAuth.Wcf
@@ -68,7 +67,7 @@ namespace DevDefined.OAuth.Wcf
 
       var requestProperty = (HttpRequestMessageProperty) request.Properties[HttpRequestMessageProperty.Name];
 
-      OAuthContext context = new OAuthContextBuilder().FromUri(requestProperty.Method, request.Headers.To);
+      IOAuthContext context = new OAuthContextBuilder().FromUri(requestProperty.Method, request.Headers.To);
 
       try
       {

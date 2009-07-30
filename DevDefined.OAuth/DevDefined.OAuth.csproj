@@ -33,15 +33,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\shared-libs\Castle.Core.dll</HintPath>
-    </Reference>
+    <Reference Include="Accessibility" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -63,15 +63,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Consumer\ConsumerRequest.cs" />
+    <Compile Include="Consumer\ConsumerRequestExtensions.cs" />
+    <Compile Include="Consumer\DefaultConsumerRequestFactory.cs" />
+    <Compile Include="Consumer\IConsumerRequest.cs" />
+    <Compile Include="Consumer\IConsumerRequestFactory.cs" />
     <Compile Include="Consumer\IOAuthSession.cs" />
     <Compile Include="Consumer\OAuthSession.cs" />
     <Compile Include="Consumer\IOAuthConsumerContext.cs" />
     <Compile Include="Consumer\OAuthConsumerContext.cs" />
+    <Compile Include="Consumer\RequestDescription.cs" />
     <Compile Include="Framework\AccessDeniedException.cs" />
     <Compile Include="Framework\CertificateUtility.cs" />
     <Compile Include="Framework\DateTimeUtility.cs" />
     <Compile Include="Framework\IConsumer.cs" />
     <Compile Include="Framework\INonceGenerator.cs" />
+    <Compile Include="Framework\IOAuthContext.cs" />
     <Compile Include="Framework\Signing\IOAuthContextSigner.cs" />
     <Compile Include="Framework\IToken.cs" />
     <Compile Include="Framework\OAuthException.cs" />
@@ -96,6 +102,11 @@
     <Compile Include="Provider\OAuthProvider.cs" />
     <Compile Include="Provider\Inspectors\SignatureValidationInspector.cs" />
     <Compile Include="Provider\Inspectors\TimestampRangeInspector.cs" />
+    <Compile Include="Storage\Basic\AccessToken.cs" />
+    <Compile Include="Storage\Basic\InMemoryTokenRepository.cs" />
+    <Compile Include="Storage\Basic\InMemoryTokenStore.cs" />
+    <Compile Include="Storage\Basic\ITokenRepository.cs" />
+    <Compile Include="Storage\Basic\RequestToken.cs" />
     <Compile Include="Storage\IConsumerStore.cs" />
     <Compile Include="Storage\INonceStore.cs" />
     <Compile Include="Storage\ITokenStore.cs" />
@@ -104,6 +115,7 @@
     <Compile Include="Testing\TestConsumerStore.cs" />
     <Compile Include="Testing\TestNonceStore.cs" />
     <Compile Include="Testing\TestTokenStore.cs" />
+    <Compile Include="Utility\ReflectionBasedDictionaryAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DevDefined.OAuth.snk">

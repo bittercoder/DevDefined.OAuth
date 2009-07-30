@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // The MIT License
 //
@@ -24,39 +24,28 @@
 
 #endregion
 
-using System.Collections.Generic;
-using DevDefined.OAuth.Storage;
+using DevDefined.OAuth.Framework;
 
-namespace ExampleProviderSite.Repositories
+namespace DevDefined.OAuth.Storage.Basic
 {
   /// <summary>
-  /// A simplistic in-memory repository for access and request token models - the example implementation of
+  /// A simplistic repository for access and request of token models - the example implementation of
   /// <see cref="ITokenStore" /> relies on this repository - normally you would make use of repositories
   /// wired up to your domain model i.e. NHibernate, Entity Framework etc.
   /// </summary>    
-  public class TokenRepository
+  public interface ITokenRepository<T> where T : TokenBase
   {
-    readonly Dictionary<string, Models.AccessToken> _accessTokens = new Dictionary<string, Models.AccessToken>();
-    readonly Dictionary<string, Models.RequestToken> _requestTokens = new Dictionary<string, Models.RequestToken>();
+    /// <summary>
+    /// Gets an existing token from the underlying store
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    T GetToken(string token);
 
-    public Models.RequestToken GetRequestToken(string token)
-    {
-      return _requestTokens[token];
-    }
-
-    public Models.AccessToken GetAccessToken(string token)
-    {
-      return _accessTokens[token];
-    }
-
-    public void SaveRequestToken(Models.RequestToken token)
-    {
-      _requestTokens[token.Token] = token;
-    }
-
-    public void SaveAccessToken(Models.AccessToken token)
-    {
-      _accessTokens[token.Token] = token;
-    }
+    /// <summary>
+    /// Saves the token in the underlying store
+    /// </summary>
+    /// <param name="token"></param>
+    void SaveToken(T token);
   }
 }

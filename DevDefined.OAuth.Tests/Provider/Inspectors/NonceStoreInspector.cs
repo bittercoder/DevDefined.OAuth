@@ -41,7 +41,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
     {
       var repository = new MockRepository();
 
-      var nonceStore = repository.CreateMock<INonceStore>();
+      var nonceStore = repository.StrictMock<INonceStore>();
       var context = new OAuthContext {Nonce = "1"};
 
       using (repository.Record())
@@ -60,7 +60,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
     {
       var repository = new MockRepository();
 
-      var nonceStore = repository.CreateMock<INonceStore>();
+      var nonceStore = repository.StrictMock<INonceStore>();
       var context = new OAuthContext {Nonce = "2"};
 
       using (repository.Record())

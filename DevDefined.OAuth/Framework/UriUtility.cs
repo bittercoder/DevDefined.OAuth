@@ -36,7 +36,10 @@ namespace DevDefined.OAuth.Framework
 {
   public static class UriUtility
   {
+    const string AuthorizationHeaderRealmParameter = "realm";
+    const string OAuthAuthorizationHeaderStart = "OAuth";
     const string UnreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
+    static readonly string[] QuoteCharacters = new[] {"\"", "'"};
 
     /// <summary>
     /// Extracts all the parameters from the supplied encoded parameters. 
@@ -73,6 +76,65 @@ namespace DevDefined.OAuth.Framework
       }
 
       return result;
+    }
+
+    /// <summary>
+    /// Extracts all the parameters from the supplied encoded parameters. 
+    /// </summary>
+    /// <param name="parameters"></param>
+    /// <returns></returns>
+    public static List<QueryParameter> GetHeaderParameters(string parameters)
+    {
+      parameters = parameters.Trim();
+
+      var result = new List<QueryParameter>();
+
+      if (!parameters.StartsWith(OAuthAuthorizationHeaderStart, StringComparison.InvariantCultureIgnoreCase))
+      {
+        return result;
+      }
+
+      parameters = parameters.Substring(OAuthAuthorizationHeaderStart.Length).Trim();
+
+      if (!string.IsNullOrEmpty(parameters))
+      {
+        string[] p = parameters.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string s in p)
+        {
+          if (string.IsNullOrEmpty(s)) continue;
+          QueryParameter parameter = ParseAuthorizationHeaderKeyValuePair(s);
+          if (parameter.Key != AuthorizationHeaderRealmParameter)
+          {
+            result.Add(parameter);
+          }
+        }
+      }
+
+      return result;
+    }
+
+    static QueryParameter ParseAuthorizationHeaderKeyValuePair(string value)
+    {
+      if (value.IndexOf('=') > -1)
+      {
+        string[] temp = value.Split('=');
+        return new QueryParameter(temp[0].Trim(), StripQuotes(temp[1]));
+      }
+      return new QueryParameter(value.Trim(), string.Empty);
+    }
+
+    static string StripQuotes(string quotedValue)
+    {
+      foreach (string quoteCharacter in QuoteCharacters)
+      {
+        if (quotedValue.StartsWith(quoteCharacter) && quotedValue.EndsWith(quoteCharacter) && quotedValue.Length > 1)
+        {
+          return quotedValue.Substring(1, quotedValue.Length - 2);
+        }
+      }
+
+      return quotedValue;
     }
 
     /// <summary>

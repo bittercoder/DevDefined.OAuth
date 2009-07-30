@@ -40,7 +40,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
     {
       var repository = new MockRepository();
 
-      var consumerStore = repository.CreateMock<IConsumerStore>();
+      var consumerStore = repository.StrictMock<IConsumerStore>();
       var context = new OAuthContext {ConsumerKey = "key"};
 
       using (repository.Record())
@@ -59,7 +59,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
     {
       var repository = new MockRepository();
 
-      var consumerStore = repository.CreateMock<IConsumerStore>();
+      var consumerStore = repository.StrictMock<IConsumerStore>();
       var context = new OAuthContext {ConsumerKey = "key"};
 
       using (repository.Record())

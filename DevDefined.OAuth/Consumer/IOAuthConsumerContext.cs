@@ -41,7 +41,7 @@ namespace DevDefined.OAuth.Consumer
     string SignatureMethod { get; set; }
     AsymmetricAlgorithm Key { get; set; }
     bool UseHeaderForOAuthParameters { get; set; }
-    void SignContext(OAuthContext context);
-    void SignContextWithToken(OAuthContext context, IToken token);
+    void SignContext(IOAuthContext context);
+    void SignContextWithToken(IOAuthContext context, IToken token);
   }
 }

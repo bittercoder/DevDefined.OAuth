@@ -52,7 +52,8 @@ namespace DevDefined.OAuth.Tests.Consumer
       return new OAuthSession(consumerContext, "https://www.google.com/accounts/OAuthGetRequestToken",
                               "https://www.google.com/accounts/accounts/OAuthAuthorizeToken",
                               "https://www.google.com/accounts/OAuthGetAccessToken ")
-        .WithQueryParameters(new {scope = "https://www.google.com/m8/feeds"});
+        .WithQueryParameters(new {scope = "https://www.google.com/m8/feeds"})
+        .RequiresCallbackConfirmation();
     }
 
     /*
@@ -102,6 +103,8 @@ string responseText = session.Request().Get().ForUrl("http://www.google.com/m8/f
 
         string userAuthorize = consumer.GetUserAuthorizationUrlForToken(requestToken, null);
 
+        string verificationCode;
+
         using (var ie = new IE(userAuthorize))
         {
           Link overrideLink = ie.Link("overridelink");
@@ -116,12 +119,23 @@ string responseText = session.Request().Get().ForUrl("http://www.google.com/m8/f
 
           ie.Button("allow").Click();
 
-          Assert.IsTrue(ie.Html.Contains("Authorized") || ie.Html.Contains("successfully granted"));
+          string html = ie.Html;
+
+          Assert.IsTrue(html.Contains("Authorized") || html.Contains("successfully granted"));
+
+          int index = html.IndexOf("verification code:");
+          
+          Assert.IsTrue(index > 0);
+
+          int startIndex = html.IndexOf("<B>", index, StringComparison.InvariantCultureIgnoreCase);
+          int endIndex = html.IndexOf("</B>", startIndex + 1, StringComparison.InvariantCultureIgnoreCase);
+
+          verificationCode = html.Substring(startIndex+3, endIndex-(startIndex+3));
         }
 
         // this will implicitly set AccessToken on the current session... 
 
-        IToken accessToken = consumer.ExchangeRequestTokenForAccessToken(requestToken);
+        IToken accessToken = consumer.ExchangeRequestTokenForAccessToken(requestToken, verificationCode);
 
         try
         {

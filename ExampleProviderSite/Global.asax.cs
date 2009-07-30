@@ -28,30 +28,17 @@ using System;
 using System.Web;
 using DevDefined.OAuth.Provider;
 using DevDefined.OAuth.Provider.Inspectors;
+using DevDefined.OAuth.Storage.Basic;
 using DevDefined.OAuth.Testing;
-using ExampleProviderSite.Implementation;
 using ExampleProviderSite.Repositories;
 
 namespace ExampleProviderSite
 {
-  public interface IOAuthServices
-  {
-    IOAuthProvider Provider { get; }
-    TokenRepository TokenRepository { get; }
-  }
-
-  public static class OAuthServicesLocator
-  {
-    public static IOAuthServices Services
-    {
-      get { return (HttpContext.Current.ApplicationInstance as IOAuthServices); }
-    }
-  }
-
   public class Global : HttpApplication, IOAuthServices
   {
     static IOAuthProvider _provider;
-    static TokenRepository _repository;
+    static ITokenRepository<DevDefined.OAuth.Storage.Basic.AccessToken> _accessTokenRepository;
+    static ITokenRepository<DevDefined.OAuth.Storage.Basic.RequestToken> _requestTokenRepository;
 
     #region IOAuthServices Members
 
@@ -60,19 +47,28 @@ namespace ExampleProviderSite
       get { return _provider; }
     }
 
-    public TokenRepository TokenRepository
+    public ITokenRepository<DevDefined.OAuth.Storage.Basic.AccessToken> AccessTokenRepository
     {
-      get { return _repository; }
+      get { return _accessTokenRepository; }
+    }
+
+    public ITokenRepository<DevDefined.OAuth.Storage.Basic.RequestToken> RequestTokenRepository
+    {
+      get { return _requestTokenRepository; }
     }
 
     #endregion
 
     protected void Application_Start(object sender, EventArgs e)
     {
+      _requestTokenRepository = new InMemoryTokenRepository<DevDefined.OAuth.Storage.Basic.RequestToken>();
+      _accessTokenRepository = new InMemoryTokenRepository<DevDefined.OAuth.Storage.Basic.AccessToken>();
+      
       var consumerStore = new TestConsumerStore();
-      var nonceStore = new TestNonceStore();
-      _repository = new TokenRepository();
-      var tokenStore = new SimpleTokenStore(_repository);
+      
+      var nonceStore = new TestNonceStore();      
+      
+      var tokenStore = new SimpleTokenStore(_accessTokenRepository, _requestTokenRepository);
 
       _provider = new OAuthProvider(tokenStore,
                                     new SignatureValidationInspector(consumerStore),

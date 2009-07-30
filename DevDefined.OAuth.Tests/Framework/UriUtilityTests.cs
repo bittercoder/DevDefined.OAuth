@@ -36,6 +36,35 @@ namespace DevDefined.OAuth.Tests.Framework
   public class UriUtilityTests
   {
     [Test]
+    public void GetHeaderParameters()
+    {
+      List<QueryParameter> parameters =
+        UriUtility.GetHeaderParameters("OAuth realm=\"http:\\somerealm.com\", oauth_consumer_key=\"consumerKey\"");
+
+      Assert.AreEqual(1, parameters.Count);
+      Assert.AreEqual("consumerKey", parameters.Single(p => p.Key == "oauth_consumer_key").Value);
+    }
+
+    [Test]
+    public void GetHeaderParametersWhenAuthorizationHeaderDoesNotContainOAuthReturnsEmptyCollection()
+    {
+      List<QueryParameter> parameters =
+        UriUtility.GetHeaderParameters("realm=\"http:\\somerealm.com\", oauth_consumer_key=\"\"");
+
+      Assert.AreEqual(0, parameters.Count);
+    }
+
+    [Test]
+    public void GetHeaderParametersWhenKeysValueIsEmpty()
+    {
+      List<QueryParameter> parameters =
+        UriUtility.GetHeaderParameters("OAuth realm=\"http:\\somerealm.com\", oauth_consumer_key=\"\"");
+
+      Assert.AreEqual(1, parameters.Count);
+      Assert.AreEqual("", parameters.Single(p => p.Key == "oauth_consumer_key").Value);
+    }
+
+    [Test]
     public void GetQueryParametersWithoutQuestionMark()
     {
       List<QueryParameter> parameters = UriUtility.GetQueryParameters("key1=value1&key2=value2");

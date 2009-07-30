@@ -25,127 +25,38 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Web;
 using System.Xml.Linq;
-using Castle.Core;
 using DevDefined.OAuth.Framework;
 
 namespace DevDefined.OAuth.Consumer
 {
-  public class ConsumerRequest
+  public class ConsumerRequest : IConsumerRequest
   {
     readonly IOAuthConsumerContext _consumerContext;
-    readonly OAuthContext _context;
+    readonly IOAuthContext _context;
     readonly IToken _token;
 
-    public ConsumerRequest(OAuthContext context, IOAuthConsumerContext consumerContext, IToken token)
+    public ConsumerRequest(IOAuthContext context, IOAuthConsumerContext consumerContext, IToken token)
     {
       _context = context;
       _consumerContext = consumerContext;
       _token = token;
     }
 
-    public OAuthContext Context
+    public IOAuthConsumerContext ConsumerContext
+    {
+      get { return _consumerContext; }
+    }
+
+    public IOAuthContext Context
     {
       get { return _context; }
     }
-
-    public ConsumerRequest AlterContext(Action<OAuthContext> alteration)
-    {
-      alteration(_context);
-      return this;
-    }
-
-    public ConsumerRequest ForMethod(string method)
-    {
-      _context.RequestMethod = method;
-      return this;
-    }
-
-    public ConsumerRequest Get()
-    {
-      return ForMethod("GET");
-    }
-
-    public ConsumerRequest Delete()
-    {
-      return ForMethod("DELETE");
-    }
-
-    public ConsumerRequest Put()
-    {
-      return ForMethod("PUT");
-    }
-
-    public ConsumerRequest Post()
-    {
-      return ForMethod("POST");
-    }
-
-    public ConsumerRequest ForUri(Uri uri)
-    {
-      _context.RawUri = uri;
-      return this;
-    }
-
-    public ConsumerRequest ForUrl(string url)
-    {
-      _context.RawUri = new Uri(url);
-      return this;
-    }
-
-    public ConsumerRequest WithFormParameters(IDictionary dictionary)
-    {
-      ApplyParameters(_context.FormEncodedParameters, dictionary);
-      return this;
-    }
-
-    public ConsumerRequest WithFormParameters(object anonymousClass)
-    {
-      ApplyParameters(_context.FormEncodedParameters, anonymousClass);
-      return this;
-    }
-
-    public ConsumerRequest WithQueryParameters(IDictionary dictionary)
-    {
-      ApplyParameters(_context.QueryParameters, dictionary);
-      return this;
-    }
-
-    public ConsumerRequest WithQueryParameters(object anonymousClass)
-    {
-      ApplyParameters(_context.QueryParameters, anonymousClass);
-      return this;
-    }
-
-    public ConsumerRequest WithCookies(IDictionary dictionary)
-    {
-      ApplyParameters(_context.Cookies, dictionary);
-      return this;
-    }
-
-    public ConsumerRequest WithCookies(object anonymousClass)
-    {
-      ApplyParameters(_context.Cookies, anonymousClass);
-      return this;
-    }
-
-    public ConsumerRequest WithHeaders(IDictionary dictionary)
-    {
-      ApplyParameters(_context.Headers, dictionary);
-      return this;
-    }
-
-    public ConsumerRequest WithHeaders(object anonymousClass)
-    {
-      ApplyParameters(_context.Headers, anonymousClass);
-      return this;
-    }
-
+    
     public override string ToString()
     {
       return FromStream(stream => new StreamReader(stream).ReadToEnd());
@@ -173,23 +84,35 @@ namespace DevDefined.OAuth.Consumer
         return streamParser(stream);
       }
     }
-
-    void ApplyParameters(NameValueCollection destination, object anonymousClass)
-    {
-      ApplyParameters(destination, new ReflectionBasedDictionaryAdapter(anonymousClass));
-    }
-
-    void ApplyParameters(NameValueCollection destination, IDictionary additions)
-    {
-      if (additions == null) throw new ArgumentNullException("additions");
-
-      foreach (string parameter in additions.Keys)
-      {
-        destination[parameter] = Convert.ToString(additions[parameter]);
-      }
-    }
-
+    
     public HttpWebRequest ToWebRequest()
+    {
+      var description = GetRequestDescription();
+
+      var request = (HttpWebRequest) WebRequest.Create(description.Url);
+      request.Method = description.Method;
+
+      if (description.ContentType == "application/x-www-form-urlencoded")
+      {
+        request.ContentType = description.ContentType;
+        using (var writer = new StreamWriter(request.GetRequestStream()))
+        {
+          writer.Write(description.Body);
+        }
+      }
+
+      if (description.Headers.Count > 0)
+      {
+        foreach (var key in description.Headers.AllKeys)
+        {
+          request.Headers[key] = description.Headers[key];
+        }
+      }
+
+      return request;
+    }
+    
+    public RequestDescription GetRequestDescription()
     {
       if (string.IsNullOrEmpty(_context.Signature))
       {
@@ -202,27 +125,27 @@ namespace DevDefined.OAuth.Consumer
           _consumerContext.SignContext(_context);
         }
       }
-
+      
       Uri uri = _context.GenerateUri();
 
-      var request = (HttpWebRequest) WebRequest.Create(uri);
-      request.Method = _context.RequestMethod;
+      var description = new RequestDescription
+        {
+          Url = uri,
+          Method = _context.RequestMethod
+        };
 
       if ((_context.FormEncodedParameters != null) && (_context.FormEncodedParameters.Count > 0))
       {
-        request.ContentType = "application/x-www-form-urlencoded";
-        using (var writer = new StreamWriter(request.GetRequestStream()))
-        {
-          writer.Write(UriUtility.FormatQueryString(_context.FormEncodedParameters));
-        }
+        description.ContentType = "application/x-www-form-urlencoded";
+        description.Body = UriUtility.FormatQueryString(_context.FormEncodedParameters);
       }
 
       if (_consumerContext.UseHeaderForOAuthParameters)
       {
-        request.Headers[Parameters.OAuth_Authorization_Header] = _context.GenerateOAuthParametersForHeader();
+        description.Headers[Parameters.OAuth_Authorization_Header] = _context.GenerateOAuthParametersForHeader();
       }
 
-      return request;
+      return description;
     }
 
     public HttpWebResponse ToWebResponse()
@@ -252,31 +175,19 @@ namespace DevDefined.OAuth.Consumer
       }
     }
 
-    public T Select<T>(Func<NameValueCollection, T> selectFunc)
-    {
-      try
-      {
-        return selectFunc(ToBodyParameters());
-      }
-      catch (ArgumentNullException)
-      {
-        throw Error.FailedToParseResponse(ToString());
-      }
-    }
-
-    public ConsumerRequest SignWithoutToken()
+    public IConsumerRequest SignWithoutToken()
     {
       EnsureRequestHasNotBeenSignedYet();
       _consumerContext.SignContext(_context);
       return this;
     }
 
-    public ConsumerRequest SignWithToken()
+    public IConsumerRequest SignWithToken()
     {
       return SignWithToken(_token);
     }
 
-    public ConsumerRequest SignWithToken(IToken token)
+    public IConsumerRequest SignWithToken(IToken token)
     {
       EnsureRequestHasNotBeenSignedYet();
       _consumerContext.SignContextWithToken(_context, token);
@@ -289,11 +200,6 @@ namespace DevDefined.OAuth.Consumer
       {
         throw Error.ThisConsumerRequestHasAlreadyBeenSigned();
       }
-    }
-
-    public static implicit operator OAuthContext(ConsumerRequest request)
-    {
-      return request._context;
     }
   }
 }

@@ -40,12 +40,12 @@ namespace DevDefined.OAuth.Framework.Signing
       get { return SignatureMethod.RsaSha1; }
     }
 
-    public void SignContext(OAuthContext authContext, SigningContext signingContext)
+    public void SignContext(IOAuthContext authContext, SigningContext signingContext)
     {
       authContext.Signature = GenerateSignature(authContext, signingContext);
     }
 
-    public bool ValidateSignature(OAuthContext authContext, SigningContext signingContext)
+    public bool ValidateSignature(IOAuthContext authContext, SigningContext signingContext)
     {
       if (signingContext.Algorithm == null) throw Error.AlgorithmPropertyNotSetOnSigningContext();
 
@@ -61,7 +61,7 @@ namespace DevDefined.OAuth.Framework.Signing
 
     #endregion
 
-    string GenerateSignature(OAuthContext authContext, SigningContext signingContext)
+    string GenerateSignature(IOAuthContext authContext, SigningContext signingContext)
     {
       if (signingContext.Algorithm == null) throw Error.AlgorithmPropertyNotSetOnSigningContext();
 

@@ -28,18 +28,18 @@ using System;
 using System.Web;
 using System.Web.UI;
 using DevDefined.OAuth.Framework;
-using DevDefined.OAuth.Wcf.Repositories;
+using DevDefined.OAuth.Storage.Basic;
 
 namespace ExampleOAuthChannel
 {
   public partial class UserAuthorize : Page
   {
-    ITokenRepository<DevDefined.OAuth.Wcf.Models.AccessToken> AccessTokenRepository
+    ITokenRepository<DevDefined.OAuth.Storage.Basic.AccessToken> AccessTokenRepository
     {
       get { return OAuthServicesLocator.AccessTokenRepository; }
     }
 
-    ITokenRepository<DevDefined.OAuth.Wcf.Models.RequestToken> RequestTokenRepository
+    ITokenRepository<DevDefined.OAuth.Storage.Basic.RequestToken> RequestTokenRepository
     {
       get { return OAuthServicesLocator.RequestTokenRepository; }
     }
@@ -78,9 +78,9 @@ namespace ExampleOAuthChannel
 
     void ApproveRequestForAccess(string tokenString)
     {
-      DevDefined.OAuth.Wcf.Models.RequestToken requestToken = RequestTokenRepository.GetToken(tokenString);
+      DevDefined.OAuth.Storage.Basic.RequestToken requestToken = RequestTokenRepository.GetToken(tokenString);
 
-      var accessToken = new DevDefined.OAuth.Wcf.Models.AccessToken
+      var accessToken = new DevDefined.OAuth.Storage.Basic.AccessToken
         {
           ConsumerKey = requestToken.ConsumerKey,
           Realm = requestToken.Realm,
@@ -100,7 +100,7 @@ namespace ExampleOAuthChannel
 
     void DenyRequestForAccess(string tokenString)
     {
-      DevDefined.OAuth.Wcf.Models.RequestToken requestToken = RequestTokenRepository.GetToken(tokenString);
+      DevDefined.OAuth.Storage.Basic.RequestToken requestToken = RequestTokenRepository.GetToken(tokenString);
 
       requestToken.AccessDenied = true;
 

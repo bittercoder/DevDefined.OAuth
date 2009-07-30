@@ -92,7 +92,7 @@ namespace DevDefined.OAuth.Tests.Consumer
       session.AccessToken = new TokenBase {ConsumerKey = "key", Token = "accesskey", TokenSecret = "accesssecret"};
       session.ConsumerContext.UseHeaderForOAuthParameters = true;
 
-      ConsumerRequest context = session.Request().Post().ForUrl("http://term.ie/oauth/example/echo_api.php")
+      var context = session.Request().Post().ForUrl("http://term.ie/oauth/example/echo_api.php")
         .WithFormParameters(new {success = "true"})
         .SignWithToken();
 

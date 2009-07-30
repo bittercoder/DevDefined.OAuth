@@ -30,5 +30,5 @@ namespace DevDefined.OAuth.Framework
   {
     string TokenSecret { get; set; }
     string Token { get; set; }
-  }
+  }  
 }

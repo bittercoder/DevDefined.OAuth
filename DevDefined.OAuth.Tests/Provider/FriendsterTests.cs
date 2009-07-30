@@ -59,7 +59,7 @@ A1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEFBQADQQCXFtEZswNcPcOTT78oeTuslgmu
         new Uri(
           "http://demo.devdefined.com/OpenSocial/HelloWorld.aspx?oauth_nonce=c39f4e3e6c309988763eb8af85fcb74b&oauth_timestamp=1221992254&oauth_consumer_key=friendster.com&synd=friendster&container=default&opensocial_owner_id=82474146&opensocial_viewer_id=82474146&opensocial_app_id=52ae97f7aa8a7e7565dd40a4e00eb0f5&oauth_token=&xoauth_signature_publickey=http%3A%2F%2Fwww.fmodules.com%2Fpublic080813.crt&oauth_signature_method=RSA-SHA1&oauth_signature=PLOkRKwLLeJRZz18PsAVQgL5y9Rdf0AW5eicdT0xwauRe3bE2NTDFHoMsUtO6UMHEY0v9GRcKbvkgEWEGGtiGA%3D%3D&");
 
-      OAuthContext context = new OAuthContextBuilder().FromUri("GET", uri);
+      IOAuthContext context = new OAuthContextBuilder().FromUri("GET", uri);
       var signer = new OAuthContextSigner();
       var signingContext = new SigningContext {Algorithm = FriendsterCertificate.PublicKey.Key};
 

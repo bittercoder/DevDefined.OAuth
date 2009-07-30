@@ -39,12 +39,12 @@ namespace DevDefined.OAuth.Framework.Signing
       get { return SignatureMethod.HmacSha1; }
     }
 
-    public void SignContext(OAuthContext authContext, SigningContext signingContext)
+    public void SignContext(IOAuthContext authContext, SigningContext signingContext)
     {
       authContext.Signature = GenerateSignature(authContext, signingContext);
     }
 
-    public bool ValidateSignature(OAuthContext authContext, SigningContext signingContext)
+    public bool ValidateSignature(IOAuthContext authContext, SigningContext signingContext)
     {
       return (authContext.Signature == GenerateSignature(authContext, signingContext));
     }

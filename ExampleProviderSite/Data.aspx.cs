@@ -38,17 +38,17 @@ namespace ExampleProviderSite
   {
     protected void Page_Load(object sender, EventArgs e)
     {
-      OAuthContext context = new OAuthContextBuilder().FromHttpRequest(Request);
+      var context = new OAuthContextBuilder().FromHttpRequest(Request);
 
       IOAuthProvider provider = OAuthServicesLocator.Services.Provider;
 
-      TokenRepository tokenRepository = OAuthServicesLocator.Services.TokenRepository;
+      var tokenRepository = OAuthServicesLocator.Services.AccessTokenRepository;
 
       try
       {
         provider.AccessProtectedResourceRequest(context);
 
-        Models.AccessToken accessToken = tokenRepository.GetAccessToken(context.Token);
+        var accessToken = tokenRepository.GetToken(context.Token);
 
         string userName = accessToken.UserName;
 

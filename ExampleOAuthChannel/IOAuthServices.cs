@@ -25,11 +25,11 @@
 #endregion
 
 using DevDefined.OAuth.Provider;
-using DevDefined.OAuth.Wcf.Repositories;
+using DevDefined.OAuth.Storage.Basic;
 
 public interface IOAuthServices
 {
   IOAuthProvider Provider { get; }
-  ITokenRepository<DevDefined.OAuth.Wcf.Models.AccessToken> AccessTokenRepository { get; }
-  ITokenRepository<DevDefined.OAuth.Wcf.Models.RequestToken> RequestTokenRepository { get; }
+  ITokenRepository<AccessToken> AccessTokenRepository { get; }
+  ITokenRepository<DevDefined.OAuth.Storage.Basic.RequestToken> RequestTokenRepository { get; }
 }

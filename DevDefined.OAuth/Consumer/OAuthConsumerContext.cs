@@ -62,7 +62,7 @@ namespace DevDefined.OAuth.Consumer
     public AsymmetricAlgorithm Key { get; set; }
     public bool UseHeaderForOAuthParameters { get; set; }
 
-    public void SignContext(OAuthContext context)
+    public void SignContext(IOAuthContext context)
     {
       EnsureStateIsValid();
 
@@ -84,7 +84,7 @@ namespace DevDefined.OAuth.Consumer
                             {Algorithm = Key, SignatureBase = signatureBase, ConsumerSecret = ConsumerSecret});
     }
 
-    public void SignContextWithToken(OAuthContext context, IToken token)
+    public void SignContextWithToken(IOAuthContext context, IToken token)
     {
       context.Token = token.Token;
       context.TokenSecret = token.TokenSecret;

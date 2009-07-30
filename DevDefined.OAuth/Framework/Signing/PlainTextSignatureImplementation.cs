@@ -35,19 +35,19 @@ namespace DevDefined.OAuth.Framework.Signing
       get { return SignatureMethod.PlainText; }
     }
 
-    public void SignContext(OAuthContext authContext, SigningContext signingContext)
+    public void SignContext(IOAuthContext authContext, SigningContext signingContext)
     {
       authContext.Signature = GenerateSignature(authContext, signingContext);
     }
 
-    public bool ValidateSignature(OAuthContext authContext, SigningContext signingContext)
+    public bool ValidateSignature(IOAuthContext authContext, SigningContext signingContext)
     {
       return (authContext.Signature == GenerateSignature(authContext, signingContext));
     }
 
     #endregion
 
-    string GenerateSignature(OAuthContext authContext, SigningContext signingContext)
+    string GenerateSignature(IOAuthContext authContext, SigningContext signingContext)
     {
       return UriUtility.UrlEncode(string.Format("{0}&{1}", signingContext.ConsumerSecret, authContext.TokenSecret));
     }

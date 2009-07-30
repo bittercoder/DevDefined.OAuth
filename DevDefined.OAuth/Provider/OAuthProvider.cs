@@ -47,14 +47,14 @@ namespace DevDefined.OAuth.Provider
 
     #region IOAuthProvider Members
 
-    public virtual IToken GrantRequestToken(OAuthContext context)
+    public virtual IToken GrantRequestToken(IOAuthContext context)
     {
       InspectRequest(context);
 
       return _tokenStore.CreateRequestToken(context);
     }
 
-    public virtual IToken ExchangeRequestTokenForAccessToken(OAuthContext context)
+    public virtual IToken ExchangeRequestTokenForAccessToken(IOAuthContext context)
     {
       InspectRequest(context);
 
@@ -73,7 +73,7 @@ namespace DevDefined.OAuth.Provider
       return _tokenStore.GetAccessTokenAssociatedWithRequestToken(context);
     }
 
-    public virtual void AccessProtectedResourceRequest(OAuthContext context)
+    public virtual void AccessProtectedResourceRequest(IOAuthContext context)
     {
       InspectRequest(context);
 
@@ -87,7 +87,7 @@ namespace DevDefined.OAuth.Provider
       _inspectors.Add(inspector);
     }
 
-    protected virtual void InspectRequest(OAuthContext context)
+    protected virtual void InspectRequest(IOAuthContext context)
     {
       foreach (IContextInspector inspector in _inspectors)
       {

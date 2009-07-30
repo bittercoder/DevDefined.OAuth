@@ -51,6 +51,9 @@
     <Reference Include="System.ServiceModel.Web">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Web.Abstractions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Web.Extensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -124,10 +127,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DevDefined.OAuth.Tests\DevDefined.OAuth.Tests.csproj">
-      <Project>{86815C8E-3E6E-4176-9548-B40B2C691144}</Project>
-      <Name>DevDefined.OAuth.Tests</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DevDefined.OAuth\DevDefined.OAuth.csproj">
       <Project>{61B700B6-3911-4CEF-8751-7F42CA765068}</Project>
       <Name>DevDefined.OAuth</Name>

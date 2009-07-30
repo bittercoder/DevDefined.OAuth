@@ -38,12 +38,13 @@ namespace DevDefined.OAuth.Tests.Framework
     {
       var context = new OAuthContext
         {
-          RequestMethod = "GET",
-          RawUri = new Uri("https://www.google.com/m8/feeds/contacts/default/base"),
-          Token = "1/2",
-          ConsumerKey = "context",
-          SignatureMethod = SignatureMethod.RsaSha1
+          RequestMethod = "GET"
         };
+
+      context.RawUri = new Uri("https://www.google.com/m8/feeds/contacts/default/base");
+      context.Token = "1/2";
+      context.ConsumerKey = "context";
+      context.SignatureMethod = SignatureMethod.RsaSha1;
 
       Assert.AreEqual(
         "GET&https%3A%2F%2Fwww.google.com%2Fm8%2Ffeeds%2Fcontacts%2Fdefault%2Fbase&oauth_consumer_key%3Dcontext%26oauth_signature_method%3DRSA-SHA1%26oauth_token%3D1%252F2",

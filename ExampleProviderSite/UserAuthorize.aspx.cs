@@ -28,20 +28,26 @@ using System;
 using System.Web;
 using System.Web.UI;
 using DevDefined.OAuth.Framework;
+using DevDefined.OAuth.Storage.Basic;
 using ExampleProviderSite.Repositories;
 
 namespace ExampleProviderSite
 {
   public partial class UserAuthorize : Page
   {
-    TokenRepository Repository
+    ITokenRepository<DevDefined.OAuth.Storage.Basic.RequestToken> RequestTokenRepository
     {
-      get { return OAuthServicesLocator.Services.TokenRepository; }
+      get { return OAuthServicesLocator.Services.RequestTokenRepository; }
+    }
+
+    ITokenRepository<DevDefined.OAuth.Storage.Basic.AccessToken> AccessTokenRepository
+    {
+      get { return OAuthServicesLocator.Services.AccessTokenRepository; }
     }
 
     public string ConsumerKey
     {
-      get { return Repository.GetRequestToken(GetTokenString()).ConsumerKey; }
+      get { return RequestTokenRepository.GetToken(GetTokenString()).ConsumerKey; }
     }
 
     string GetTokenString()
@@ -73,9 +79,9 @@ namespace ExampleProviderSite
 
     void ApproveRequestForAccess(string tokenString)
     {
-      Models.RequestToken requestToken = Repository.GetRequestToken(tokenString);
+      DevDefined.OAuth.Storage.Basic.RequestToken requestToken = RequestTokenRepository.GetToken(tokenString);
 
-      var accessToken = new Models.AccessToken
+      var accessToken = new DevDefined.OAuth.Storage.Basic.AccessToken
         {
           ConsumerKey = requestToken.ConsumerKey,
           Realm = requestToken.Realm,
@@ -85,20 +91,20 @@ namespace ExampleProviderSite
           ExpireyDate = DateTime.Now.AddMinutes(1)
         };
 
-      Repository.SaveAccessToken(accessToken);
+      AccessTokenRepository.SaveToken(accessToken);
 
       requestToken.AccessToken = accessToken;
 
-      Repository.SaveRequestToken(requestToken);
+      RequestTokenRepository.SaveToken(requestToken);
     }
 
     void DenyRequestForAccess(string tokenString)
     {
-      Models.RequestToken requestToken = Repository.GetRequestToken(tokenString);
+      DevDefined.OAuth.Storage.Basic.RequestToken requestToken = RequestTokenRepository.GetToken(tokenString);
 
       requestToken.AccessDenied = true;
 
-      Repository.SaveRequestToken(requestToken);
+      RequestTokenRepository.SaveToken(requestToken);
     }
 
     void RedirectToClient(string token, bool granted)

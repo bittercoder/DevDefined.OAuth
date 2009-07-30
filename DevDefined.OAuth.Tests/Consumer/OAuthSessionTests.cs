@@ -27,6 +27,7 @@
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace DevDefined.OAuth.Tests.Consumer
 {
@@ -42,6 +43,47 @@ namespace DevDefined.OAuth.Tests.Consumer
                                                               "http://localhost/callback");
       Assert.AreEqual(
         "http://localhost/userauth?oauth_token=token&oauth_callback=http%3A%2F%2Flocalhost%2Fcallback", actual);
+    }
+
+    [Test]
+    public void GetRequestTokenForConsumerWithCallbackUrl()
+    {
+      var consumerContext = new OAuthConsumerContext {ConsumerKey = "key"};
+
+      var session = new OAuthSession(consumerContext, "http://localhost/request",
+                                     "http://localhost/userauth", "http://localhost/access", "http://localhost/callback");
+
+      var description = session.BuildRequestTokenContext("POST").GetRequestDescription();
+
+      Assert.IsTrue(description.Body.Contains("oauth_callback=http%3A%2F%2Flocalhost%2Fcallback"));
+    }
+
+    [Test]
+    public void GetRequestTokenForConsumerWithoutCallbackUrl()
+    {
+      var consumerContext = new OAuthConsumerContext { ConsumerKey = "key" };
+
+      var session = new OAuthSession(consumerContext, "http://localhost/request",
+                                     "http://localhost/userauth", "http://localhost/access");
+
+      var description = session.BuildRequestTokenContext("POST").GetRequestDescription();
+
+      Assert.IsTrue(description.Body.Contains("oauth_callback=oob"));
+    }
+
+    [Test]
+    public void GetRequestTokenForMethodGetDoesNotPopulateBody()
+    {
+      var consumerContext = new OAuthConsumerContext { ConsumerKey = "key" };
+
+      var session = new OAuthSession(consumerContext, "http://localhost/request",
+                                     "http://localhost/userauth", "http://localhost/access");
+
+      var description = session.BuildRequestTokenContext("GET").GetRequestDescription();
+
+      Assert.IsNull(description.Body);
+      Assert.IsNull(description.ContentType);
+      Assert.AreEqual("GET", description.Method);
     }
 
     [Test]

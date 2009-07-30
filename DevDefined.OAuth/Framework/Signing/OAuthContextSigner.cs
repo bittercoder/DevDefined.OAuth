@@ -48,13 +48,13 @@ namespace DevDefined.OAuth.Framework.Signing
 
     #region IOAuthContextSigner Members
 
-    public void SignContext(OAuthContext authContext, SigningContext signingContext)
+    public void SignContext(IOAuthContext authContext, SigningContext signingContext)
     {
       signingContext.SignatureBase = authContext.GenerateSignatureBase();
       FindImplementationForAuthContext(authContext).SignContext(authContext, signingContext);
     }
 
-    public bool ValidateSignature(OAuthContext authContext, SigningContext signingContext)
+    public bool ValidateSignature(IOAuthContext authContext, SigningContext signingContext)
     {
       signingContext.SignatureBase = authContext.GenerateSignatureBase();
       return FindImplementationForAuthContext(authContext).ValidateSignature(authContext, signingContext);
@@ -62,7 +62,7 @@ namespace DevDefined.OAuth.Framework.Signing
 
     #endregion
 
-    IContextSignatureImplementation FindImplementationForAuthContext(OAuthContext authContext)
+    IContextSignatureImplementation FindImplementationForAuthContext(IOAuthContext authContext)
     {
       IContextSignatureImplementation impl =
         _implementations.FirstOrDefault(i => i.MethodName == authContext.SignatureMethod);

@@ -43,7 +43,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       var repository = new MockRepository();
 
       var consumerStore = repository.DynamicMock<IConsumerStore>();
-      var signer = repository.CreateMock<IOAuthContextSigner>();
+      var signer = repository.StrictMock<IOAuthContextSigner>();
 
       var context = new OAuthContext {ConsumerKey = "key", SignatureMethod = SignatureMethod.PlainText};
 
@@ -64,7 +64,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       var repository = new MockRepository();
 
       var consumerStore = repository.DynamicMock<IConsumerStore>();
-      var signer = repository.CreateMock<IOAuthContextSigner>();
+      var signer = repository.StrictMock<IOAuthContextSigner>();
 
       var context = new OAuthContext {ConsumerKey = "key", SignatureMethod = SignatureMethod.PlainText};
 
@@ -85,7 +85,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       var repository = new MockRepository();
 
       var consumerStore = repository.DynamicMock<IConsumerStore>();
-      var signer = repository.CreateMock<IOAuthContextSigner>();
+      var signer = repository.StrictMock<IOAuthContextSigner>();
 
       var context = new OAuthContext {ConsumerKey = "key", SignatureMethod = SignatureMethod.RsaSha1};
 

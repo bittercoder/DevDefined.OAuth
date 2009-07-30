@@ -30,12 +30,21 @@ using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
-
+using System.Linq;
 namespace DevDefined.OAuth.Framework
 {
-  public class OAuthContextBuilder
+  public interface IOAuthContextBuilder
   {
-    public OAuthContext FromUri(string httpMethod, Uri uri)
+    IOAuthContext FromUri(string httpMethod, Uri uri);
+    IOAuthContext FromHttpRequest(HttpRequest request);
+    IOAuthContext FromHttpRequest(HttpRequestBase request);
+    IOAuthContext FromWebRequest(HttpWebRequest request, Stream rawBody);
+    IOAuthContext FromWebRequest(HttpWebRequest request, string body);
+  }
+
+  public class OAuthContextBuilder : IOAuthContextBuilder
+  {
+    public IOAuthContext FromUri(string httpMethod, Uri uri)
     {
       uri = CleanUri(uri);
 
@@ -57,22 +66,30 @@ namespace DevDefined.OAuth.Framework
       string originalUrl = uri.OriginalString;
       return originalUrl.EndsWith("&") ? new Uri(originalUrl.Substring(0, originalUrl.Length - 1)) : uri;
     }
-
-    public OAuthContext FromHttpRequest(HttpRequest request)
+    public IOAuthContext FromHttpRequest(HttpRequest request)
+    {
+      return FromHttpRequest(new HttpRequestWrapper(request));
+    }
+    public IOAuthContext FromHttpRequest(HttpRequestBase request)
     {
       var context = new OAuthContext
-        {
-          RawUri = CleanUri(request.Url),
-          Cookies = CollectCookies(request),
-          Headers = request.Headers,
-          RequestMethod = request.HttpMethod,
-          FormEncodedParameters = request.Form
-        };
+                      {
+                        RawUri = CleanUri(request.Url),
+                        Cookies = CollectCookies(request),
+                        Headers = request.Headers,
+                        RequestMethod = request.HttpMethod,
+                        FormEncodedParameters = request.Form,
+                        QueryParameters = request.QueryString,
+                      };
+      if (request.Headers.AllKeys.Contains("Authorization"))
+      {
+        context.AuthorizationHeaderParameters = UriUtility.GetHeaderParameters(request.Headers["Authorization"]).ToNameValueCollection();
+      }
 
       return context;
     }
 
-    public OAuthContext FromWebRequest(HttpWebRequest request, Stream rawBody)
+    public IOAuthContext FromWebRequest(HttpWebRequest request, Stream rawBody)
     {
       using (var reader = new StreamReader(rawBody))
       {
@@ -80,7 +97,7 @@ namespace DevDefined.OAuth.Framework
       }
     }
 
-    public OAuthContext FromWebRequest(HttpWebRequest request, string body)
+    public IOAuthContext FromWebRequest(HttpWebRequest request, string body)
     {
       var context = new OAuthContext
         {
@@ -98,17 +115,17 @@ namespace DevDefined.OAuth.Framework
       return context;
     }
 
-    NameValueCollection CollectCookies(HttpWebRequest request)
+    static NameValueCollection CollectCookies(WebRequest request)
     {
       return CollectCookiesFromHeaderString(request.Headers[HttpRequestHeader.Cookie]);
     }
 
-    NameValueCollection CollectCookies(HttpRequest request)
+    static NameValueCollection CollectCookies(HttpRequestBase request)
     {
       return CollectCookiesFromHeaderString(request.Headers["Set-Cookie"]);
     }
 
-    NameValueCollection CollectCookiesFromHeaderString(string cookieHeader)
+    static NameValueCollection CollectCookiesFromHeaderString(string cookieHeader)
     {
       var cookieCollection = new NameValueCollection();
 

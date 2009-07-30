@@ -34,7 +34,7 @@ using QueryParameter = System.Collections.Generic.KeyValuePair<string, string>;
 
 namespace DevDefined.OAuth.Framework
 {
-  public class OAuthContext : IToken
+  public class OAuthContext : IOAuthContext
   {
     readonly BoundParameter _consumerKey;
     readonly BoundParameter _nonce;
@@ -44,6 +44,8 @@ namespace DevDefined.OAuth.Framework
     readonly BoundParameter _token;
     readonly BoundParameter _tokenSecret;
     readonly BoundParameter _version;
+    readonly BoundParameter _callbackUrl;
+    readonly BoundParameter _verifier;
     NameValueCollection _authorizationHeaderParameters;
     NameValueCollection _cookies;
     NameValueCollection _formEncodedParameters;
@@ -54,7 +56,9 @@ namespace DevDefined.OAuth.Framework
 
     public OAuthContext()
     {
+      _verifier = new BoundParameter(Parameters.OAuth_Verifier, this);
       _consumerKey = new BoundParameter(Parameters.OAuth_Consumer_Key, this);
+      _callbackUrl = new BoundParameter(Parameters.OAuth_Callback, this);
       _nonce = new BoundParameter(Parameters.OAuth_Nonce, this);
       _signature = new BoundParameter(Parameters.OAuth_Signature, this);
       _signatureMethod = new BoundParameter(Parameters.OAuth_Signature_Method, this);
@@ -150,6 +154,18 @@ namespace DevDefined.OAuth.Framework
     {
       get { return _nonce.Value; }
       set { _nonce.Value = value; }
+    }
+
+    public string Verifier
+    {
+      get { return _verifier.Value; }
+      set { _verifier.Value = value; }
+    }
+
+    public string CallbackUrl
+    {
+      get { return _callbackUrl.Value; }
+      set { _callbackUrl.Value = value; }
     }
 
     public string Signature
@@ -303,29 +319,29 @@ namespace DevDefined.OAuth.Framework
 
     public override string ToString()
     {
-/*
-          StringBuilder builder = new StringBuilder();
+      /*
+                StringBuilder builder = new StringBuilder();
 
-          builder.AppendFormat("")
-            this.ConsumerKey
-              this.Nonce
-                this.RawUri
-                  this.Realm
-                            this.RequestMethod
-                              this.Signature
-                                this.SignatureMethod
-                                  this.Timestamp
-                                    this.Token
-                                      this.TokenSecret
-                                        this.UseAuthorizationHeader
-                                          this.Version
+                builder.AppendFormat("")
+                  this.ConsumerKey
+                    this.Nonce
+                      this.RawUri
+                        this.Realm
+                                  this.RequestMethod
+                                    this.Signature
+                                      this.SignatureMethod
+                                        this.Timestamp
+                                          this.Token
+                                            this.TokenSecret
+                                              this.UseAuthorizationHeader
+                                                this.Version
           
-          this.AuthorizationHeaderParameters          
-              this.Cookies
-              this.FormEncodedParameters
-                this.Headers                  
-                    this.NormalizedRequestUrl
-                      this.QueryParameters                                                          */
+                this.AuthorizationHeaderParameters          
+                    this.Cookies
+                    this.FormEncodedParameters
+                      this.Headers                  
+                          this.NormalizedRequestUrl
+                            this.QueryParameters                                                          */
       return base.ToString();
     }
 
