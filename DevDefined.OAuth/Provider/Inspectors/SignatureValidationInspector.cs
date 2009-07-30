@@ -49,7 +49,7 @@ namespace DevDefined.OAuth.Provider.Inspectors
 
     #region IContextInspector Members
 
-    public virtual void InspectContext(IOAuthContext context)
+    public virtual void InspectContext(ProviderPhase phase, IOAuthContext context)
     {
       SigningContext signingContext = CreateSignatureContextForConsumer(context);
 

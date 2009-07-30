@@ -38,5 +38,7 @@ namespace DevDefined.OAuth.Storage.Basic
     public bool AccessDenied { get; set; }
     public bool UsedUp { get; set; }
     public AccessToken AccessToken { get; set; }
+    public string CallbackUrl { get; set; }
+    public string Verifier { get; set; }
   }
 }

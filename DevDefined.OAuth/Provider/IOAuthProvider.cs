@@ -33,5 +33,5 @@ namespace DevDefined.OAuth.Provider
     IToken GrantRequestToken(IOAuthContext context);
     IToken ExchangeRequestTokenForAccessToken(IOAuthContext context);
     void AccessProtectedResourceRequest(IOAuthContext context);
-  }
+  }  
 }

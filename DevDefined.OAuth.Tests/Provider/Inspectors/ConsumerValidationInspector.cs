@@ -25,6 +25,7 @@
 #endregion
 
 using DevDefined.OAuth.Framework;
+using DevDefined.OAuth.Provider.Inspectors;
 using DevDefined.OAuth.Storage;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -50,7 +51,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       using (repository.Playback())
       {
         var inspector = new OAuth.Provider.Inspectors.ConsumerValidationInspector(consumerStore);
-        inspector.InspectContext(context);
+        inspector.InspectContext(ProviderPhase.GrantRequestToken, context);
       }
     }
 
@@ -69,7 +70,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       using (repository.Playback())
       {
         var inspector = new OAuth.Provider.Inspectors.ConsumerValidationInspector(consumerStore);
-        inspector.InspectContext(context);
+        inspector.InspectContext(ProviderPhase.GrantRequestToken, context);
       }
     }
   }

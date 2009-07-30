@@ -175,5 +175,10 @@ namespace DevDefined.OAuth.Framework
     {
       return new Exception("Callback was not confirmed");
     }
+
+    public static Exception RejectedRequiredOAuthParameter(IOAuthContext context, string parameter)
+    {
+      return new OAuthException(context, OAuthProblems.ParameterRejected, string.Format("The parameter \"{0}\" was rejected", parameter));
+    }
   }
 }

@@ -37,8 +37,12 @@ namespace DevDefined.OAuth.Provider
     readonly List<IContextInspector> _inspectors = new List<IContextInspector>();
     readonly ITokenStore _tokenStore;
 
+    public bool RequiresCallbackUrlInRequest { get; set; }
+
     public OAuthProvider(ITokenStore tokenStore, params IContextInspector[] inspectors)
     {
+      RequiresCallbackUrlInRequest = true;
+
       if (tokenStore == null) throw new ArgumentNullException("tokenStore");
       _tokenStore = tokenStore;
 
@@ -49,14 +53,14 @@ namespace DevDefined.OAuth.Provider
 
     public virtual IToken GrantRequestToken(IOAuthContext context)
     {
-      InspectRequest(context);
-
+      InspectRequest(ProviderPhase.GrantRequestToken, context);
+      
       return _tokenStore.CreateRequestToken(context);
     }
 
     public virtual IToken ExchangeRequestTokenForAccessToken(IOAuthContext context)
     {
-      InspectRequest(context);
+      InspectRequest(ProviderPhase.ExchangeRequestTokenForAccessToken, context);
 
       _tokenStore.ConsumeRequestToken(context);
 
@@ -75,7 +79,7 @@ namespace DevDefined.OAuth.Provider
 
     public virtual void AccessProtectedResourceRequest(IOAuthContext context)
     {
-      InspectRequest(context);
+      InspectRequest(ProviderPhase.AccessProtectedResourceRequest, context);
 
       _tokenStore.ConsumeAccessToken(context);
     }
@@ -87,11 +91,11 @@ namespace DevDefined.OAuth.Provider
       _inspectors.Add(inspector);
     }
 
-    protected virtual void InspectRequest(IOAuthContext context)
+    protected virtual void InspectRequest(ProviderPhase phase, IOAuthContext context)
     {
       foreach (IContextInspector inspector in _inspectors)
       {
-        inspector.InspectContext(context);
+        inspector.InspectContext(phase, context);
       }
     }
   }

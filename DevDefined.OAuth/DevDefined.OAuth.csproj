@@ -99,6 +99,8 @@
     <Compile Include="Provider\Inspectors\IContextInspector.cs" />
     <Compile Include="Provider\Inspectors\ConsumerValidationInspector.cs" />
     <Compile Include="Provider\Inspectors\NonceStoreInspector.cs" />
+    <Compile Include="Provider\Inspectors\OAuth10aInspector.cs" />
+    <Compile Include="Provider\Inspectors\ProviderPhase.cs" />
     <Compile Include="Provider\OAuthProvider.cs" />
     <Compile Include="Provider\Inspectors\SignatureValidationInspector.cs" />
     <Compile Include="Provider\Inspectors\TimestampRangeInspector.cs" />
@@ -116,6 +118,7 @@
     <Compile Include="Testing\TestNonceStore.cs" />
     <Compile Include="Testing\TestTokenStore.cs" />
     <Compile Include="Utility\ReflectionBasedDictionaryAdapter.cs" />
+    <Compile Include="Utility\UnguessableGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DevDefined.OAuth.snk">

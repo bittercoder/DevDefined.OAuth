@@ -87,17 +87,17 @@ namespace DevDefined.OAuth.Testing
       return RequestForAccessStatus.Unknown;
     }
 
-    public string GetCallbackUrlForToken(IToken token)
+    public string GetCallbackUrlForToken(IOAuthContext requestContext)
     {
       return CallbackUrl;
     }
 
-    public void SetVerificationCodeForToken(IToken token, string verificationCode)
+    public void SetVerificationCodeForRequestToken(IOAuthContext requestContext, string verificationCode)
     {
       VerificationCode = verificationCode;
     }
 
-    public string GetVerificationCodeForToken(IToken token)
+    public string GetVerificationCodeForRequestToken(IOAuthContext requestContext)
     {
       return VerificationCode;
     }

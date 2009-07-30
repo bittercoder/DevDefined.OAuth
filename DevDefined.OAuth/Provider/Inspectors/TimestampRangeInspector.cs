@@ -54,7 +54,7 @@ namespace DevDefined.OAuth.Provider.Inspectors
 
     #region IContextInspector Members
 
-    public void InspectContext(IOAuthContext context)
+    public void InspectContext(ProviderPhase phase, IOAuthContext context)
     {
       DateTime timestamp = DateTimeUtility.FromEpoch(Convert.ToInt32(context.Timestamp));
       DateTime now = _nowFunc();

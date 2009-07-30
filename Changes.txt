@@ -2,7 +2,10 @@
 --------------
 
 Moved the "basic" storage implementation into the core library.
-Updated consumer implementation to support OAuth 1.0a (have not completed updating provider yet).
+Updated consumer implementation to support OAuth 1.0a.
+Updated the provider implementation to support OAuth 1.0a.
+
+Note: Provider example still needs updating to be 1.0a compliant.
 
 17th November 2008
 ------------------

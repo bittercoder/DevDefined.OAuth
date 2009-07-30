@@ -46,7 +46,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
                         Timestamp = new DateTime(2008, 1, 1, 13, 0, 1).Epoch().ToString()
                       };
 
-      inspector.InspectContext(context);
+      inspector.InspectContext(ProviderPhase.GrantRequestToken, context);
     }
 
     [Test]
@@ -61,7 +61,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
                         Timestamp = new DateTime(2008, 1, 1, 10, 59, 59).Epoch().ToString()
                       };
 
-      inspector.InspectContext(context);
+      inspector.InspectContext(ProviderPhase.GrantRequestToken, context);
     }
 
     [Test]
@@ -75,7 +75,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
                         Timestamp = new DateTime(2008, 1, 1, 13, 0, 0).Epoch().ToString()
                       };
 
-      inspector.InspectContext(context);
+      inspector.InspectContext(ProviderPhase.GrantRequestToken, context);
     }
 
     [Test]
@@ -89,7 +89,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
                         Timestamp = new DateTime(2008, 1, 1, 11, 0, 0).Epoch().ToString()
                       };
 
-      inspector.InspectContext(context);
+      inspector.InspectContext(ProviderPhase.GrantRequestToken, context);
     }
   }
 }

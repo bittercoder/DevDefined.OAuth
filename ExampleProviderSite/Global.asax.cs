@@ -30,17 +30,14 @@ using DevDefined.OAuth.Provider;
 using DevDefined.OAuth.Provider.Inspectors;
 using DevDefined.OAuth.Storage.Basic;
 using DevDefined.OAuth.Testing;
-using ExampleProviderSite.Repositories;
 
 namespace ExampleProviderSite
 {
   public class Global : HttpApplication, IOAuthServices
   {
-    static IOAuthProvider _provider;
     static ITokenRepository<DevDefined.OAuth.Storage.Basic.AccessToken> _accessTokenRepository;
+    static IOAuthProvider _provider;
     static ITokenRepository<DevDefined.OAuth.Storage.Basic.RequestToken> _requestTokenRepository;
-
-    #region IOAuthServices Members
 
     public IOAuthProvider Provider
     {
@@ -57,24 +54,23 @@ namespace ExampleProviderSite
       get { return _requestTokenRepository; }
     }
 
-    #endregion
-
     protected void Application_Start(object sender, EventArgs e)
     {
       _requestTokenRepository = new InMemoryTokenRepository<DevDefined.OAuth.Storage.Basic.RequestToken>();
       _accessTokenRepository = new InMemoryTokenRepository<DevDefined.OAuth.Storage.Basic.AccessToken>();
-      
+
       var consumerStore = new TestConsumerStore();
-      
-      var nonceStore = new TestNonceStore();      
-      
+
+      var nonceStore = new TestNonceStore();
+
       var tokenStore = new SimpleTokenStore(_accessTokenRepository, _requestTokenRepository);
 
       _provider = new OAuthProvider(tokenStore,
                                     new SignatureValidationInspector(consumerStore),
                                     new NonceStoreInspector(nonceStore),
                                     new TimestampRangeInspector(new TimeSpan(1, 0, 0)),
-                                    new ConsumerValidationInspector(consumerStore));
+                                    new ConsumerValidationInspector(consumerStore),
+                                    new OAuth10AInspector(tokenStore));
     }
   }
 }

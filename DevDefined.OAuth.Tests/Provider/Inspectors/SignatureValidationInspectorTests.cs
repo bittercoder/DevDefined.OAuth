@@ -54,7 +54,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       using (repository.Playback())
       {
         var inspector = new SignatureValidationInspector(consumerStore, signer);
-        inspector.InspectContext(context);
+        inspector.InspectContext(ProviderPhase.GrantRequestToken, context);
       }
     }
 
@@ -75,7 +75,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       using (repository.Playback())
       {
         var inspector = new SignatureValidationInspector(consumerStore, signer);
-        inspector.InspectContext(context);
+        inspector.InspectContext(ProviderPhase.GrantRequestToken, context);
       }
     }
 
@@ -98,7 +98,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       using (repository.Playback())
       {
         var inspector = new SignatureValidationInspector(consumerStore, signer);
-        inspector.InspectContext(context);
+        inspector.InspectContext(ProviderPhase.GrantRequestToken, context);
       }
     }
   }

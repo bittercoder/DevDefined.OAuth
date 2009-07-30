@@ -76,6 +76,7 @@
     <Compile Include="Provider\Inspectors\NonceStoreInspector.cs" />
     <Compile Include="Provider\Inspectors\SignatureValidationInspectorTests.cs" />
     <Compile Include="Provider\Inspectors\TimestampRangeInspectorTests.cs" />
+    <Compile Include="Provider\OAuthProvider1ATests.cs" />
     <Compile Include="Provider\OAuthProviderTests.cs" />
     <Compile Include="Consumer\GoogleIntegrationTests.cs" />
     <Compile Include="Consumer\TermIeConsumerIntegrationTests.cs" />

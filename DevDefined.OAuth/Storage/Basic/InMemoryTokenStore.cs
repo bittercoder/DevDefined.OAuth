@@ -53,7 +53,8 @@ namespace DevDefined.OAuth.Storage.Basic
           ConsumerKey = context.ConsumerKey,
           Realm = context.Realm,
           Token = Guid.NewGuid().ToString(),
-          TokenSecret = Guid.NewGuid().ToString()
+          TokenSecret = Guid.NewGuid().ToString(),
+          CallbackUrl = context.CallbackUrl
         };
 
       _requestTokenRepository.SaveToken(token);
@@ -100,19 +101,28 @@ namespace DevDefined.OAuth.Storage.Basic
       return RequestForAccessStatus.Granted;
     }
 
-    public string GetCallbackUrlForToken(IToken token)
+    public string GetCallbackUrlForToken(IOAuthContext requestContext)
     {
-      throw new NotImplementedException();
+      RequestToken requestToken = _requestTokenRepository.GetToken(requestContext.Token);
+      return requestToken.CallbackUrl;
     }
 
-    public void SetVerificationCodeForToken(IToken token, string verificationCode)
+    public void SetVerificationCodeForRequestToken(IOAuthContext requestContext, string verificationCode)
     {
-      throw new NotImplementedException();
+      if (string.IsNullOrEmpty(verificationCode)) throw new ArgumentNullException("verificationCode");
+      
+      RequestToken requestToken = _requestTokenRepository.GetToken(requestContext.Token);
+      
+      requestToken.Verifier = verificationCode;
+      
+      _requestTokenRepository.SaveToken(requestToken);
     }
 
-    public string GetVerificationCodeForToken(IToken token)
+    public string GetVerificationCodeForRequestToken(IOAuthContext requestContext)
     {
-      throw new NotImplementedException();
+      RequestToken requestToken = _requestTokenRepository.GetToken(requestContext.Token);
+
+      return requestToken.Verifier;
     }
 
     public IToken GetToken(IOAuthContext context)

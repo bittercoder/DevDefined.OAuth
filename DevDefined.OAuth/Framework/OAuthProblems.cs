@@ -44,5 +44,7 @@ namespace DevDefined.OAuth.Framework
     public const string TokenRevoked = "token_revoked";
     public const string TokenUsed = "token_used";
     public const string VersionRejected = "version_rejected";
+    public const string AdditionalAuthorizationRequired = "additional_authorization_required";
+    public const string UserRefused = "user_refused";
   }
 }

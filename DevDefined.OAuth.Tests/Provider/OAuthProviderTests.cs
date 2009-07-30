@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace DevDefined.OAuth.Tests.Provider
 {
   [TestFixture]
-  public class OAuthProviderTests
+  public class OAuthProvider10Tests
   {
     OAuthProvider provider;
 
@@ -66,6 +66,24 @@ namespace DevDefined.OAuth.Tests.Provider
       var session = new OAuthSession(consumerContext, "http://localhost/oauth/requesttoken.rails",
                                      "http://localhost/oauth/userauhtorize.rails",
                                      "http://localhost/oauth/accesstoken.rails");
+
+      return session;
+    }
+
+    IOAuthSession CreateConsumerWithCallback(string signatureMethod)
+    {
+      var consumerContext = new OAuthConsumerContext
+      {
+        SignatureMethod = signatureMethod,
+        ConsumerKey = "key",
+        ConsumerSecret = "secret",
+        Key = TestCertificates.OAuthTestCertificate().PrivateKey
+      };
+
+      var session = new OAuthSession(consumerContext, "http://localhost/oauth/requesttoken.rails",
+                                     "http://localhost/oauth/userauhtorize.rails",
+                                     "http://localhost/oauth/accesstoken.rails",
+                                     "http://myapp/callback.rails");
 
       return session;
     }

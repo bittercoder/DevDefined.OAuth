@@ -51,7 +51,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       using (repository.Playback())
       {
         var inspector = new NonceStoreInspector(nonceStore);
-        inspector.InspectContext(context);
+        inspector.InspectContext(ProviderPhase.GrantRequestToken, context);
       }
     }
 
@@ -70,7 +70,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       using (repository.Playback())
       {
         var inspector = new NonceStoreInspector(nonceStore);
-        inspector.InspectContext(context);
+        inspector.InspectContext(ProviderPhase.GrantRequestToken, context);
       }
     }
   }
