@@ -157,7 +157,9 @@ string responseText = session.Request().Get().ForUrl("http://www.google.com/m8/f
     }
 
 
-    [Test]
+    // TODO: revist this test, I'm not sure if this was a test or just an experiment (wrote it a couple of months ago).
+
+    /*[Test]
     public void DenyCallback()
     {
       // this test does a full end-to-end integration (request token, user authoriazation, exchanging request token
@@ -225,7 +227,7 @@ string responseText = session.Request().Get().ForUrl("http://www.google.com/m8/f
           Assert.Fail();
         }
       }      
-    }
+    }*/
 
 
     [Test]
