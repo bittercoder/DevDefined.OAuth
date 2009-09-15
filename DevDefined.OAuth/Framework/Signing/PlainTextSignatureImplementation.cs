@@ -28,8 +28,6 @@ namespace DevDefined.OAuth.Framework.Signing
 {
   public class PlainTextSignatureImplementation : IContextSignatureImplementation
   {
-    #region IContextSignatureImplementation Members
-
     public string MethodName
     {
       get { return SignatureMethod.PlainText; }
@@ -44,8 +42,6 @@ namespace DevDefined.OAuth.Framework.Signing
     {
       return (authContext.Signature == GenerateSignature(authContext, signingContext));
     }
-
-    #endregion
 
     string GenerateSignature(IOAuthContext authContext, SigningContext signingContext)
     {

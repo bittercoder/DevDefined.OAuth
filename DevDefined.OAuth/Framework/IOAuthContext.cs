@@ -10,9 +10,9 @@ namespace DevDefined.OAuth.Framework
     NameValueCollection Cookies { get; set; }
     NameValueCollection FormEncodedParameters { get; set; }
     NameValueCollection AuthorizationHeaderParameters { get; set; }
-    
+
     Uri RawUri { get; set; }
-    
+
     string NormalizedRequestUrl { get; }
     string RequestMethod { get; set; }
     string Nonce { get; set; }
@@ -24,7 +24,7 @@ namespace DevDefined.OAuth.Framework
     string Verifier { get; set; }
 
     bool UseAuthorizationHeader { get; set; }
-    
+
     Uri GenerateUri();
     string GenerateUrl();
     string GenerateOAuthParametersForHeader();

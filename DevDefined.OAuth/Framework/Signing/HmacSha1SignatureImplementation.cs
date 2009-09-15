@@ -32,8 +32,6 @@ namespace DevDefined.OAuth.Framework.Signing
 {
   public class HmacSha1SignatureImplementation : IContextSignatureImplementation
   {
-    #region IContextSignatureImplementation Members
-
     public string MethodName
     {
       get { return SignatureMethod.HmacSha1; }
@@ -48,8 +46,6 @@ namespace DevDefined.OAuth.Framework.Signing
     {
       return (authContext.Signature == GenerateSignature(authContext, signingContext));
     }
-
-    #endregion
 
     static string GenerateSignature(IToken authContext, SigningContext signingContext)
     {

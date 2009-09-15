@@ -37,6 +37,6 @@ namespace DevDefined.OAuth.Storage.Basic
   {
     public string UserName { get; set; }
     public string[] Roles { get; set; }
-    public DateTime ExpireyDate { get; set; }    
+    public DateTime ExpireyDate { get; set; }
   }
 }

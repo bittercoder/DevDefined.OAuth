@@ -27,13 +27,53 @@
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using NUnit.Framework;
-using Rhino.Mocks;
 
 namespace DevDefined.OAuth.Tests.Consumer
 {
   [TestFixture]
   public class OAuthSessionTests
   {
+    [Test]
+    public void GetRequestTokenForConsumerWithCallbackUrl()
+    {
+      var consumerContext = new OAuthConsumerContext {ConsumerKey = "key"};
+
+      var session = new OAuthSession(consumerContext, "http://localhost/request",
+                                     "http://localhost/userauth", "http://localhost/access", "http://localhost/callback");
+
+      RequestDescription description = session.BuildRequestTokenContext("POST").GetRequestDescription();
+
+      Assert.IsTrue(description.Body.Contains("oauth_callback=http%3A%2F%2Flocalhost%2Fcallback"));
+    }
+
+    [Test]
+    public void GetRequestTokenForConsumerWithoutCallbackUrl()
+    {
+      var consumerContext = new OAuthConsumerContext {ConsumerKey = "key"};
+
+      var session = new OAuthSession(consumerContext, "http://localhost/request",
+                                     "http://localhost/userauth", "http://localhost/access");
+
+      RequestDescription description = session.BuildRequestTokenContext("POST").GetRequestDescription();
+
+      Assert.IsTrue(description.Body.Contains("oauth_callback=oob"));
+    }
+
+    [Test]
+    public void GetRequestTokenForMethodGetDoesNotPopulateBody()
+    {
+      var consumerContext = new OAuthConsumerContext {ConsumerKey = "key"};
+
+      var session = new OAuthSession(consumerContext, "http://localhost/request",
+                                     "http://localhost/userauth", "http://localhost/access");
+
+      RequestDescription description = session.BuildRequestTokenContext("GET").GetRequestDescription();
+
+      Assert.IsNull(description.Body);
+      Assert.IsNull(description.ContentType);
+      Assert.AreEqual("GET", description.Method);
+    }
+
     [Test]
     public void GetUserAuthorizationUriForTokenWithCallback()
     {
@@ -46,53 +86,66 @@ namespace DevDefined.OAuth.Tests.Consumer
     }
 
     [Test]
-    public void GetRequestTokenForConsumerWithCallbackUrl()
-    {
-      var consumerContext = new OAuthConsumerContext {ConsumerKey = "key"};
-
-      var session = new OAuthSession(consumerContext, "http://localhost/request",
-                                     "http://localhost/userauth", "http://localhost/access", "http://localhost/callback");
-
-      var description = session.BuildRequestTokenContext("POST").GetRequestDescription();
-
-      Assert.IsTrue(description.Body.Contains("oauth_callback=http%3A%2F%2Flocalhost%2Fcallback"));
-    }
-
-    [Test]
-    public void GetRequestTokenForConsumerWithoutCallbackUrl()
-    {
-      var consumerContext = new OAuthConsumerContext { ConsumerKey = "key" };
-
-      var session = new OAuthSession(consumerContext, "http://localhost/request",
-                                     "http://localhost/userauth", "http://localhost/access");
-
-      var description = session.BuildRequestTokenContext("POST").GetRequestDescription();
-
-      Assert.IsTrue(description.Body.Contains("oauth_callback=oob"));
-    }
-
-    [Test]
-    public void GetRequestTokenForMethodGetDoesNotPopulateBody()
-    {
-      var consumerContext = new OAuthConsumerContext { ConsumerKey = "key" };
-
-      var session = new OAuthSession(consumerContext, "http://localhost/request",
-                                     "http://localhost/userauth", "http://localhost/access");
-
-      var description = session.BuildRequestTokenContext("GET").GetRequestDescription();
-
-      Assert.IsNull(description.Body);
-      Assert.IsNull(description.ContentType);
-      Assert.AreEqual("GET", description.Method);
-    }
-
-    [Test]
     public void GetUserAuthorizationUriForTokenWithoutCallback()
     {
       var session = new OAuthSession(new OAuthConsumerContext(), "http://localhost/request",
                                      "http://localhost/userauth", "http://localhost/access");
       string actual = session.GetUserAuthorizationUrlForToken(new TokenBase {Token = "token"}, null);
       Assert.AreEqual("http://localhost/userauth?oauth_token=token", actual);
+    }
+
+    [Test]
+    public void TokenSecretNotIncludedInAuthorizationHeaderForPostRequestWithUseAuthorizationHeaders()
+    {
+      var session = new OAuthSession(new OAuthConsumerContext {ConsumerKey = "consumer", UseHeaderForOAuthParameters = true}, "http://localhost/request",
+                                     "http://localhost/userauth", "http://localhost/access");
+
+      var accessToken = new TokenBase {ConsumerKey = "consumer", Token = "token", TokenSecret = "secret"};
+
+      RequestDescription description = session
+        .Request(accessToken)
+        .Post()
+        .ForUrl("http://localhost/")
+        .SignWithToken()
+        .GetRequestDescription();
+
+      Assert.IsFalse(description.Headers["Authorization"].Contains(Parameters.OAuth_Token_Secret));
+    }
+
+    [Test]
+    public void TokenSecretNotIncludedInBodyParametersForPostRequest()
+    {
+      var session = new OAuthSession(new OAuthConsumerContext {ConsumerKey = "consumer"}, "http://localhost/request",
+                                     "http://localhost/userauth", "http://localhost/access");
+
+      var accessToken = new TokenBase {ConsumerKey = "consumer", Token = "token", TokenSecret = "secret"};
+
+      RequestDescription description = session
+        .Request(accessToken)
+        .Post()
+        .ForUrl("http://localhost/")
+        .SignWithToken()
+        .GetRequestDescription();
+
+      Assert.IsFalse(description.Body.Contains(Parameters.OAuth_Token_Secret));
+    }
+
+    [Test]
+    public void TokenSecretNotIncludedInQueryParametersForGetRequest()
+    {
+      var session = new OAuthSession(new OAuthConsumerContext {ConsumerKey = "consumer"}, "http://localhost/request",
+                                     "http://localhost/userauth", "http://localhost/access");
+
+      var accessToken = new TokenBase {ConsumerKey = "consumer", Token = "token", TokenSecret = "secret"};
+
+      RequestDescription description = session
+        .Request(accessToken)
+        .Get()
+        .ForUrl("http://localhost/")
+        .SignWithToken()
+        .GetRequestDescription();
+
+      Assert.IsFalse(description.Url.ToString().Contains(Parameters.OAuth_Token_Secret));
     }
   }
 }

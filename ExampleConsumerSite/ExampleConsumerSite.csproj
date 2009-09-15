@@ -54,12 +54,20 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Callback.aspx" />
+    <Content Include="Contacts.xslt" />
     <Content Include="site.css" />
     <Content Include="ViewData.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccessDenied.aspx.cs">
+      <DependentUpon>AccessDenied.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccessDenied.aspx.designer.cs">
+      <DependentUpon>AccessDenied.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Callback.aspx.cs">
       <DependentUpon>Callback.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -69,6 +77,13 @@
     </Compile>
     <Compile Include="OAuthPage.cs">
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Site.Master.cs">
+      <DependentUpon>Site.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Site.Master.designer.cs">
+      <DependentUpon>Site.Master</DependentUpon>
     </Compile>
     <Compile Include="ViewData.aspx.cs">
       <DependentUpon>ViewData.aspx</DependentUpon>
@@ -108,6 +123,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Content Include="AccessDenied.aspx" />
+    <Content Include="Images\DevDefinedLogo_24High.png" />
+    <Content Include="Images\DevDefinedOAuthBackground.png" />
+    <Content Include="Images\DevDefinedOAuthTitle.png" />
+    <Content Include="Site.Master" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DevDefined.OAuth\DevDefined.OAuth.csproj">

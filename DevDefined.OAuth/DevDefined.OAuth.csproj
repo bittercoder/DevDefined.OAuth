@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -72,6 +73,7 @@
     <Compile Include="Consumer\IOAuthConsumerContext.cs" />
     <Compile Include="Consumer\OAuthConsumerContext.cs" />
     <Compile Include="Consumer\RequestDescription.cs" />
+    <Compile Include="Consumer\WebExceptionHelper.cs" />
     <Compile Include="Framework\AccessDeniedException.cs" />
     <Compile Include="Framework\CertificateUtility.cs" />
     <Compile Include="Framework\DateTimeUtility.cs" />
@@ -118,6 +120,7 @@
     <Compile Include="Testing\TestNonceStore.cs" />
     <Compile Include="Testing\TestTokenStore.cs" />
     <Compile Include="Utility\ReflectionBasedDictionaryAdapter.cs" />
+    <Compile Include="Utility\StreamExtensions.cs" />
     <Compile Include="Utility\UnguessableGenerator.cs" />
   </ItemGroup>
   <ItemGroup>

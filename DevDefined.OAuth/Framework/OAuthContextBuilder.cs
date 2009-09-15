@@ -27,10 +27,11 @@
 using System;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Linq;
+
 namespace DevDefined.OAuth.Framework
 {
   public interface IOAuthContextBuilder
@@ -58,29 +59,22 @@ namespace DevDefined.OAuth.Framework
         };
     }
 
-    static Uri CleanUri(Uri uri)
-    {
-      // this is a fix for OpenSocial platforms sometimes appending an empty query string parameter
-      // to their url.
-
-      string originalUrl = uri.OriginalString;
-      return originalUrl.EndsWith("&") ? new Uri(originalUrl.Substring(0, originalUrl.Length - 1)) : uri;
-    }
     public IOAuthContext FromHttpRequest(HttpRequest request)
     {
       return FromHttpRequest(new HttpRequestWrapper(request));
     }
+
     public IOAuthContext FromHttpRequest(HttpRequestBase request)
     {
       var context = new OAuthContext
-                      {
-                        RawUri = CleanUri(request.Url),
-                        Cookies = CollectCookies(request),
-                        Headers = request.Headers,
-                        RequestMethod = request.HttpMethod,
-                        FormEncodedParameters = request.Form,
-                        QueryParameters = request.QueryString,
-                      };
+        {
+          RawUri = CleanUri(request.Url),
+          Cookies = CollectCookies(request),
+          Headers = new NameValueCollection(request.Headers),
+          RequestMethod = request.HttpMethod,
+          FormEncodedParameters = new NameValueCollection(request.Form),
+          QueryParameters = new NameValueCollection(request.QueryString),
+        };
       if (request.Headers.AllKeys.Contains("Authorization"))
       {
         context.AuthorizationHeaderParameters = UriUtility.GetHeaderParameters(request.Headers["Authorization"]).ToNameValueCollection();
@@ -113,6 +107,15 @@ namespace DevDefined.OAuth.Framework
       }
 
       return context;
+    }
+
+    static Uri CleanUri(Uri uri)
+    {
+      // this is a fix for OpenSocial platforms sometimes appending an empty query string parameter
+      // to their url.
+
+      string originalUrl = uri.OriginalString;
+      return originalUrl.EndsWith("&") ? new Uri(originalUrl.Substring(0, originalUrl.Length - 1)) : uri;
     }
 
     static NameValueCollection CollectCookies(WebRequest request)

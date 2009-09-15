@@ -40,5 +40,14 @@ namespace DevDefined.OAuth.Storage.Basic
     public AccessToken AccessToken { get; set; }
     public string CallbackUrl { get; set; }
     public string Verifier { get; set; }
+
+    public override string ToString()
+    {
+      string formattedToken = base.ToString();
+
+      formattedToken += "&" + Parameters.OAuth_Callback_Confirmed + "=true";
+
+      return formattedToken;
+    }
   }
 }

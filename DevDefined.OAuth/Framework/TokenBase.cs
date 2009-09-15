@@ -24,12 +24,13 @@
 
 #endregion
 
+using System;
+
 namespace DevDefined.OAuth.Framework
 {
+  [Serializable]
   public class TokenBase : IToken
   {
-    #region IToken Members
-
     public string TokenSecret { get; set; }
 
     public string Token { get; set; }
@@ -37,8 +38,6 @@ namespace DevDefined.OAuth.Framework
     public string ConsumerKey { get; set; }
 
     public string Realm { get; set; }
-
-    #endregion
 
     public override string ToString()
     {

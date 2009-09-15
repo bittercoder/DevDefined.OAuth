@@ -1,3 +1,11 @@
+31st July 2009
+--------------
+
+Fixed bug that allowed oauth_token_secret to be transmitted from the consumer to the provider.
+Fixed bug that meant provider would not work with plain text signature method, unless oauth_token_secret was sent by the client.
+Fixed the ExampleConsumerSite and ExampleProviderSite to implement a working OAuth 1.0a exchange of tokens etc.
+Apply General code cleanup.
+
 30th July 2009
 --------------
 

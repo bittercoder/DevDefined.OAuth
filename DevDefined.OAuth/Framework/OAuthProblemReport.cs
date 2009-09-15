@@ -27,16 +27,53 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
+using System.Web;
 
 namespace DevDefined.OAuth.Framework
 {
+  [Serializable]
   public class OAuthProblemReport
   {
     public OAuthProblemReport()
     {
       ParametersRejected = new List<string>();
       ParametersAbsent = new List<string>();
+    }
+
+    public OAuthProblemReport(NameValueCollection parameters)
+    {
+      Problem = parameters[Parameters.OAuth_Problem];
+
+      ProblemAdvice = parameters[Parameters.OAuth_Problem_Advice];
+
+      ParametersAbsent = parameters.AllKeys.Any(key => key == Parameters.OAuth_Parameters_Absent)
+                           ? ParseFormattedParameters(parameters[Parameters.OAuth_Parameters_Absent])
+                           : new List<string>();
+
+      ParametersRejected = parameters.AllKeys.Any(key => key == Parameters.OAuth_Parameters_Rejected)
+                             ? ParseFormattedParameters(parameters[Parameters.OAuth_Parameters_Rejected])
+                             : new List<string>();
+
+      if (parameters.AllKeys.Any(key => key == Parameters.OAuth_Acceptable_Timestamps))
+      {
+        string[] timeStamps = parameters[Parameters.OAuth_Acceptable_Timestamps].Split(new[] {'-'});
+        AcceptableTimeStampsFrom = DateTimeUtility.FromEpoch(Convert.ToInt64(timeStamps[0]));
+        AcceptableTimeStampsTo = DateTimeUtility.FromEpoch(Convert.ToInt64(timeStamps[1]));
+      }
+
+      if (parameters.AllKeys.Any(key => key == Parameters.OAuth_Acceptable_Versions))
+      {
+        string[] versions = parameters[Parameters.OAuth_Acceptable_Versions].Split(new[] {'-'});
+        AcceptableVersionFrom = versions[0];
+        AcceptableVersionTo = versions[1];
+      }
+    }
+
+    public OAuthProblemReport(string formattedReport)
+      : this(HttpUtility.ParseQueryString(formattedReport))
+    {
     }
 
     public string AcceptableVersionTo { get; set; }
@@ -87,7 +124,7 @@ namespace DevDefined.OAuth.Framework
       return UriUtility.FormatQueryString(response);
     }
 
-    string FormatParameterNames(List<string> names)
+    static string FormatParameterNames(IEnumerable<string> names)
     {
       var builder = new StringBuilder();
 
@@ -98,6 +135,11 @@ namespace DevDefined.OAuth.Framework
       }
 
       return builder.ToString();
+    }
+
+    static List<string> ParseFormattedParameters(string formattedList)
+    {
+      return formattedList.Split(new[] {'&'}, StringSplitOptions.RemoveEmptyEntries).ToList();
     }
   }
 }

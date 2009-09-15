@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Provider.Inspectors;
 using DevDefined.OAuth.Storage;
@@ -37,8 +38,6 @@ namespace DevDefined.OAuth.Provider
     readonly List<IContextInspector> _inspectors = new List<IContextInspector>();
     readonly ITokenStore _tokenStore;
 
-    public bool RequiresCallbackUrlInRequest { get; set; }
-
     public OAuthProvider(ITokenStore tokenStore, params IContextInspector[] inspectors)
     {
       RequiresCallbackUrlInRequest = true;
@@ -49,13 +48,23 @@ namespace DevDefined.OAuth.Provider
       if (inspectors != null) _inspectors.AddRange(inspectors);
     }
 
-    #region IOAuthProvider Members
+    public bool RequiresCallbackUrlInRequest { get; set; }
 
     public virtual IToken GrantRequestToken(IOAuthContext context)
     {
+      AssertContextDoesNotIncludeToken(context);
+
       InspectRequest(ProviderPhase.GrantRequestToken, context);
-      
+
       return _tokenStore.CreateRequestToken(context);
+    }
+
+    void AssertContextDoesNotIncludeToken(IOAuthContext context)
+    {
+      if (context.Token != null)
+      {
+        throw Error.RequestForTokenMustNotIncludeTokenInContext(context);
+      }
     }
 
     public virtual IToken ExchangeRequestTokenForAccessToken(IOAuthContext context)
@@ -84,8 +93,6 @@ namespace DevDefined.OAuth.Provider
       _tokenStore.ConsumeAccessToken(context);
     }
 
-    #endregion
-
     public void AddInspector(IContextInspector inspector)
     {
       _inspectors.Add(inspector);
@@ -93,9 +100,43 @@ namespace DevDefined.OAuth.Provider
 
     protected virtual void InspectRequest(ProviderPhase phase, IOAuthContext context)
     {
+      AssertContextDoesNotIncludeTokenSecret(context);
+
+      AddStoredTokenSecretToContext(context, phase);
+
+      ApplyInspectors(context, phase);
+    }
+
+    void ApplyInspectors(IOAuthContext context, ProviderPhase phase)
+    {
       foreach (IContextInspector inspector in _inspectors)
       {
         inspector.InspectContext(phase, context);
+      }
+    }
+
+    void AddStoredTokenSecretToContext(IOAuthContext context, ProviderPhase phase)
+    {
+      if (phase == ProviderPhase.ExchangeRequestTokenForAccessToken)
+      {
+        string secret = _tokenStore.GetRequestTokenSecret(context);
+
+        context.TokenSecret = secret;
+      }
+
+      else if (phase == ProviderPhase.AccessProtectedResourceRequest)
+      {
+        string secret = _tokenStore.GetAccessTokenSecret(context);
+
+        context.TokenSecret = secret;
+      }
+    }
+
+    static void AssertContextDoesNotIncludeTokenSecret(IOAuthContext context)
+    {
+      if (!string.IsNullOrEmpty(context.TokenSecret))
+      {
+        throw new OAuthException(context, OAuthProblems.ParameterRejected, "The oauth_token_secret must not be transmitted to the provider.");
       }
     }
   }

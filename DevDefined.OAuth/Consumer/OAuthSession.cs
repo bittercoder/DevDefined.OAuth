@@ -33,6 +33,7 @@ using DevDefined.OAuth.Utility;
 
 namespace DevDefined.OAuth.Consumer
 {
+  [Serializable]
   public class OAuthSession : IOAuthSession
   {
     readonly NameValueCollection _cookies = new NameValueCollection();
@@ -40,16 +41,6 @@ namespace DevDefined.OAuth.Consumer
     readonly NameValueCollection _headers = new NameValueCollection();
     readonly NameValueCollection _queryParameters = new NameValueCollection();
     IConsumerRequestFactory _consumerRequestFactory = DefaultConsumerRequestFactory.Instance;
-
-    public IConsumerRequestFactory ConsumerRequestFactory
-    {
-      get { return _consumerRequestFactory; }
-      set
-      {
-        if (_consumerRequestFactory == null) throw new ArgumentNullException("value");
-        _consumerRequestFactory = value;
-      }
-    }
 
     public OAuthSession(IOAuthConsumerContext consumerContext, Uri requestTokenUri, Uri userAuthorizeUri,
                         Uri accessTokenUri)
@@ -79,6 +70,16 @@ namespace DevDefined.OAuth.Consumer
     {
     }
 
+    public IConsumerRequestFactory ConsumerRequestFactory
+    {
+      get { return _consumerRequestFactory; }
+      set
+      {
+        if (_consumerRequestFactory == null) throw new ArgumentNullException("value");
+        _consumerRequestFactory = value;
+      }
+    }
+
     public bool CallbackMustBeConfirmed { get; set; }
 
     public Uri CallbackUri { get; set; }
@@ -89,11 +90,26 @@ namespace DevDefined.OAuth.Consumer
     public Uri UserAuthorizeUri { get; set; }
     public IToken AccessToken { get; set; }
 
+    public IConsumerRequest Request(IToken accessToken)
+    {
+      var context = new OAuthContext
+        {
+          UseAuthorizationHeader = ConsumerContext.UseHeaderForOAuthParameters
+        };
+
+      context.Cookies.Add(_cookies);
+      context.FormEncodedParameters.Add(_formParameters);
+      context.Headers.Add(_headers);
+      context.QueryParameters.Add(_queryParameters);
+
+      return _consumerRequestFactory.CreateConsumerRequest(context, ConsumerContext, accessToken);
+    }
+
     public IConsumerRequest Request()
     {
       var context = new OAuthContext
         {
-          UseAuthorizationHeader = ConsumerContext.UseHeaderForOAuthParameters          
+          UseAuthorizationHeader = ConsumerContext.UseHeaderForOAuthParameters
         };
 
       context.Cookies.Add(_cookies);
@@ -107,40 +123,6 @@ namespace DevDefined.OAuth.Consumer
     public IToken GetRequestToken()
     {
       return GetRequestToken("GET");
-    }
-
-    public IToken GetRequestToken(string method)
-    {
-      var results = BuildRequestTokenContext(method).Select(collection =>
-                                               new {
-                                                   ConsumerKey = ConsumerContext.ConsumerKey,
-                                                   Token =
-                                                     ParseResponseParameter(collection,
-                                                                            Parameters.OAuth_Token),
-                                                   TokenSecret =
-                                                     ParseResponseParameter(collection,
-                                                                            Parameters.
-                                                                              OAuth_Token_Secret),
-                                                   CallackConfirmed = WasCallbackConfimed(collection)
-                                                 });
-
-      if (!results.CallackConfirmed && CallbackMustBeConfirmed)
-      {
-        throw Error.CallbackWasNotConfirmed();
-      }
-
-      return new TokenBase
-        {
-          ConsumerKey = results.ConsumerKey,
-          Token = results.Token,
-          TokenSecret = results.TokenSecret
-        };
-    }
-
-    static bool WasCallbackConfimed(NameValueCollection parameters)
-    {
-      var value = ParseResponseParameter(parameters, Parameters.OAuth_Callback_Confirmed);
-      return (value == "true");
     }
 
     public IToken ExchangeRequestTokenForAccessToken(IToken requestToken)
@@ -179,7 +161,8 @@ namespace DevDefined.OAuth.Consumer
     {
       return Request()
         .ForMethod(method)
-        .AlterContext(context=>context.CallbackUrl = (CallbackUri == null) ? "oob" : CallbackUri.ToString())
+        .AlterContext(context => context.CallbackUrl = (CallbackUri == null) ? "oob" : CallbackUri.ToString())
+        .AlterContext(context => context.Token = null)
         .ForUri(RequestTokenUri)
         .SignWithoutToken();
     }
@@ -188,9 +171,14 @@ namespace DevDefined.OAuth.Consumer
     {
       return Request()
         .ForMethod(method)
-        .AlterContext(context=>context.Verifier = verificationCode)
+        .AlterContext(context => context.Verifier = verificationCode)
         .ForUri(AccessTokenUri)
         .SignWithToken(requestToken);
+    }
+
+    public string GetUserAuthorizationUrlForToken(IToken token)
+    {
+      return GetUserAuthorizationUrlForToken(token, null);
     }
 
     public string GetUserAuthorizationUrlForToken(IToken token, string callbackUrl)
@@ -262,6 +250,41 @@ namespace DevDefined.OAuth.Consumer
     {
       CallbackMustBeConfirmed = true;
       return this;
+    }
+
+    public IToken GetRequestToken(string method)
+    {
+      var results = BuildRequestTokenContext(method).Select(collection =>
+                                                            new
+                                                              {
+                                                                ConsumerContext.ConsumerKey,
+                                                                Token =
+                                                              ParseResponseParameter(collection,
+                                                                                     Parameters.OAuth_Token),
+                                                                TokenSecret =
+                                                              ParseResponseParameter(collection,
+                                                                                     Parameters.
+                                                                                       OAuth_Token_Secret),
+                                                                CallackConfirmed = WasCallbackConfimed(collection)
+                                                              });
+
+      if (!results.CallackConfirmed && CallbackMustBeConfirmed)
+      {
+        throw Error.CallbackWasNotConfirmed();
+      }
+
+      return new TokenBase
+        {
+          ConsumerKey = results.ConsumerKey,
+          Token = results.Token,
+          TokenSecret = results.TokenSecret
+        };
+    }
+
+    static bool WasCallbackConfimed(NameValueCollection parameters)
+    {
+      string value = ParseResponseParameter(parameters, Parameters.OAuth_Callback_Confirmed);
+      return (value == "true");
     }
 
     static Uri ParseCallbackUri(string callBackUrl)

@@ -1,16 +1,7 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ExampleProviderSite._Default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ExampleProviderSite._Default" MasterPageFile="~/Site.Master" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" >
-<head runat="server">
-    <title>Untitled Page</title>
-</head>
-<body>
-    <form id="form1" runat="server">
-    <div>
-    
-    </div>
-    </form>
-</body>
-</html>
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
+    <p>Welcome to the <a href="http://code.google.com/p/devdefined-tools/wiki/OAuth">DevDefined.OAuth</a> Provider Example site.</p>
+    <p>This example demonstrates the <a href="http://oauth.net">OAuth</a> flow of a simple application that implements <a href="http://oauth.net/core/1.0a">OAuth 1.0a</a> – this allows an application (in this case the ExampleConsumerSite project) to make a request to access the Contacts (address book) of a user on the ExampleProviderSite.</p>    
+    <p>This site provides a contact service which can be accessed by consumers, to access it a consumer must be delegated the authority to do so by a user on this website.</p>    
+</asp:Content>

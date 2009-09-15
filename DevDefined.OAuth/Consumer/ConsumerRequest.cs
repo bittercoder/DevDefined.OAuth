@@ -31,6 +31,7 @@ using System.Net;
 using System.Web;
 using System.Xml.Linq;
 using DevDefined.OAuth.Framework;
+using DevDefined.OAuth.Utility;
 
 namespace DevDefined.OAuth.Consumer
 {
@@ -56,11 +57,6 @@ namespace DevDefined.OAuth.Consumer
     {
       get { return _context; }
     }
-    
-    public override string ToString()
-    {
-      return FromStream(stream => new StreamReader(stream).ReadToEnd());
-    }
 
     public XDocument ToDocument()
     {
@@ -77,17 +73,9 @@ namespace DevDefined.OAuth.Consumer
         });
     }
 
-    T FromStream<T>(Func<Stream, T> streamParser)
-    {
-      using (Stream stream = ToWebResponse().GetResponseStream())
-      {
-        return streamParser(stream);
-      }
-    }
-    
     public HttpWebRequest ToWebRequest()
     {
-      var description = GetRequestDescription();
+      RequestDescription description = GetRequestDescription();
 
       var request = (HttpWebRequest) WebRequest.Create(description.Url);
       request.Method = description.Method;
@@ -103,7 +91,7 @@ namespace DevDefined.OAuth.Consumer
 
       if (description.Headers.Count > 0)
       {
-        foreach (var key in description.Headers.AllKeys)
+        foreach (string key in description.Headers.AllKeys)
         {
           request.Headers[key] = description.Headers[key];
         }
@@ -111,7 +99,7 @@ namespace DevDefined.OAuth.Consumer
 
       return request;
     }
-    
+
     public RequestDescription GetRequestDescription()
     {
       if (string.IsNullOrEmpty(_context.Signature))
@@ -125,7 +113,7 @@ namespace DevDefined.OAuth.Consumer
           _consumerContext.SignContext(_context);
         }
       }
-      
+
       Uri uri = _context.GenerateUri();
 
       var description = new RequestDescription
@@ -137,7 +125,7 @@ namespace DevDefined.OAuth.Consumer
       if ((_context.FormEncodedParameters != null) && (_context.FormEncodedParameters.Count > 0))
       {
         description.ContentType = "application/x-www-form-urlencoded";
-        description.Body = UriUtility.FormatQueryString(_context.FormEncodedParameters);
+        description.Body = UriUtility.FormatQueryString(_context.FormEncodedParameters.ToQueryParametersExcludingTokenSecret());
       }
 
       if (_consumerContext.UseHeaderForOAuthParameters)
@@ -150,8 +138,22 @@ namespace DevDefined.OAuth.Consumer
 
     public HttpWebResponse ToWebResponse()
     {
-      HttpWebRequest request = ToWebRequest();
-      return (HttpWebResponse) request.GetResponse();
+      try
+      {
+        HttpWebRequest request = ToWebRequest();
+        return (HttpWebResponse)request.GetResponse();      
+      }
+      catch (WebException webEx)
+      {
+        OAuthException authException;
+
+        if (WebExceptionHelper.TryWrapException(Context, webEx, out authException))
+        {
+          throw authException;
+        }
+
+        throw;
+      }
     }
 
     public NameValueCollection ToBodyParameters()
@@ -192,6 +194,19 @@ namespace DevDefined.OAuth.Consumer
       EnsureRequestHasNotBeenSignedYet();
       _consumerContext.SignContextWithToken(_context, token);
       return this;
+    }
+
+    public override string ToString()
+    {
+      return FromStream(stream => new StreamReader(stream).ReadToEnd());
+    }
+
+    T FromStream<T>(Func<Stream, T> streamParser)
+    {
+      using (Stream stream = ToWebResponse().GetResponseStream())
+      {
+        return streamParser(stream);
+      }
     }
 
     void EnsureRequestHasNotBeenSignedYet()

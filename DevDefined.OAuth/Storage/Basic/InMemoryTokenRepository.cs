@@ -38,10 +38,8 @@ namespace DevDefined.OAuth.Storage.Basic
   {
     readonly Dictionary<string, T> _tokens = new Dictionary<string, T>();
 
-    #region ITokenRepository<T> Members
-
     public T GetToken(string token)
-    {
+    {      
       return _tokens[token];
     }
 
@@ -49,7 +47,5 @@ namespace DevDefined.OAuth.Storage.Basic
     {
       _tokens[token.Token] = token;
     }
-
-    #endregion
   }
 }

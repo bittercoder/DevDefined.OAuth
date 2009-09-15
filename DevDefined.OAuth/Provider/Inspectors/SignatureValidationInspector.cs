@@ -47,8 +47,6 @@ namespace DevDefined.OAuth.Provider.Inspectors
       _signer = signer;
     }
 
-    #region IContextInspector Members
-
     public virtual void InspectContext(ProviderPhase phase, IOAuthContext context)
     {
       SigningContext signingContext = CreateSignatureContextForConsumer(context);
@@ -58,8 +56,6 @@ namespace DevDefined.OAuth.Provider.Inspectors
         throw Error.FailedToValidateSignature(context);
       }
     }
-
-    #endregion
 
     protected virtual bool SignatureMethodRequiresCertificate(string signatureMethod)
     {

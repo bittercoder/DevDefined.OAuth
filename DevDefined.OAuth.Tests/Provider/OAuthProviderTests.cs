@@ -73,12 +73,12 @@ namespace DevDefined.OAuth.Tests.Provider
     IOAuthSession CreateConsumerWithCallback(string signatureMethod)
     {
       var consumerContext = new OAuthConsumerContext
-      {
-        SignatureMethod = signatureMethod,
-        ConsumerKey = "key",
-        ConsumerSecret = "secret",
-        Key = TestCertificates.OAuthTestCertificate().PrivateKey
-      };
+        {
+          SignatureMethod = signatureMethod,
+          ConsumerKey = "key",
+          ConsumerSecret = "secret",
+          Key = TestCertificates.OAuthTestCertificate().PrivateKey
+        };
 
       var session = new OAuthSession(consumerContext, "http://localhost/oauth/requesttoken.rails",
                                      "http://localhost/oauth/userauhtorize.rails",
@@ -93,9 +93,18 @@ namespace DevDefined.OAuth.Tests.Provider
     {
       IOAuthSession session = CreateConsumer(SignatureMethod.RsaSha1);
       session.AccessToken = new TokenBase {ConsumerKey = "key", Token = "accesskey", TokenSecret = "accesssecret"};
+      IOAuthContext context = session.Request().Get().ForUrl("http://localhost/protected.rails").SignWithToken().Context;
+      context.TokenSecret = null;
+      provider.AccessProtectedResourceRequest(context);
+    }
 
-      var context = session.Request().Get().ForUrl("http://localhost/protected.rails").SignWithToken().Context;
-
+    [Test]
+    public void AccessProtectedResourceWithPlainText()
+    {
+      IOAuthSession session = CreateConsumer(SignatureMethod.PlainText);
+      session.AccessToken = new TokenBase {ConsumerKey = "key", Token = "accesskey", TokenSecret = "accesssecret"};
+      IOAuthContext context = session.Request().Get().ForUrl("http://localhost/protected.rails").SignWithToken().Context;
+      context.TokenSecret = null;
       provider.AccessProtectedResourceRequest(context);
     }
 
@@ -105,7 +114,8 @@ namespace DevDefined.OAuth.Tests.Provider
       IOAuthSession session = CreateConsumer(SignatureMethod.RsaSha1);
       IOAuthContext context =
         session.BuildExchangeRequestTokenForAccessTokenContext(
-          new TokenBase {ConsumerKey = "key", Token = "requestkey", TokenSecret = "requestsecret"},"GET", null).Context;
+          new TokenBase {ConsumerKey = "key", Token = "requestkey", TokenSecret = "requestsecret"}, "GET", null).Context;
+      context.TokenSecret = null;
       IToken accessToken = provider.ExchangeRequestTokenForAccessToken(context);
       Assert.AreEqual("accesskey", accessToken.Token);
       Assert.AreEqual("accesssecret", accessToken.TokenSecret);
@@ -118,9 +128,19 @@ namespace DevDefined.OAuth.Tests.Provider
       IOAuthContext context =
         session.BuildExchangeRequestTokenForAccessTokenContext(
           new TokenBase {ConsumerKey = "key", Token = "requestkey", TokenSecret = "requestsecret"}, "GET", null).Context;
+      context.TokenSecret = null;
       IToken accessToken = provider.ExchangeRequestTokenForAccessToken(context);
       Assert.AreEqual("accesskey", accessToken.Token);
       Assert.AreEqual("accesssecret", accessToken.TokenSecret);
+    }
+
+    [Test]
+    public void ExchangeTokensWhenVerifierIsMatchDoesNotThrowException()
+    {
+      IOAuthSession session = CreateConsumer(SignatureMethod.RsaSha1);
+      IOAuthContext context = session.BuildExchangeRequestTokenForAccessTokenContext(
+        new TokenBase {ConsumerKey = "key", Token = "requestkey"}, "GET", "GzvVb5WjWfHKa/0JuFupaMyn").Context;
+      provider.ExchangeRequestTokenForAccessToken(context);
     }
 
     [Test]
@@ -182,6 +202,14 @@ namespace DevDefined.OAuth.Tests.Provider
       context.Signature =
         "eeh8hLNIlNNq1Xrp7BOCc+xgY/K8AmjxKNM7UdLqqcvNSmJqcPcf7yQIOvu8oj5R/mDvBpSb3+CEhxDoW23gggsddPIxNdOcDuEOenugoCifEY6nRz8sbtYt3GHXsDS2esEse/N8bWgDdOm2FRDKuy9OOluQuKXLjx5wkD/KYMY=";
       provider.GrantRequestToken(context);
+    }
+
+    [Test]
+    [ExpectedException(typeof(OAuthException), ExpectedMessage = "The oauth_token_secret must not be transmitted to the provider.")]
+    public void RequestTokenWithTokenSecretParamterThrowsException()
+    {
+      IOAuthContext context = new OAuthContext {TokenSecret = "secret"};
+      provider.ExchangeRequestTokenForAccessToken(context);
     }
   }
 }

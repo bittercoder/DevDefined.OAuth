@@ -31,6 +31,7 @@ using System.Net;
 using System.Web;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
+using DevDefined.OAuth.Utility;
 using ExampleConsumerSite.Properties;
 
 namespace ExampleConsumerSite
@@ -39,21 +40,21 @@ namespace ExampleConsumerSite
   {
     protected void Page_Load(object sender, EventArgs e)
     {
-      OAuthSession session = CreateSession();
+      var session = CreateSession();
 
       string accessTokenString = Request[Parameters.OAuth_Token];
 
-      session.AccessToken = (IToken) Session[accessTokenString];
+      session.AccessToken = ((IToken) Session[accessTokenString]) ?? new TokenBase { ConsumerKey = "fake", Token = "fake"};
 
       try
       {
-        HttpWebResponse results = session.Request()
+        string response = session.Request()
           .Get()
           .ForUrl(Settings.Default.DataUrl)
           .SignWithToken()
-          .ToWebResponse();
+          .ReadBody();
 
-        xmlFeed.DocumentContent = ReadBody(results);
+        xmlFeed.DocumentContent = response;
       }
       catch (WebException webEx)
       {
@@ -61,24 +62,29 @@ namespace ExampleConsumerSite
 
         if (response.StatusCode == HttpStatusCode.Forbidden)
         {
-          ShowErrorsInResultsPanelFor(response);
+          ShowOAuthProblemDetails(response);
+        }
+        else
+        {
+          ShowStatusCodeDetails(response);
         }
       }
     }
 
-    static string ReadBody(WebResponse response)
-    {
-      using (var reader = new StreamReader(response.GetResponseStream()))
-      {
-        return reader.ReadToEnd();
-      }
-    }
-
-    void ShowErrorsInResultsPanelFor(WebResponse response)
+    void ShowStatusCodeDetails(HttpWebResponse response)
     {
       ResultsPanel.Visible = false;
 
-      NameValueCollection parameters = HttpUtility.ParseQueryString(ReadBody(response));
+      NameValueCollection parameters = HttpUtility.ParseQueryString(response.ReadToEnd());
+
+      ErrorInfo.Text = string.Format("Request failed, status code was: {0}, status description: {1}", response.StatusCode, response.StatusDescription);
+    }
+
+    void ShowOAuthProblemDetails(WebResponse response)
+    {
+      ResultsPanel.Visible = false;
+
+      NameValueCollection parameters = HttpUtility.ParseQueryString(response.ReadToEnd());
 
       ErrorInfo.Text = "Access was denied to resource.<br/><br/>";
 

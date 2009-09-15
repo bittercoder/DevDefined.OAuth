@@ -31,6 +31,7 @@ using DevDefined.OAuth.Framework.Signing;
 
 namespace DevDefined.OAuth.Consumer
 {
+  [Serializable]
   public class OAuthConsumerContext : IOAuthConsumerContext
   {
     INonceGenerator _nonceGenerator = new GuidNonceGenerator();
@@ -52,8 +53,6 @@ namespace DevDefined.OAuth.Consumer
       get { return _nonceGenerator; }
       set { _nonceGenerator = value; }
     }
-
-    #region IOAuthConsumerContext Members
 
     public string Realm { get; set; }
     public string ConsumerKey { get; set; }
@@ -91,8 +90,6 @@ namespace DevDefined.OAuth.Consumer
 
       SignContext(context);
     }
-
-    #endregion
 
     void EnsureStateIsValid()
     {

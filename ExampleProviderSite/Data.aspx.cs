@@ -60,9 +60,11 @@ namespace ExampleProviderSite
       }
       catch (OAuthException authEx)
       {
-        // access was denied for some reason, so we set the status code to 403.
+        // fairly naieve approach to status codes, generally you would want to examine eiter the inner exception of the 
+        // problem report to determine an appropriate status code for your technology / architecture.
+
         Response.StatusCode = 403;
-        Response.Write(authEx.Report.ToString());
+        Response.Write(authEx.Report);
         Response.End();
       }
     }

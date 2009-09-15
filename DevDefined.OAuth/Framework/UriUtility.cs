@@ -170,6 +170,28 @@ namespace DevDefined.OAuth.Framework
     /// </summary>
     /// <param name="parameters"></param>
     /// <returns></returns>
+    public static string FormatQueryString(IEnumerable<KeyValuePair<string, string>> parameters)
+    {
+      var builder = new StringBuilder();
+
+      if (parameters != null)
+      {
+        foreach (var pair in parameters)
+        {
+          if (builder.Length > 0) builder.Append("&");
+          builder.Append(pair.Key).Append("=");
+          builder.Append(UrlEncode(pair.Value));
+        }
+      }
+
+      return builder.ToString();
+    }
+
+    /// <summary>
+    /// Formats a set of query parameters, as per query string encoding.
+    /// </summary>
+    /// <param name="parameters"></param>
+    /// <returns></returns>
     public static string FormatQueryString(NameValueCollection parameters)
     {
       var builder = new StringBuilder();
@@ -256,6 +278,17 @@ namespace DevDefined.OAuth.Framework
       foreach (string key in source.AllKeys)
       {
         yield return new QueryParameter(key, source[key]);
+      }
+    }
+
+    public static IEnumerable<QueryParameter> ToQueryParametersExcludingTokenSecret(this NameValueCollection source)
+    {
+      foreach (string key in source.AllKeys)
+      {
+        if (key != Parameters.OAuth_Token_Secret)
+        {
+          yield return new QueryParameter(key, source[key]);
+        }
       }
     }
 

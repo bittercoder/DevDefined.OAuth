@@ -32,23 +32,23 @@ namespace DevDefined.OAuth.Testing
 {
   public class TestTokenStore : ITokenStore
   {
-    public string CallbackUrl { get; set; }
-    public string VerificationCode { get; set; }
+    public const string AccessSecret = "accesssecret";
+    public const string RequestSecret = "requestsecret";
 
     public TestTokenStore()
     {
       CallbackUrl = "http://localhost/callback";
-      VerificationCode = "GzvVb5WjWfHKa/0JuFupaMyn"; // this is a example google oauth verification code
+      VerificationCode = "GzvVb5WjWfHKa/0JuFupaMyn"; // this is a example google oauth verification code      
     }
 
-    #region ITokenStore Members
+    public string CallbackUrl { get; set; }
+    public string VerificationCode { get; set; }
 
     public IToken CreateRequestToken(IOAuthContext context)
     {
       EnsureTestConsumer(context);
 
-      return new TokenBase
-        {ConsumerKey = "key", Realm = null, Token = "requestkey", TokenSecret = "requestsecret"};
+      return new TokenBase {ConsumerKey = "key", Realm = null, Token = "requestkey", TokenSecret = RequestSecret};
     }
 
     public void ConsumeRequestToken(IOAuthContext requestContext)
@@ -57,7 +57,7 @@ namespace DevDefined.OAuth.Testing
 
       if (requestContext.Token != "requestkey")
         throw new OAuthException(requestContext, OAuthProblems.TokenRejected,
-                                 "The supplied request token is unknown to teh provider.");
+                                 "The supplied request token is unknown to the provider.");
     }
 
     public void ConsumeAccessToken(IOAuthContext accessContext)
@@ -66,7 +66,7 @@ namespace DevDefined.OAuth.Testing
 
       if (accessContext.Token != "accesskey")
         throw new OAuthException(accessContext, OAuthProblems.TokenRejected,
-                                 "The supplied access token is unknown to teh provider.");
+                                 "The supplied access token is unknown to the provider.");
     }
 
     public IToken GetAccessTokenAssociatedWithRequestToken(IOAuthContext requestContext)
@@ -76,7 +76,7 @@ namespace DevDefined.OAuth.Testing
       if (requestContext.Token != "requestkey")
         throw new OAuthException(requestContext, OAuthProblems.TokenRejected, "Expected Token \"requestkey\"");
 
-      return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = "accesssecret"};
+      return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = AccessSecret};
     }
 
     public RequestForAccessStatus GetStatusOfRequestForAccess(IOAuthContext requestContext)
@@ -92,23 +92,26 @@ namespace DevDefined.OAuth.Testing
       return CallbackUrl;
     }
 
-    public void SetVerificationCodeForRequestToken(IOAuthContext requestContext, string verificationCode)
-    {
-      VerificationCode = verificationCode;
-    }
-
     public string GetVerificationCodeForRequestToken(IOAuthContext requestContext)
     {
       return VerificationCode;
     }
 
-    #endregion
+    public string GetRequestTokenSecret(IOAuthContext context)
+    {
+      return RequestSecret;
+    }
+
+    public string GetAccessTokenSecret(IOAuthContext context)
+    {
+      return AccessSecret;
+    }
 
     public IToken CreateAccessTokenForRequestToken(IOAuthContext requestContext)
     {
       EnsureTestConsumer(requestContext);
 
-      return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = "accesssecret"};
+      return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = AccessSecret};
     }
 
     static void EnsureTestConsumer(IConsumer consumer)

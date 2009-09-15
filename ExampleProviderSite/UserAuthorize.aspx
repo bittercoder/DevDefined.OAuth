@@ -1,14 +1,8 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="UserAuthorize.aspx.cs"
-    Inherits="ExampleProviderSite.UserAuthorize" %>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title>3rd Party Access Request</title>
-</head>
-<body>
-    <h1>
-        OAuth Demo - Provider</h1>
+    Inherits="ExampleProviderSite.UserAuthorize" MasterPageFile="~/Site.Master" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="Server">
+    <h2>Access Request</h2>
+    <br />
     <p>
         The consumer <strong>
             <%=ConsumerKey%></strong> is requesting access to your Account for the services(s)
@@ -24,7 +18,6 @@
     <ul>
         <li><strong>contacts</strong> The contacts service. </li>
     </ul>
-    <form id="form1" runat="server">
     <div>
         <p>
             A 3rd party appliication
@@ -33,6 +26,4 @@
         <asp:Button runat="server" ID="Approve" Text="Grant Access" OnClick="Approve_Click" />
         <asp:Button runat="server" ID="Deny" Text="Deny Access" OnClick="Deny_Click" />
     </div>
-    </form>
-</body>
-</html>
+</asp:Content>

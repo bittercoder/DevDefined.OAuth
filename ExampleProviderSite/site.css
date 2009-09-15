@@ -1,19 +1,101 @@
-﻿#passwordList tr th
+﻿html {
+    height: 100%;
+}
+
+body {
+    margin:0;
+    padding:0;
+    line-height: 1.5em;
+    background-color: Black;
+    background-image: url(Images/DevDefinedOAuthBackground.png);
+    background-repeat: repeat-x;
+    color:#999999;
+    font-family:Calibri,Tahoma,Verdana,Helvetica,Arial,sans-serif;
+    height: 100%;
+}
+
+a {
+    color: #CCCCCC; 
+}
+
+
+#topsection {
+    height: 110px; 
+    background-position: 50px 12px;
+    background-image: url(Images/DevDefinedOAuthTitle.png);
+    background-repeat: no-repeat;
+}
+
+* {
+    margin:0;
+    padding:0;
+} 
+
+html, body, #wrap {
+    height: 100%;
+    }
+
+body > #wrap  {
+    height: auto;
+    min-height: 100%;
+}
+
+#main {
+    padding-bottom: 70px;
+    margin-left: 10px;
+}  
+
+#main p {
+    padding-bottom: 18px;
+}
+
+#main h1 {
+    color: #EEEEEE;
+    padding-bottom: 20px;
+}
+
+#footer 
 {
+    position: relative;
+	margin-top: -40px;
+	margin-left: 10px;
+	height: 40px;
+	clear:both;
+} 
+
+.clearfix:after {
+    content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+.clearfix {
+    display: inline-block;
+}
+
+* html .clearfix {
+    height: 1%;
+}
+
+.clearfix {
+    display: block;
+}
+
+#passwordList tr th {
     border-style: groove;
     border-width: 1px;
     background-color: Gray;
     color: White;
 }
 
-#passwordList tr td
-{
+#passwordList tr td {
     border-style: groove;
     border-width: 1px;
+    padding-left: 3px;
 }
 
-#passwordList
-{
+#passwordList {
     width: 400px;
     empty-cells: show;
     padding: 1px;
@@ -22,7 +104,16 @@
     border-width: 1px;
 }
 
-body
-{
-    font-family: Arial, Helvetica, sans-serif;
+.loginTextbox  {
+    width: 100px;
+    margin-left: 10px;
 }
+
+#LoginRememberMe input {
+    margin-right: 10px;   
+}
+
+#LoginButtons input {
+    width: 70px;
+}
+    

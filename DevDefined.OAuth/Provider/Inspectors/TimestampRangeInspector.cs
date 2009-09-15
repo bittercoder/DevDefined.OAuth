@@ -52,8 +52,6 @@ namespace DevDefined.OAuth.Provider.Inspectors
       _nowFunc = nowFunc;
     }
 
-    #region IContextInspector Members
-
     public void InspectContext(ProviderPhase phase, IOAuthContext context)
     {
       DateTime timestamp = DateTimeUtility.FromEpoch(Convert.ToInt32(context.Timestamp));
@@ -74,7 +72,5 @@ namespace DevDefined.OAuth.Provider.Inspectors
                                    _maxAfterNow.TotalSeconds));
       }
     }
-
-    #endregion
   }
 }

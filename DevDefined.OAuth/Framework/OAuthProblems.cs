@@ -28,6 +28,7 @@ namespace DevDefined.OAuth.Framework
 {
   public static class OAuthProblems
   {
+    public const string AdditionalAuthorizationRequired = "additional_authorization_required";
     public const string ConsumerKeyRefused = "consumer_key_refused";
     public const string ConsumerKeyRejected = "consumer_key_rejected";
     public const string ConsumerKeyUnknown = "consumer_key_unknown";
@@ -43,8 +44,7 @@ namespace DevDefined.OAuth.Framework
     public const string TokenRejected = "token_rejected";
     public const string TokenRevoked = "token_revoked";
     public const string TokenUsed = "token_used";
-    public const string VersionRejected = "version_rejected";
-    public const string AdditionalAuthorizationRequired = "additional_authorization_required";
     public const string UserRefused = "user_refused";
+    public const string VersionRejected = "version_rejected";
   }
 }

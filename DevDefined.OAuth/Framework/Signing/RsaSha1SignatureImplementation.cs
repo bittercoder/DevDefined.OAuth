@@ -33,8 +33,6 @@ namespace DevDefined.OAuth.Framework.Signing
 {
   public class RsaSha1SignatureImplementation : IContextSignatureImplementation
   {
-    #region IContextSignatureImplementation Members
-
     public string MethodName
     {
       get { return SignatureMethod.RsaSha1; }
@@ -58,8 +56,6 @@ namespace DevDefined.OAuth.Framework.Signing
 
       return deformatter.VerifySignature(sha1, signature);
     }
-
-    #endregion
 
     string GenerateSignature(IOAuthContext authContext, SigningContext signingContext)
     {

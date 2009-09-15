@@ -37,8 +37,6 @@ namespace DevDefined.OAuth.Testing
   {
     readonly Dictionary<string, List<string>> _nonces = new Dictionary<string, List<string>>();
 
-    #region INonceStore Members
-
     public bool RecordNonceAndCheckIsUnique(IConsumer consumer, string nonce)
     {
       List<string> list = GetNonceListForConsumer(consumer.ConsumerKey);
@@ -49,8 +47,6 @@ namespace DevDefined.OAuth.Testing
         return true;
       }
     }
-
-    #endregion
 
     List<string> GetNonceListForConsumer(string consumerKey)
     {

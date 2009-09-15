@@ -1,0 +1,1 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="GetRequestToken.aspx.cs" Inherits="ExampleProviderSite.GetRequestToken" %>

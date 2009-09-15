@@ -42,8 +42,6 @@ namespace DevDefined.OAuth.Storage.Basic
       _requestTokenRepository = requestTokenRepository;
     }
 
-    #region ITokenStore Members
-
     public IToken CreateRequestToken(IOAuthContext context)
     {
       if (context == null) throw new ArgumentNullException("context");
@@ -65,17 +63,43 @@ namespace DevDefined.OAuth.Storage.Basic
     public void ConsumeRequestToken(IOAuthContext requestContext)
     {
       if (requestContext == null) throw new ArgumentNullException("requestContext");
-
-      RequestToken requestToken = _requestTokenRepository.GetToken(requestContext.Token);
+      
+      RequestToken requestToken = GetRequestToken(requestContext);
 
       UseUpRequestToken(requestContext, requestToken);
 
       _requestTokenRepository.SaveToken(requestToken);
     }
 
+    RequestToken GetRequestToken(IOAuthContext context)
+    {
+      try
+      {
+        return _requestTokenRepository.GetToken(context.Token);
+      }
+      catch (Exception exception)
+      {
+        // TODO: log exception
+        throw Error.UnknownToken(context, context.Token, exception);
+      }
+    }
+
+    AccessToken GetAccessToken(IOAuthContext context)
+    {
+      try
+      {
+        return _accessTokenRepository.GetToken(context.Token);
+      }
+      catch (Exception exception)
+      {
+        // TODO: log exception
+        throw Error.UnknownToken(context, context.Token, exception);
+      }
+    }
+
     public void ConsumeAccessToken(IOAuthContext accessContext)
     {
-      AccessToken accessToken = _accessTokenRepository.GetToken(accessContext.Token);
+      AccessToken accessToken = GetAccessToken(accessContext);
 
       if (accessToken.ExpireyDate < DateTime.Now)
       {
@@ -86,13 +110,13 @@ namespace DevDefined.OAuth.Storage.Basic
 
     public IToken GetAccessTokenAssociatedWithRequestToken(IOAuthContext requestContext)
     {
-      RequestToken request = _requestTokenRepository.GetToken(requestContext.Token);
-      return request.AccessToken;
+      RequestToken requestToken = GetRequestToken(requestContext);
+      return requestToken.AccessToken;
     }
 
     public RequestForAccessStatus GetStatusOfRequestForAccess(IOAuthContext accessContext)
     {
-      RequestToken request = _requestTokenRepository.GetToken(accessContext.Token);
+      RequestToken request = GetRequestToken(accessContext);
 
       if (request.AccessDenied) return RequestForAccessStatus.Denied;
 
@@ -103,26 +127,29 @@ namespace DevDefined.OAuth.Storage.Basic
 
     public string GetCallbackUrlForToken(IOAuthContext requestContext)
     {
-      RequestToken requestToken = _requestTokenRepository.GetToken(requestContext.Token);
+      RequestToken requestToken = GetRequestToken(requestContext);
       return requestToken.CallbackUrl;
-    }
-
-    public void SetVerificationCodeForRequestToken(IOAuthContext requestContext, string verificationCode)
-    {
-      if (string.IsNullOrEmpty(verificationCode)) throw new ArgumentNullException("verificationCode");
-      
-      RequestToken requestToken = _requestTokenRepository.GetToken(requestContext.Token);
-      
-      requestToken.Verifier = verificationCode;
-      
-      _requestTokenRepository.SaveToken(requestToken);
     }
 
     public string GetVerificationCodeForRequestToken(IOAuthContext requestContext)
     {
-      RequestToken requestToken = _requestTokenRepository.GetToken(requestContext.Token);
+      RequestToken requestToken = GetRequestToken(requestContext);
 
       return requestToken.Verifier;
+    }
+
+    public string GetRequestTokenSecret(IOAuthContext context)
+    {
+      RequestToken requestToken = GetRequestToken(context);
+
+      return requestToken.TokenSecret;
+    }
+
+    public string GetAccessTokenSecret(IOAuthContext context)
+    {
+      AccessToken token = GetAccessToken(context);
+
+      return token.TokenSecret;
     }
 
     public IToken GetToken(IOAuthContext context)
@@ -130,14 +157,20 @@ namespace DevDefined.OAuth.Storage.Basic
       var token = (IToken) null;
       if (!string.IsNullOrEmpty(context.Token))
       {
-        token = _accessTokenRepository.GetToken(context.Token) ??
-                (IToken) _requestTokenRepository.GetToken(context.Token);
+        try
+        {
+          token = _accessTokenRepository.GetToken(context.Token) ??
+                  (IToken)_requestTokenRepository.GetToken(context.Token);
+        }
+        catch (Exception ex)
+        {
+          // TODO: log exception
+          throw Error.UnknownToken(context, context.Token, ex);
+        }
+       
       }
       return token;
-
     }
-
-    #endregion
 
     static void UseUpRequestToken(IOAuthContext requestContext, RequestToken requestToken)
     {

@@ -1,0 +1,30 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="ExampleProviderSite.Site" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Example Consumer - DevDefined OAuth</title>
+    <link href="site.css" type="text/css" rel="Stylesheet" />
+</head>
+<body>
+    <div id="wrap">
+        <div id="main" class="clearfix">
+            <div id="topsection">
+            </div>
+            <div id="contentwrapper">
+                <h1>Example Consumer</h1>
+                <form id="form1" runat="server">
+                <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                </asp:ContentPlaceHolder>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        DevDefined.OAuth is developed by <a href="http://blog.bittercoder.com/">Alex Henderson</a>,
+        Copyright (C) 2008-2010 <a href="http://www.devdefined.com/">DevDefined Ltd.</a>
+        and Contributors under the <a href="http://www.opensource.org/licenses/mit-license.php">
+            MIT License</a>.
+    </div>
+</body>
+</html>

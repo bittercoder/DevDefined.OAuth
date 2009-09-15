@@ -34,8 +34,10 @@ using QueryParameter = System.Collections.Generic.KeyValuePair<string, string>;
 
 namespace DevDefined.OAuth.Framework
 {
+  [Serializable]
   public class OAuthContext : IOAuthContext
   {
+    readonly BoundParameter _callbackUrl;
     readonly BoundParameter _consumerKey;
     readonly BoundParameter _nonce;
     readonly BoundParameter _signature;
@@ -43,9 +45,8 @@ namespace DevDefined.OAuth.Framework
     readonly BoundParameter _timestamp;
     readonly BoundParameter _token;
     readonly BoundParameter _tokenSecret;
-    readonly BoundParameter _version;
-    readonly BoundParameter _callbackUrl;
     readonly BoundParameter _verifier;
+    readonly BoundParameter _version;
     NameValueCollection _authorizationHeaderParameters;
     NameValueCollection _cookies;
     NameValueCollection _formEncodedParameters;
@@ -194,8 +195,6 @@ namespace DevDefined.OAuth.Framework
 
     public bool UseAuthorizationHeader { get; set; }
 
-    #region IToken Members
-
     public string Realm
     {
       get { return AuthorizationHeaderParameters[Parameters.Realm]; }
@@ -220,15 +219,14 @@ namespace DevDefined.OAuth.Framework
       set { _tokenSecret.Value = value; }
     }
 
-    #endregion
-
     public Uri GenerateUri()
     {
       var builder = new UriBuilder(NormalizedRequestUrl);
 
-      string formattedQuery = UriUtility.FormatQueryString(QueryParameters);
+      IEnumerable<QueryParameter> parameters = QueryParameters.ToQueryParametersExcludingTokenSecret();
 
-      builder.Query = UriUtility.FormatQueryString(QueryParameters);
+      builder.Query = UriUtility.FormatQueryString(parameters);
+
       return builder.Uri;
     }
 
@@ -247,8 +245,10 @@ namespace DevDefined.OAuth.Framework
 
       if (Realm != null) builder.Append("realm=\"").Append(Realm).Append("\"");
 
+      IEnumerable<QueryParameter> parameters = AuthorizationHeaderParameters.ToQueryParametersExcludingTokenSecret();
+
       foreach (
-        var parameter in AuthorizationHeaderParameters.ToQueryParameters().Where(p => p.Key != Parameters.Realm)
+        var parameter in parameters.Where(p => p.Key != Parameters.Realm)
         )
       {
         if (builder.Length > 0) builder.Append(",");
@@ -265,9 +265,8 @@ namespace DevDefined.OAuth.Framework
     {
       var builder = new UriBuilder(NormalizedRequestUrl);
 
-      NameValueCollection parameters = QueryParameters.ToQueryParameters()
-        .Where(q => !q.Key.StartsWith(Parameters.OAuthParameterPrefix))
-        .ToNameValueCollection();
+      IEnumerable<QueryParameter> parameters = QueryParameters.ToQueryParameters()
+        .Where(q => !q.Key.StartsWith(Parameters.OAuthParameterPrefix));
 
       builder.Query = UriUtility.FormatQueryString(parameters);
 
@@ -277,11 +276,6 @@ namespace DevDefined.OAuth.Framework
 
     public string GenerateSignatureBase()
     {
-      if (Token == null)
-      {
-        Token = string.Empty;
-      }
-
       if (string.IsNullOrEmpty(ConsumerKey))
       {
         throw Error.MissingRequiredOAuthParameter(this, Parameters.OAuth_Consumer_Key);
@@ -299,53 +293,18 @@ namespace DevDefined.OAuth.Framework
 
       var allParameters = new List<QueryParameter>();
 
-      if (FormEncodedParameters != null) allParameters.AddRange(FormEncodedParameters.ToQueryParameters());
-      if (QueryParameters != null) allParameters.AddRange(QueryParameters.ToQueryParameters());
-      if (Cookies != null) allParameters.AddRange(Cookies.ToQueryParameters());
+      if (FormEncodedParameters != null) allParameters.AddRange(FormEncodedParameters.ToQueryParametersExcludingTokenSecret());
+      if (QueryParameters != null) allParameters.AddRange(QueryParameters.ToQueryParametersExcludingTokenSecret());
+      if (Cookies != null) allParameters.AddRange(Cookies.ToQueryParametersExcludingTokenSecret());
       if (AuthorizationHeaderParameters != null)
-        allParameters.AddRange(
-          AuthorizationHeaderParameters.ToQueryParameters().Where(q => q.Key != Parameters.Realm));
-
-      // remove the signature parameter
+        allParameters.AddRange(AuthorizationHeaderParameters.ToQueryParametersExcludingTokenSecret().Where(q => q.Key != Parameters.Realm));
 
       allParameters.RemoveAll(param => param.Key == Parameters.OAuth_Signature);
 
-      //allParameters.RemoveAll(param => param.Key == Parameters.OAuth_Token && string.IsNullOrEmpty(param.Value));
+      string signatureBase = UriUtility.FormatParameters(RequestMethod, new Uri(NormalizedRequestUrl), allParameters);
 
-      // build the uri
-
-      return UriUtility.FormatParameters(RequestMethod, new Uri(NormalizedRequestUrl), allParameters);
+      return signatureBase;
     }
-
-    public override string ToString()
-    {
-      /*
-                StringBuilder builder = new StringBuilder();
-
-                builder.AppendFormat("")
-                  this.ConsumerKey
-                    this.Nonce
-                      this.RawUri
-                        this.Realm
-                                  this.RequestMethod
-                                    this.Signature
-                                      this.SignatureMethod
-                                        this.Timestamp
-                                          this.Token
-                                            this.TokenSecret
-                                              this.UseAuthorizationHeader
-                                                this.Version
-          
-                this.AuthorizationHeaderParameters          
-                    this.Cookies
-                    this.FormEncodedParameters
-                      this.Headers                  
-                          this.NormalizedRequestUrl
-                            this.QueryParameters                                                          */
-      return base.ToString();
-    }
-
-    #region Nested type: BoundParameter
 
     class BoundParameter
     {
@@ -384,7 +343,5 @@ namespace DevDefined.OAuth.Framework
         }
       }
     }
-
-    #endregion
   }
 }

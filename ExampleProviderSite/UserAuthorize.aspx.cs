@@ -29,18 +29,18 @@ using System.Web;
 using System.Web.UI;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage.Basic;
-using ExampleProviderSite.Repositories;
+using DevDefined.OAuth.Utility;
 
 namespace ExampleProviderSite
 {
   public partial class UserAuthorize : Page
   {
-    ITokenRepository<DevDefined.OAuth.Storage.Basic.RequestToken> RequestTokenRepository
+    static ITokenRepository<RequestToken> RequestTokenRepository
     {
       get { return OAuthServicesLocator.Services.RequestTokenRepository; }
     }
 
-    ITokenRepository<DevDefined.OAuth.Storage.Basic.AccessToken> AccessTokenRepository
+    static ITokenRepository<AccessToken> AccessTokenRepository
     {
       get { return OAuthServicesLocator.Services.AccessTokenRepository; }
     }
@@ -79,9 +79,9 @@ namespace ExampleProviderSite
 
     void ApproveRequestForAccess(string tokenString)
     {
-      DevDefined.OAuth.Storage.Basic.RequestToken requestToken = RequestTokenRepository.GetToken(tokenString);
+      RequestToken requestToken = RequestTokenRepository.GetToken(tokenString);
 
-      var accessToken = new DevDefined.OAuth.Storage.Basic.AccessToken
+      var accessToken = new AccessToken
         {
           ConsumerKey = requestToken.ConsumerKey,
           Realm = requestToken.Realm,
@@ -95,35 +95,56 @@ namespace ExampleProviderSite
 
       requestToken.AccessToken = accessToken;
 
+      requestToken.Verifier = UnguessableGenerator.GenerateUnguessable();
+
       RequestTokenRepository.SaveToken(requestToken);
     }
 
     void DenyRequestForAccess(string tokenString)
     {
-      DevDefined.OAuth.Storage.Basic.RequestToken requestToken = RequestTokenRepository.GetToken(tokenString);
+      RequestToken requestToken = RequestTokenRepository.GetToken(tokenString);
+
+      // fairly naieve approach to status codes, generally you would want to examine either the inner exception or the 
+      // problem report to determine an appropriate status code for your technology / architecture.
+
+      requestToken.Verifier = UnguessableGenerator.GenerateUnguessable();
 
       requestToken.AccessDenied = true;
 
       RequestTokenRepository.SaveToken(requestToken);
     }
 
-    void RedirectToClient(string token, bool granted)
+    void RedirectToClient(string tokenString, bool granted)
     {
-      string callBackUrl = Request[Parameters.OAuth_Callback];
+      RequestToken requestToken = RequestTokenRepository.GetToken(tokenString);
+
+      string callBackUrl = requestToken.CallbackUrl;
+      string verifier = requestToken.Verifier;
 
       if (!string.IsNullOrEmpty(callBackUrl))
       {
         if (!callBackUrl.Contains("?")) callBackUrl += "?";
         else callBackUrl += "&";
 
-        callBackUrl += Parameters.OAuth_Token + "=" + UriUtility.UrlEncode(token);
+        callBackUrl += Parameters.OAuth_Token + "=" + UriUtility.UrlEncode(tokenString);
+        callBackUrl += "&" + Parameters.OAuth_Verifier + "=" + UriUtility.UrlEncode(verifier);
 
         Response.Redirect(callBackUrl, true);
       }
       else
       {
-        if (granted) Response.Write("Authorized");
-        else Response.Write("Denied");
+        if (granted)
+        {
+          string successMessage = string.Format(
+            "You have been successfully granted Access, To complete the process, please provide <I>{0}</I> with this verification code: <B>{1}</B>",
+            requestToken.ConsumerKey, HttpUtility.HtmlEncode(requestToken.Verifier));
+
+          Response.Write(successMessage);
+        }
+        else
+        {
+          Response.Write("Denied");
+        }
 
         Response.End();
       }

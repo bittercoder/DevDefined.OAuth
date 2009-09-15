@@ -46,8 +46,6 @@ namespace DevDefined.OAuth.Framework.Signing
     {
     }
 
-    #region IOAuthContextSigner Members
-
     public void SignContext(IOAuthContext authContext, SigningContext signingContext)
     {
       signingContext.SignatureBase = authContext.GenerateSignatureBase();
@@ -59,8 +57,6 @@ namespace DevDefined.OAuth.Framework.Signing
       signingContext.SignatureBase = authContext.GenerateSignatureBase();
       return FindImplementationForAuthContext(authContext).ValidateSignature(authContext, signingContext);
     }
-
-    #endregion
 
     IContextSignatureImplementation FindImplementationForAuthContext(IOAuthContext authContext)
     {

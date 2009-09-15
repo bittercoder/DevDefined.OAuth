@@ -57,13 +57,9 @@ namespace DevDefined.OAuth.Framework
       _action = action;
     }
 
-    #region IDisposable Members
-
     public void Dispose()
     {
       _action();
     }
-
-    #endregion
   }
 }

@@ -180,5 +180,20 @@ namespace DevDefined.OAuth.Framework
     {
       return new OAuthException(context, OAuthProblems.ParameterRejected, string.Format("The parameter \"{0}\" was rejected", parameter));
     }
+
+    public static Exception UnknownToken(IOAuthContext context, string token)
+    {
+      return new OAuthException(context, OAuthProblems.TokenRejected, string.Format("Unknown or previously rejected token \"{0}\"", token));
+    }
+
+    public static Exception UnknownToken(IOAuthContext context, string token, Exception exception)
+    {
+      return new OAuthException(context, OAuthProblems.TokenRejected, string.Format("Unknown or previously rejected token \"{0}\"", token), exception);
+    }
+
+    public static Exception RequestForTokenMustNotIncludeTokenInContext(IOAuthContext context)
+    {
+      throw new OAuthException(context, OAuthProblems.ParameterRejected, "When obtaining a request token, you must not supply the oauth_token parameter");
+    }
   }
 }

@@ -38,6 +38,7 @@ namespace DevDefined.OAuth.Consumer
     Uri UserAuthorizeUri { get; set; }
     IToken AccessToken { get; set; }
     IConsumerRequest Request();
+    IConsumerRequest Request(IToken accessToken);
     IToken GetRequestToken();
     IToken ExchangeRequestTokenForAccessToken(IToken requestToken);
     IToken ExchangeRequestTokenForAccessToken(IToken requestToken, string verificationCode);
@@ -45,6 +46,7 @@ namespace DevDefined.OAuth.Consumer
     IConsumerRequest BuildRequestTokenContext(string method);
     IConsumerRequest BuildExchangeRequestTokenForAccessTokenContext(IToken requestToken, string method, string verificationCode);
     string GetUserAuthorizationUrlForToken(IToken token, string callbackUrl);
+    string GetUserAuthorizationUrlForToken(IToken token);
     IOAuthSession WithFormParameters(IDictionary dictionary);
     IOAuthSession WithFormParameters(object anonymousClass);
     IOAuthSession WithQueryParameters(IDictionary dictionary);

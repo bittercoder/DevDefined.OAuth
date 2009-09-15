@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Net;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Utility;
 
@@ -113,6 +114,13 @@ namespace DevDefined.OAuth.Consumer
     {
       alteration(request.Context);
       return request;
+    }
+
+    public static string ReadBody(this IConsumerRequest request)
+    {
+      HttpWebResponse response = request.ToWebResponse();
+
+      return response.ReadToEnd();
     }
 
     public static T Select<T>(this IConsumerRequest request, Func<NameValueCollection, T> selectFunc)

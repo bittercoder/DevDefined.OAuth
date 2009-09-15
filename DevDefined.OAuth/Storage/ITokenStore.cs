@@ -71,17 +71,24 @@ namespace DevDefined.OAuth.Storage
     string GetCallbackUrlForToken(IOAuthContext requestContext);
 
     /// <summary>
-    /// Sets the verification code for a token
-    /// </summary>
-    /// <param name="requestContext"></param>
-    /// <param name="verificationCode"></param>
-    void SetVerificationCodeForRequestToken(IOAuthContext requestContext, string verificationCode);
-
-    /// <summary>
     /// Retrieves the verification code for a token
     /// </summary>
-    /// <param name="token"></param>
+    /// <param name="requestContext"></param>
     /// <returns>verification code</returns>
     string GetVerificationCodeForRequestToken(IOAuthContext requestContext);
+
+    /// <summary>
+    /// Gets the token secret for the supplied request token
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns>token secret</returns>
+    string GetRequestTokenSecret(IOAuthContext context);
+
+    /// <summary>
+    /// Gets the token secret for the supplied access token
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns>token secret</returns>
+    string GetAccessTokenSecret(IOAuthContext context);
   }
 }

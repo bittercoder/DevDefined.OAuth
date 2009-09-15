@@ -40,19 +40,40 @@ namespace DevDefined.OAuth.Tests.Provider
 
       var session = new OAuthSession(consumerContext, "http://localhost/oauth/requesttoken.rails",
                                      "http://localhost/oauth/userauhtorize.rails",
-                                     "http://localhost/oauth/accesstoken.rails");      
+                                     "http://localhost/oauth/accesstoken.rails");
 
       return session;
     }
 
     [Test]
-    [ExpectedException(typeof(OAuthException), "Missing required parameter : oauth_callback")]
-    public void RequestTokenWithoutCallbackWillThrowException()
+    public void ExchangeTokensWhenVerifierIsMatchDoesNotThrowException()
     {
-      IOAuthSession session = CreateConsumer(SignatureMethod.PlainText);
-      IOAuthContext context = session.BuildRequestTokenContext("GET").Context;
-      context.CallbackUrl = null; // clear parameter, as it will default to "oob"
-      IToken token = provider.GrantRequestToken(context);      
+      IOAuthSession session = CreateConsumer(SignatureMethod.RsaSha1);
+      IOAuthContext context = session.BuildExchangeRequestTokenForAccessTokenContext(
+        new TokenBase {ConsumerKey = "key", Token = "requestkey"}, "GET", "GzvVb5WjWfHKa/0JuFupaMyn").Context;
+      provider.ExchangeRequestTokenForAccessToken(context);
+    }
+
+    [Test]
+    [ExpectedException(typeof (OAuthException), ExpectedMessage = "Missing required parameter : oauth_verifier")]
+    public void ExchangeTokensWhenVerifierIsMissingThrowsException()
+    {
+      string verifier = null;
+
+      IOAuthSession session = CreateConsumer(SignatureMethod.RsaSha1);
+      IOAuthContext context = session.BuildExchangeRequestTokenForAccessTokenContext(
+        new TokenBase {ConsumerKey = "key", Token = "requestkey"}, "GET", verifier).Context;
+      provider.ExchangeRequestTokenForAccessToken(context);
+    }
+
+    [Test]
+    [ExpectedException(typeof(OAuthException), ExpectedMessage = "The parameter \"oauth_verifier\" was rejected")]
+    public void ExchangeTokensWhenVerifierIsWrongThrowsException()
+    {
+      IOAuthSession session = CreateConsumer(SignatureMethod.RsaSha1);
+      IOAuthContext context = session.BuildExchangeRequestTokenForAccessTokenContext(
+        new TokenBase {ConsumerKey = "key", Token = "requestkey"}, "GET", "wrong").Context;
+      provider.ExchangeRequestTokenForAccessToken(context);
     }
 
     [Test]
@@ -60,42 +81,17 @@ namespace DevDefined.OAuth.Tests.Provider
     {
       IOAuthSession session = CreateConsumer(SignatureMethod.PlainText);
       IOAuthContext context = session.BuildRequestTokenContext("GET").Context;
-      IToken token = provider.GrantRequestToken(context);   
+      provider.GrantRequestToken(context);
     }
 
     [Test]
-    [ExpectedException(typeof(OAuthException), "Missing required parameter : oauth_verifier")]
-    public void ExchangeTokensWhenVerifierIsMissingThrowsException()
+    [ExpectedException(typeof(OAuthException), ExpectedMessage = "Missing required parameter : oauth_callback")]
+    public void RequestTokenWithoutCallbackWillThrowException()
     {
-      string verifier = null;
-
-      IOAuthSession session = CreateConsumer(SignatureMethod.RsaSha1);
-      IOAuthContext context = session.BuildExchangeRequestTokenForAccessTokenContext(
-        new TokenBase { ConsumerKey = "key", Token = "requestkey", TokenSecret = "requestsecret" }, "GET", verifier).Context;
-      IToken accessToken = provider.ExchangeRequestTokenForAccessToken(context);      
-    }
-
-    [Test]
-    [ExpectedException(typeof(OAuthException), "The parameter \"oauth_verifier\" was rejected")]
-    public void ExchangeTokensWhenVerifierIsWrongThrowsException()
-    {
-      string verifier = null;
-
-      IOAuthSession session = CreateConsumer(SignatureMethod.RsaSha1);
-      IOAuthContext context = session.BuildExchangeRequestTokenForAccessTokenContext(
-        new TokenBase { ConsumerKey = "key", Token = "requestkey", TokenSecret = "requestsecret" }, "GET", "wrong").Context;
-      IToken accessToken = provider.ExchangeRequestTokenForAccessToken(context);
-    }
-
-    [Test]
-    public void ExchangeTokensWhenVerifierIsMatchDoesNotThrowException()
-    {
-      string verifier = null;
-
-      IOAuthSession session = CreateConsumer(SignatureMethod.RsaSha1);
-      IOAuthContext context = session.BuildExchangeRequestTokenForAccessTokenContext(
-        new TokenBase { ConsumerKey = "key", Token = "requestkey", TokenSecret = "requestsecret" }, "GET", "GzvVb5WjWfHKa/0JuFupaMyn").Context;
-      IToken accessToken = provider.ExchangeRequestTokenForAccessToken(context);
+      IOAuthSession session = CreateConsumer(SignatureMethod.PlainText);
+      IOAuthContext context = session.BuildRequestTokenContext("GET").Context;
+      context.CallbackUrl = null; // clear parameter, as it will default to "oob"
+      provider.GrantRequestToken(context);
     }
   }
 }

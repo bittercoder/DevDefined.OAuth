@@ -56,23 +56,23 @@
     <Reference Include="System.Web.Mobile" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AccessToken.aspx" />
+    <Content Include="GetAccessToken.aspx" />
     <Content Include="Data.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Login.aspx" />
-    <Content Include="RequestToken.aspx" />
+    <Content Include="GetRequestToken.aspx" />
     <Content Include="site.css" />
     <Content Include="UserAuthorize.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccessToken.aspx.cs">
-      <DependentUpon>AccessToken.aspx</DependentUpon>
+    <Compile Include="GetAccessToken.aspx.cs">
+      <DependentUpon>GetAccessToken.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="AccessToken.aspx.designer.cs">
-      <DependentUpon>AccessToken.aspx</DependentUpon>
+    <Compile Include="GetAccessToken.aspx.designer.cs">
+      <DependentUpon>GetAccessToken.aspx</DependentUpon>
     </Compile>
     <Compile Include="Data.aspx.cs">
       <DependentUpon>Data.aspx</DependentUpon>
@@ -91,8 +91,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="IOAuthServices.asax.cs" />
-    <Compile Include="OAuthServicesLocator.asax.cs" />
+    <Compile Include="Services\IOAuthServices.asax.cs" />
+    <Compile Include="Services\OAuthServicesLocator.asax.cs" />
     <Compile Include="Repositories\ContactsRepository.cs" />
     <Compile Include="Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>
@@ -102,12 +102,19 @@
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestToken.aspx.cs">
-      <DependentUpon>RequestToken.aspx</DependentUpon>
+    <Compile Include="GetRequestToken.aspx.cs">
+      <DependentUpon>GetRequestToken.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="RequestToken.aspx.designer.cs">
-      <DependentUpon>RequestToken.aspx</DependentUpon>
+    <Compile Include="GetRequestToken.aspx.designer.cs">
+      <DependentUpon>GetRequestToken.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Site.Master.cs">
+      <DependentUpon>Site.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Site.Master.designer.cs">
+      <DependentUpon>Site.Master</DependentUpon>
     </Compile>
     <Compile Include="UserAuthorize.aspx.cs">
       <DependentUpon>UserAuthorize.aspx</DependentUpon>
@@ -122,6 +129,12 @@
       <Project>{61B700B6-3911-4CEF-8751-7F42CA765068}</Project>
       <Name>DevDefined.OAuth</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\DevDefinedLogo_24High.png" />
+    <Content Include="Images\DevDefinedOAuthBackground.png" />
+    <Content Include="Images\DevDefinedOAuthTitle.png" />
+    <Content Include="Site.Master" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

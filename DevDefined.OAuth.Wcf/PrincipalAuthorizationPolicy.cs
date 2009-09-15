@@ -17,8 +17,6 @@ namespace DevDefined.OAuth.Wcf
       _principal = principal;
     }
 
-    #region IAuthorizationPolicy Members
-
     public ClaimSet Issuer
     {
       get { return ClaimSet.System; }
@@ -36,7 +34,5 @@ namespace DevDefined.OAuth.Wcf
       evaluationContext.Properties["Principal"] = _principal;
       return true;
     }
-
-    #endregion
   }
 }
