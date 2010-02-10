@@ -78,6 +78,7 @@ namespace DevDefined.OAuth.Framework
       if (request.Headers.AllKeys.Contains("Authorization"))
       {
         context.AuthorizationHeaderParameters = UriUtility.GetHeaderParameters(request.Headers["Authorization"]).ToNameValueCollection();
+		context.UseAuthorizationHeader = true;
       }
 
       return context;
