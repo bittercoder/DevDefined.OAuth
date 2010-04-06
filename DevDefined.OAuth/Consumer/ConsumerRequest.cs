@@ -31,7 +31,6 @@ using System.Net;
 using System.Web;
 using System.Xml.Linq;
 using DevDefined.OAuth.Framework;
-using DevDefined.OAuth.Utility;
 
 namespace DevDefined.OAuth.Consumer
 {
@@ -47,6 +46,8 @@ namespace DevDefined.OAuth.Consumer
       _consumerContext = consumerContext;
       _token = token;
     }
+
+    #region IConsumerRequest Members
 
     public IOAuthConsumerContext ConsumerContext
     {
@@ -66,11 +67,11 @@ namespace DevDefined.OAuth.Consumer
     public byte[] ToBytes()
     {
       return FromStream(delegate(Stream stream)
-        {
-          var buffer = new byte[stream.Length];
-          stream.Read(buffer, 0, buffer.Length);
-          return buffer;
-        });
+                          {
+                            var buffer = new byte[stream.Length];
+                            stream.Read(buffer, 0, buffer.Length);
+                            return buffer;
+                          });
     }
 
     public HttpWebRequest ToWebRequest()
@@ -117,10 +118,10 @@ namespace DevDefined.OAuth.Consumer
       Uri uri = _context.GenerateUri();
 
       var description = new RequestDescription
-        {
-          Url = uri,
-          Method = _context.RequestMethod
-        };
+                          {
+                            Url = uri,
+                            Method = _context.RequestMethod
+                          };
 
       if ((_context.FormEncodedParameters != null) && (_context.FormEncodedParameters.Count > 0))
       {
@@ -141,15 +142,15 @@ namespace DevDefined.OAuth.Consumer
       try
       {
         HttpWebRequest request = ToWebRequest();
-        return (HttpWebResponse)request.GetResponse();      
+        return (HttpWebResponse) request.GetResponse();
       }
       catch (WebException webEx)
       {
-        OAuthException authException;
+        Exception wrappedException;
 
-        if (WebExceptionHelper.TryWrapException(Context, webEx, out authException))
+        if (WebExceptionHelper.TryWrapException(Context, webEx, out wrappedException))
         {
-          throw authException;
+          throw wrappedException;
         }
 
         throw;
@@ -195,6 +196,8 @@ namespace DevDefined.OAuth.Consumer
       _consumerContext.SignContextWithToken(_context, token);
       return this;
     }
+
+    #endregion
 
     public override string ToString()
     {

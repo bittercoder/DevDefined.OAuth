@@ -80,6 +80,7 @@
     <Compile Include="Framework\IConsumer.cs" />
     <Compile Include="Framework\INonceGenerator.cs" />
     <Compile Include="Framework\IOAuthContext.cs" />
+    <Compile Include="Framework\ParsedWebException.cs" />
     <Compile Include="Framework\Signing\IOAuthContextSigner.cs" />
     <Compile Include="Framework\IToken.cs" />
     <Compile Include="Framework\OAuthException.cs" />
