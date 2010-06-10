@@ -33,6 +33,7 @@ namespace DevDefined.OAuth.Storage.Basic
   /// Simple access token model, this would hold information required to enforce policies such as expiration, and association
   /// with a user accout or other information regarding the information the consumer has been granted access to.
   /// </summary>
+  [Serializable]
   public class AccessToken : TokenBase
   {
     public string UserName { get; set; }

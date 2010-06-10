@@ -74,8 +74,6 @@ namespace DevDefined.OAuth.Consumer
       context.Timestamp = DateTime.Now.Epoch().ToString();
       context.Version = "1.0";
 
-      context.Nonce = NonceGenerator.GenerateNonce(context);
-
       string signatureBase = context.GenerateSignatureBase();
 
       _signer.SignContext(context,

@@ -24,6 +24,7 @@
 
 #endregion
 
+using System;
 using DevDefined.OAuth.Framework;
 
 namespace DevDefined.OAuth.Storage.Basic
@@ -33,6 +34,7 @@ namespace DevDefined.OAuth.Storage.Basic
   /// who it was issued to, if the token has been used up (a request token should only be presented once), and 
   /// the associated access token (if a user has granted access to a consumer i.e. given them access).
   /// </summary>
+  [Serializable]  
   public class RequestToken : TokenBase
   {
     public bool AccessDenied { get; set; }

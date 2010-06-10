@@ -31,6 +31,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.ServiceModel.Channels;
 
 namespace DevDefined.OAuth.Framework
 {
@@ -41,6 +42,7 @@ namespace DevDefined.OAuth.Framework
     IOAuthContext FromHttpRequest(HttpRequestBase request);
     IOAuthContext FromWebRequest(HttpWebRequest request, Stream rawBody);
     IOAuthContext FromWebRequest(HttpWebRequest request, string body);
+    IOAuthContext FromMessage(Message request);
   }
 
   public class OAuthContextBuilder : IOAuthContextBuilder
@@ -64,6 +66,27 @@ namespace DevDefined.OAuth.Framework
       return FromHttpRequest(new HttpRequestWrapper(request));
     }
 
+    public IOAuthContext FromMessage(Message request)
+    {
+        var requestProperty = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
+        var context = new OAuthContext
+        {
+            RawUri = CleanUri(request.Headers.To),
+            Headers = new NameValueCollection(requestProperty.Headers),
+            RequestMethod = requestProperty.Method,
+            QueryParameters = HttpUtility.ParseQueryString(requestProperty.QueryString),
+        };
+
+        string authHeader = requestProperty.Headers["Authorization"];
+        if (!string.IsNullOrEmpty(authHeader))
+        {
+            context.AuthorizationHeaderParameters = UriUtility.GetHeaderParameters(authHeader).ToNameValueCollection();
+            context.UseAuthorizationHeader = true;
+        }
+
+        return context;
+    }
+
     public IOAuthContext FromHttpRequest(HttpRequestBase request)
     {
       var context = new OAuthContext
@@ -78,7 +101,7 @@ namespace DevDefined.OAuth.Framework
       if (request.Headers.AllKeys.Contains("Authorization"))
       {
         context.AuthorizationHeaderParameters = UriUtility.GetHeaderParameters(request.Headers["Authorization"]).ToNameValueCollection();
-		context.UseAuthorizationHeader = true;
+        context.UseAuthorizationHeader = true;
       }
 
       return context;
