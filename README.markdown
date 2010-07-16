@@ -1,4 +1,4 @@
-![alt text][1]
+![DevDefined.OAuth logo][1]
 
 Introduction
 ------------
@@ -61,26 +61,26 @@ Additional Resources
 
 **OAuth Resources**
 
-[Official OAuth website][3]
-[OAuth wiki][4]
-[A guide to how OAuth works - for beginners][5]
+  - [Official OAuth website][3]
+  - [OAuth wiki][4]
+  - [A guide to how OAuth works - for beginners][5]
 
 **DevDefined OAuth Resources**
 
-[OAuth page on googlecode (where the code used to be hosted)][6]
-[Posts about OAuth / DevDefined.OAuth on the original authors blog (bittercoder)][7]
+  - [OAuth page on googlecode (where the code used to be hosted)][6]
+  - [Posts about OAuth / DevDefined.OAuth on the original authors blog (bittercoder)][7]
 
 **Blogs**
 
-[Example of using DevDefined.OAuth with Powershell][8]
-[Owen's look into ASP.Net MVC and OAuth][9]
-[Example of an OAuth Channel for use with WCF services][10]
-[Xero's API Guides (feature DevDefined.OAuth examples)][11]
+  - [Example of using DevDefined.OAuth with Powershell][8]
+  - [Owen's look into ASP.Net MVC and OAuth][9]
+  - [Example of an OAuth Channel for use with WCF services][10]
+  - [Xero's API Guides (feature DevDefined.OAuth examples)][11]
 
 **Forks**
 
-[Owen @ Xero's fork of DevDefined.OAuth - with support ASP.Net MVC][12]
-[Xero's fork of DevDefined.OAuth - as used in their API examples][13]
+  - [Owen @ Xero's fork of DevDefined.OAuth - with support ASP.Net MVC][12]
+  - [Xero's fork of DevDefined.OAuth - as used in their API examples][13]
 
 
 Downloads/Releases
@@ -89,7 +89,7 @@ Downloads/Releases
 You can download releases from the [google code site][14].
 
 
-  [1]: http://github.com/bittercoder/DevDefined.OAuth/raw/master/Artifacts/DevDefinedOAuthTitle.png
+  [1]: http://github.com/bittercoder/DevDefined.OAuth/raw/master/artifacts/DevDefinedOAuthTitle.png
   [2]: http://github.com/bittercoder/DevDefined.OAuth/raw/master/artifacts/Oauth_diagram.png
   [3]: http://www.oauth.net/
   [4]: http://wiki.oauth.net/
