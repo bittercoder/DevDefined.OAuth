@@ -77,10 +77,10 @@ namespace DevDefined.OAuth.Framework
 			              	{
 			              		RawUri = CleanUri(request.Url),
 			              		Cookies = CollectCookies(request),
-			              		Headers = new NameValueCollection(request.Headers),
+			              		Headers = GetCleanedNameValueCollection(request.Headers),
 			              		RequestMethod = request.HttpMethod,
-			              		FormEncodedParameters = new NameValueCollection(request.Form),
-			              		QueryParameters = new NameValueCollection(request.QueryString),
+			              		FormEncodedParameters = GetCleanedNameValueCollection(request.Form),
+			              		QueryParameters = GetCleanedNameValueCollection(request.QueryString),
 			              	};
 
 			if (request.Headers.AllKeys.Contains("Authorization"))
@@ -90,6 +90,18 @@ namespace DevDefined.OAuth.Framework
 			}
 
 			return context;
+		}
+
+		static NameValueCollection GetCleanedNameValueCollection(NameValueCollection requestQueryString)
+		{
+			NameValueCollection nvc = new NameValueCollection(requestQueryString);
+
+			if (nvc.HasKeys())
+			{
+				nvc.Remove(null);
+			}
+
+			return nvc;
 		}
 
 		public IOAuthContext FromWebRequest(HttpWebRequest request, Stream rawBody)

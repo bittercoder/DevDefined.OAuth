@@ -80,5 +80,16 @@ namespace DevDefined.OAuth.Tests.Framework
       Assert.Equal("value1", parameters.Single(p => p.Key == "key1").Value);
       Assert.Equal("value2", parameters.Single(p => p.Key == "key2").Value);
     }
+
+		[Fact]
+		public void Issue8_WhenSignatureContainsEqualSign_ParseAuthorizationHeaderKeyValuePairDropsCharactersAfterEqualSign()
+		{
+			var signatureInHeader = "auth_signature=\"uZF3aYQFtyK0F1FFHY+w7/Be+m4=\"";
+
+			var paramter = UriUtility.ParseAuthorizationHeaderKeyValuePair(signatureInHeader);
+
+			Assert.Equal("auth_signature", paramter.Key);
+			Assert.Equal("uZF3aYQFtyK0F1FFHY w7/Be m4=", paramter.Value);
+		}
   }
 }
