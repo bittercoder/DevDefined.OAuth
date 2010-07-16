@@ -5,7 +5,7 @@ Moved code to github.
 Split examples and code into seperate git repos.
 Shifted all tests over to run with XUnit 1.6
 Upgraded solution to Visual Studio 2010
-Pulled additions/changes from the Xero DevDefined.OAuth fork into codebase.
+Pulled additions/changes from the Xero API DevDefined.OAuth fork into codebase.
 
 31st July 2009
 --------------
