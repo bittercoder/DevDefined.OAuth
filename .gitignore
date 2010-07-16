@@ -1,0 +1,12 @@
+bin/
+obj/
+*.log
+logs/
+_ReSharper*/
+output/
+release/
+*.suo
+*.user
+*.cache
+
+/src/GlobalAssemblyInfo.cs
