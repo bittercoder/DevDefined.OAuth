@@ -150,6 +150,7 @@
     <Compile Include="Testing\TestTokenStore.cs" />
     <Compile Include="Utility\ReflectionBasedDictionaryAdapter.cs" />
     <Compile Include="Utility\StreamExtensions.cs" />
+    <Compile Include="Utility\StringUtility.cs" />
     <Compile Include="Utility\UnguessableGenerator.cs" />
   </ItemGroup>
   <ItemGroup>

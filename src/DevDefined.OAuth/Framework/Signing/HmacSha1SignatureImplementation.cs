@@ -27,6 +27,7 @@
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using DevDefined.OAuth.Utility;
 
 namespace DevDefined.OAuth.Framework.Signing
 {
@@ -44,7 +45,7 @@ namespace DevDefined.OAuth.Framework.Signing
 
     public bool ValidateSignature(IOAuthContext authContext, SigningContext signingContext)
     {
-      return (authContext.Signature == GenerateSignature(authContext, signingContext));
+    	return authContext.Signature.EqualsInConstantTime(GenerateSignature(authContext, signingContext));
     }
 
     static string GenerateSignature(IToken authContext, SigningContext signingContext)

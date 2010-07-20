@@ -24,6 +24,8 @@
 
 #endregion
 
+using DevDefined.OAuth.Utility;
+
 namespace DevDefined.OAuth.Framework.Signing
 {
   public class PlainTextSignatureImplementation : IContextSignatureImplementation
@@ -40,7 +42,7 @@ namespace DevDefined.OAuth.Framework.Signing
 
     public bool ValidateSignature(IOAuthContext authContext, SigningContext signingContext)
     {
-      return (authContext.Signature == GenerateSignature(authContext, signingContext));
+    	return authContext.Signature.EqualsInConstantTime(GenerateSignature(authContext, signingContext));
     }
 
     string GenerateSignature(IOAuthContext authContext, SigningContext signingContext)

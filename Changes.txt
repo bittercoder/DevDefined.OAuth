@@ -1,3 +1,10 @@
+20th July 2010
+--------------
+
+Implemented constant-time string comparison, and applied it to the HMAC-SHA1 and PlainText signature methods.
+
+See here: http://groups.google.com/group/oauth/browse_thread/thread/f3e9ec6c3aa0fe1a for more details.
+
 16th July 2010
 --------------
 
