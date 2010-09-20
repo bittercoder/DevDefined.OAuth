@@ -18,6 +18,7 @@ namespace DevDefined.OAuth.Consumer
         IConsumerRequest SignWithoutToken();
         IConsumerRequest SignWithToken();
         IConsumerRequest SignWithToken(IToken token);
+        IConsumerRequest WithWebRequestPropertyAction(Action<HttpWebRequest> action);
 
         Uri ProxyServerUri { get; set; }
         Action<string> ResponseBodyAction { get; set; }

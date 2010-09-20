@@ -25,9 +25,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Web;
 using System.Xml.Linq;
@@ -41,6 +43,7 @@ namespace DevDefined.OAuth.Consumer
     readonly IOAuthConsumerContext _consumerContext;
     readonly IOAuthContext _context;
     readonly IToken _token;
+    readonly List<Action<HttpWebRequest>> httpWebRequestPropertyActions = new List<Action<HttpWebRequest>>();
 
     public ConsumerRequest(IOAuthContext context, IOAuthConsumerContext consumerContext, IToken token)
     {
@@ -78,6 +81,8 @@ namespace DevDefined.OAuth.Consumer
       var request = (HttpWebRequest) WebRequest.Create(description.Url);
       request.Method = description.Method;
       request.UserAgent = _consumerContext.UserAgent;
+
+      httpWebRequestPropertyActions.ForEach(action => action(request));
 
       if (!string.IsNullOrEmpty(AcceptsType))
       {
@@ -234,6 +239,14 @@ namespace DevDefined.OAuth.Consumer
 			ConsumerContext.SignContextWithToken(_context, token);
       return this;
     }
+    
+      public IConsumerRequest WithWebRequestPropertyAction(Action<HttpWebRequest> action)
+      {
+          if (action == null) return this;
+
+          httpWebRequestPropertyActions.Add(action);
+          return this;
+      }
 
     public Uri ProxyServerUri { get; set; }
 
