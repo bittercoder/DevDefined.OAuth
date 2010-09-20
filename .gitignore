@@ -10,3 +10,4 @@ release/
 *.cache
 
 /src/GlobalAssemblyInfo.cs
+*.svn
