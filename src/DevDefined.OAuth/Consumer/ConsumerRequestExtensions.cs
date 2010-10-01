@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net;
 using DevDefined.OAuth.Framework;
@@ -43,7 +44,12 @@ namespace DevDefined.OAuth.Consumer
         destination[parameter] = Convert.ToString(additions[parameter]);
       }
     }
+    public static IConsumerRequest WithOAuthInQueryString(this IConsumerRequest request)
+    {
+        request.Context.UseQueryParametersForOAuth = true;
 
+        return request;
+    }
     public static IConsumerRequest ForMethod(this IConsumerRequest request, string method)
     {
       request.Context.RequestMethod = method;
@@ -120,6 +126,17 @@ namespace DevDefined.OAuth.Consumer
     {
       ApplyParameters(request.Context.Headers, anonymousClass);
       return request;
+    }
+
+    public static IConsumerRequest WithWebRequestPropertyAction(this IConsumerRequest request, Action<HttpWebRequest> action)
+    {
+        if (request.HttpWebRequestPropertyActions == null)
+        {
+            request.HttpWebRequestPropertyActions = new List<Action<HttpWebRequest>>();
+        }
+        request.HttpWebRequestPropertyActions.Add(action);
+
+        return request;
     }
 
     public static IConsumerRequest AlterContext(this IConsumerRequest request, Action<IOAuthContext> alteration)

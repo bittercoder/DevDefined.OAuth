@@ -42,6 +42,7 @@ namespace DevDefined.OAuth.Consumer
     string UserAgent { get; set; }
     AsymmetricAlgorithm Key { get; set; }
     bool UseHeaderForOAuthParameters { get; set; }
+    bool EncodeRequestBody { get; set; }
     void SignContext(IOAuthContext context);
     void SignContextWithToken(IOAuthContext context, IToken token);
   }

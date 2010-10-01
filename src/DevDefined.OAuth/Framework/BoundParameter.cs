@@ -61,7 +61,7 @@ namespace DevDefined.OAuth.Framework
                 if (_context.UseAuthorizationHeader)
                     return _context.AuthorizationHeaderParameters;
 
-                if (_context.RequestMethod == "GET")
+                if (_context.RequestMethod == "GET" || _context.UseQueryParametersForOAuth)
                     return _context.QueryParameters;
 
                 return _context.FormEncodedParameters;

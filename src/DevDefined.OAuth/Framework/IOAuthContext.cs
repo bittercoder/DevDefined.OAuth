@@ -24,6 +24,7 @@ namespace DevDefined.OAuth.Framework
     string Verifier { get; set; }
 
     bool UseAuthorizationHeader { get; set; }
+    bool UseQueryParametersForOAuth { get; set; }
 
     Uri GenerateUri();
     string GenerateUrl();

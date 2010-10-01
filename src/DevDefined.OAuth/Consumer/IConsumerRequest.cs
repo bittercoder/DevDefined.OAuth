@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net;
 using System.Xml.Linq;
@@ -18,11 +19,12 @@ namespace DevDefined.OAuth.Consumer
         IConsumerRequest SignWithoutToken();
         IConsumerRequest SignWithToken();
         IConsumerRequest SignWithToken(IToken token);
-        IConsumerRequest WithWebRequestPropertyAction(Action<HttpWebRequest> action);
 
         Uri ProxyServerUri { get; set; }
         Action<string> ResponseBodyAction { get; set; }
         string AcceptsType { get; set; }
         string RequestBody { get; set; }
+        List<Action<HttpWebRequest>> HttpWebRequestPropertyActions { get; set; }
+
     }
 }

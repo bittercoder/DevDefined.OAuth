@@ -43,7 +43,6 @@ namespace DevDefined.OAuth.Consumer
     readonly IOAuthConsumerContext _consumerContext;
     readonly IOAuthContext _context;
     readonly IToken _token;
-    readonly List<Action<HttpWebRequest>> httpWebRequestPropertyActions = new List<Action<HttpWebRequest>>();
 
     public ConsumerRequest(IOAuthContext context, IOAuthConsumerContext consumerContext, IToken token)
     {
@@ -82,8 +81,6 @@ namespace DevDefined.OAuth.Consumer
       request.Method = description.Method;
       request.UserAgent = _consumerContext.UserAgent;
 
-      httpWebRequestPropertyActions.ForEach(action => action(request));
-
       if (!string.IsNullOrEmpty(AcceptsType))
       {
           request.Accept = AcceptsType;
@@ -100,6 +97,11 @@ namespace DevDefined.OAuth.Consumer
       catch (Exception ex)
       {
           throw new ApplicationException("If-Modified-Since header could not be parsed as a datetime", ex);
+      }
+
+      if (HttpWebRequestPropertyActions != null)
+      {
+          HttpWebRequestPropertyActions.ForEach(action => action(request));
       }
 
       if (ProxyServerUri != null)
@@ -150,7 +152,7 @@ namespace DevDefined.OAuth.Consumer
       }
 
       Uri uri = _context.GenerateUri();
-
+      
       var description = new RequestDescription
         {
           Url = uri,
@@ -164,7 +166,14 @@ namespace DevDefined.OAuth.Consumer
       }
       else if (!string.IsNullOrEmpty(RequestBody))
       {
-          description.Body = UriUtility.UrlEncode(RequestBody);
+          if(_consumerContext.EncodeRequestBody)
+          {
+              description.Body = UriUtility.UrlEncode(RequestBody);              
+          }
+          else
+          {
+              description.Body = RequestBody;              
+          }
       }
 
       if (_consumerContext.UseHeaderForOAuthParameters)
@@ -240,14 +249,6 @@ namespace DevDefined.OAuth.Consumer
       return this;
     }
     
-      public IConsumerRequest WithWebRequestPropertyAction(Action<HttpWebRequest> action)
-      {
-          if (action == null) return this;
-
-          httpWebRequestPropertyActions.Add(action);
-          return this;
-      }
-
     public Uri ProxyServerUri { get; set; }
 
     public Action<string> ResponseBodyAction { get; set; }
@@ -255,6 +256,8 @@ namespace DevDefined.OAuth.Consumer
     public string AcceptsType { get; set; }
 
     public string RequestBody { get; set; }
+
+    public List<Action<HttpWebRequest>> HttpWebRequestPropertyActions { get; set; }
 
     private string ResponseBody { get; set; }
 

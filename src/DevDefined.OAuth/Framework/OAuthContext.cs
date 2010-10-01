@@ -202,6 +202,7 @@ namespace DevDefined.OAuth.Framework
     }
 
     public bool UseAuthorizationHeader { get; set; }
+    public bool UseQueryParametersForOAuth { get; set; }
 
     public string Realm
     {

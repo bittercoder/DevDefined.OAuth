@@ -61,7 +61,8 @@ namespace DevDefined.OAuth.Consumer
     public AsymmetricAlgorithm Key { get; set; }
     public bool UseHeaderForOAuthParameters { get; set; }
     public string UserAgent { get; set; }
-
+    public bool EncodeRequestBody { get; set; }
+    
     public void SignContext(IOAuthContext context)
     {
       EnsureStateIsValid();
