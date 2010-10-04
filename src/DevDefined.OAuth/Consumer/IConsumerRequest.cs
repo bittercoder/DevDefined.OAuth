@@ -24,7 +24,7 @@ namespace DevDefined.OAuth.Consumer
         Action<string> ResponseBodyAction { get; set; }
         string AcceptsType { get; set; }
         string RequestBody { get; set; }
-        List<Action<HttpWebRequest>> HttpWebRequestPropertyActions { get; set; }
+        List<Action<HttpWebRequest>> HttpWebRequestAlterations { get; set; }
 
     }
 }

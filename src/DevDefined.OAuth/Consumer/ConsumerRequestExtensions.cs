@@ -44,12 +44,7 @@ namespace DevDefined.OAuth.Consumer
         destination[parameter] = Convert.ToString(additions[parameter]);
       }
     }
-    public static IConsumerRequest WithOAuthInQueryString(this IConsumerRequest request)
-    {
-        request.Context.UseQueryParametersForOAuth = true;
 
-        return request;
-    }
     public static IConsumerRequest ForMethod(this IConsumerRequest request, string method)
     {
       request.Context.RequestMethod = method;
@@ -128,13 +123,14 @@ namespace DevDefined.OAuth.Consumer
       return request;
     }
 
-    public static IConsumerRequest WithWebRequestPropertyAction(this IConsumerRequest request, Action<HttpWebRequest> action)
+    public static IConsumerRequest AlterHttpWebRequest(this IConsumerRequest request, Action<HttpWebRequest> alteration)
     {
-        if (request.HttpWebRequestPropertyActions == null)
+        if (request.HttpWebRequestAlterations == null)
         {
-            request.HttpWebRequestPropertyActions = new List<Action<HttpWebRequest>>();
+            request.HttpWebRequestAlterations = new List<Action<HttpWebRequest>>();
         }
-        request.HttpWebRequestPropertyActions.Add(action);
+
+        request.HttpWebRequestAlterations.Add(alteration);
 
         return request;
     }

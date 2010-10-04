@@ -99,9 +99,9 @@ namespace DevDefined.OAuth.Consumer
           throw new ApplicationException("If-Modified-Since header could not be parsed as a datetime", ex);
       }
 
-      if (HttpWebRequestPropertyActions != null)
+      if (HttpWebRequestAlterations != null)
       {
-          HttpWebRequestPropertyActions.ForEach(action => action(request));
+          HttpWebRequestAlterations.ForEach(action => action(request));
       }
 
       if (ProxyServerUri != null)
@@ -257,7 +257,7 @@ namespace DevDefined.OAuth.Consumer
 
     public string RequestBody { get; set; }
 
-    public List<Action<HttpWebRequest>> HttpWebRequestPropertyActions { get; set; }
+    public List<Action<HttpWebRequest>> HttpWebRequestAlterations { get; set; }
 
     private string ResponseBody { get; set; }
 
