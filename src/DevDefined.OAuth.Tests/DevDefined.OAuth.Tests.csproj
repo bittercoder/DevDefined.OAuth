@@ -78,6 +78,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Consumer\ConsumerRequestTests.cs" />
     <Compile Include="Consumer\OAuthSessionTests.cs" />
     <Compile Include="Framework\DateTimeUtilityTests.cs" />
     <Compile Include="Framework\OAuthContextTests.cs" />

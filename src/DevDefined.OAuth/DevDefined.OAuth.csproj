@@ -148,7 +148,8 @@
     <Compile Include="Testing\TestConsumerStore.cs" />
     <Compile Include="Testing\TestNonceStore.cs" />
     <Compile Include="Testing\TestTokenStore.cs" />
-    <Compile Include="Utility\DateTimeProvider.cs" />
+    <Compile Include="Utility\Clock.cs" />
+    <Compile Include="Utility\DisposableAction.cs" />
     <Compile Include="Utility\ReflectionBasedDictionaryAdapter.cs" />
     <Compile Include="Utility\StreamExtensions.cs" />
     <Compile Include="Utility\StringUtility.cs" />

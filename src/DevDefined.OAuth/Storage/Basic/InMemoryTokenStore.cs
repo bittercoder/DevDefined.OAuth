@@ -26,6 +26,7 @@
 
 using System;
 using DevDefined.OAuth.Framework;
+using DevDefined.OAuth.Utility;
 
 namespace DevDefined.OAuth.Storage.Basic
 {
@@ -101,7 +102,7 @@ namespace DevDefined.OAuth.Storage.Basic
     {
       AccessToken accessToken = GetAccessToken(accessContext);
 
-      if (accessToken.ExpireyDate < DateTime.Now)
+      if (accessToken.ExpireyDate < Clock.Now)
       {
         throw new OAuthException(accessContext, OAuthProblems.TokenExpired,
                                  "Token has expired (they're only valid for 1 minute)");

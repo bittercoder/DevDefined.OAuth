@@ -26,6 +26,7 @@
 
 using System;
 using DevDefined.OAuth.Framework;
+using DevDefined.OAuth.Utility;
 
 namespace DevDefined.OAuth.Provider.Inspectors
 {
@@ -41,7 +42,7 @@ namespace DevDefined.OAuth.Provider.Inspectors
     }
 
     public TimestampRangeInspector(TimeSpan maxBeforeNow, TimeSpan maxAfterNow)
-      : this(maxBeforeNow, maxAfterNow, () => DateTime.Now)
+      : this(maxBeforeNow, maxAfterNow, () => Clock.Now)
     {
     }
 

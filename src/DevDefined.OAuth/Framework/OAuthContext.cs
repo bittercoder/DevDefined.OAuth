@@ -126,7 +126,10 @@ namespace DevDefined.OAuth.Framework
       set { _authorizationHeaderParameters = value; }
     }
 
-    public Uri RawUri
+		public string RawContent { get; set; }
+		public string RawContentType { get; set; }
+
+  	public Uri RawUri
     {
       get { return _rawUri; }
       set
@@ -142,7 +145,7 @@ namespace DevDefined.OAuth.Framework
           QueryParameters[parameter] = newParameters[parameter];
         }
 
-        _normalizedRequestUrl = UriUtility.NormalizeUri(_rawUri);
+      	_normalizedRequestUrl = UriUtility.NormalizeUri(_rawUri);
       }
     }
 
@@ -311,6 +314,10 @@ namespace DevDefined.OAuth.Framework
 
       if (AuthorizationHeaderParameters != null)
         allParameters.AddRange(AuthorizationHeaderParameters.ToQueryParametersExcludingTokenSecret().Where(q => q.Key != Parameters.Realm));
+
+			// patch from http://code.google.com/p/devdefined-tools/issues/detail?id=10
+			if(RawContent != null)
+				allParameters.Add(new QueryParameter("raw", RawContent));
 
       allParameters.RemoveAll(param => param.Key == Parameters.OAuth_Signature);
 

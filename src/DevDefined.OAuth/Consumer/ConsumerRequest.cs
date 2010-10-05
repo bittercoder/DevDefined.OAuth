@@ -161,16 +161,19 @@ namespace DevDefined.OAuth.Consumer
       {
           description.Body = UriUtility.UrlEncode(RequestBody);
       }
-
+			
+			if (_context.RawContent != null)
+			{
+				description.ContentType = _context.RawContentType;
+				description.Body = _context.RawContent;
+			}
+			
       if (_context.Headers != null)
       {
-          foreach (string key in _context.Headers.AllKeys)
-          {
-              description.Headers[key] = _context.Headers[key];
-          }
+				description.Headers.Add(_context.Headers);
       }
 
-       if (_consumerContext.UseHeaderForOAuthParameters)
+      if (_consumerContext.UseHeaderForOAuthParameters)
       {
         description.Headers[Parameters.OAuth_Authorization_Header] = _context.GenerateOAuthParametersForHeader();
       }

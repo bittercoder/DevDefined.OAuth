@@ -1,3 +1,10 @@
+6th October 2010
+----------------
+
+Applied pull request: http://github.com/bittercoder/DevDefined.OAuth/pull/7
+Applied raw content support patch: http://code.google.com/p/devdefined-tools/issues/detail?id=10
+Updated implementation
+
 20th July 2010
 --------------
 

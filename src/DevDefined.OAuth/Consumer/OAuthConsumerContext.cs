@@ -73,7 +73,7 @@ namespace DevDefined.OAuth.Consumer
       context.ConsumerKey = ConsumerKey;
       context.Realm = Realm;
       context.SignatureMethod = SignatureMethod;
-      context.Timestamp = DateTimeProvider.Now().Epoch().ToString();
+			context.Timestamp = Clock.EpochString;
       context.Version = "1.0";
 
       context.Nonce = NonceGenerator.GenerateNonce(context);
