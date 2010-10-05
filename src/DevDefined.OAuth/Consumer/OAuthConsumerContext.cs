@@ -28,6 +28,7 @@ using System;
 using System.Security.Cryptography;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Framework.Signing;
+using DevDefined.OAuth.Utility;
 
 namespace DevDefined.OAuth.Consumer
 {
@@ -72,7 +73,7 @@ namespace DevDefined.OAuth.Consumer
       context.ConsumerKey = ConsumerKey;
       context.Realm = Realm;
       context.SignatureMethod = SignatureMethod;
-      context.Timestamp = DateTime.Now.Epoch().ToString();
+      context.Timestamp = DateTimeProvider.Now().Epoch().ToString();
       context.Version = "1.0";
 
       context.Nonce = NonceGenerator.GenerateNonce(context);
