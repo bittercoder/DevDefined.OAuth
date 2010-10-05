@@ -151,5 +151,17 @@ namespace DevDefined.OAuth.Consumer
         throw Error.FailedToParseResponse(request.ToString());
       }
     }
+
+		public static IConsumerRequest WithRawContent(this IConsumerRequest request, string rawContent)
+		{
+			request.Context.RawContent = rawContent;
+			return request;
+		}
+						
+		public static IConsumerRequest WithRawContentType (this IConsumerRequest request, string rawContentType)
+		{
+			request.Context.RawContentType = rawContentType;
+			return request;
+		}
   }
 }

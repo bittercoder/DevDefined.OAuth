@@ -102,7 +102,7 @@ namespace DevDefined.OAuth.Consumer
           request.Proxy = new WebProxy(ProxyServerUri, false);
       }
 
-      if (description.ContentType == Parameters.HttpFormEncoded)
+			if (description.Body != null)
       {
         request.ContentType = description.ContentType;
 
