@@ -81,6 +81,7 @@
     <Compile Include="Framework\NonceGenerator.cs" />
     <Compile Include="Framework\Parameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Provider\Inspectors\BodyHashValidationInspector.cs" />
     <Compile Include="Provider\IOAuthProvider.cs" />
     <Compile Include="Framework\SignatureMethod.cs" />
   </ItemGroup>

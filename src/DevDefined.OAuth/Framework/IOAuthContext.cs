@@ -10,7 +10,7 @@ namespace DevDefined.OAuth.Framework
     NameValueCollection Cookies { get; set; }
     NameValueCollection FormEncodedParameters { get; set; }
     NameValueCollection AuthorizationHeaderParameters { get; set; }
-  	string RawContent { get; set; }
+  	byte[] RawContent { get; set; }
   	string RawContentType { get; set; }
     Uri RawUri { get; set; }
 
@@ -23,6 +23,7 @@ namespace DevDefined.OAuth.Framework
     string Version { get; set; }
     string CallbackUrl { get; set; }
     string Verifier { get; set; }
+    string BodyHash { get; set; }
 
     bool UseAuthorizationHeader { get; set; }
 

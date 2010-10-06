@@ -48,6 +48,7 @@ namespace DevDefined.OAuth.Framework
     readonly BoundParameter _verifier;
     readonly BoundParameter _sessionHandle;
     readonly BoundParameter _version;
+    readonly BoundParameter _bodyHash;
     NameValueCollection _authorizationHeaderParameters;
     NameValueCollection _cookies;
     NameValueCollection _formEncodedParameters;
@@ -69,6 +70,7 @@ namespace DevDefined.OAuth.Framework
       _tokenSecret = new BoundParameter(Parameters.OAuth_Token_Secret, this);
       _version = new BoundParameter(Parameters.OAuth_Version, this);
       _sessionHandle = new BoundParameter(Parameters.OAuth_Session_Handle, this);
+      _bodyHash = new BoundParameter(Parameters.OAuth_Body_Hash, this);
 
       FormEncodedParameters = new NameValueCollection();
       Cookies = new NameValueCollection();
@@ -126,7 +128,7 @@ namespace DevDefined.OAuth.Framework
       set { _authorizationHeaderParameters = value; }
     }
 
-		public string RawContent { get; set; }
+		public byte[] RawContent { get; set; }
 		public string RawContentType { get; set; }
 
   	public Uri RawUri
@@ -196,6 +198,12 @@ namespace DevDefined.OAuth.Framework
     {
       get { return _timestamp.Value; }
       set { _timestamp.Value = value; }
+    }
+
+    public string BodyHash
+    {
+        get { return _bodyHash.Value; }
+        set { _bodyHash.Value = value; }
     }
 
     public string Version
@@ -316,8 +324,8 @@ namespace DevDefined.OAuth.Framework
         allParameters.AddRange(AuthorizationHeaderParameters.ToQueryParametersExcludingTokenSecret().Where(q => q.Key != Parameters.Realm));
 
 			// patch from http://code.google.com/p/devdefined-tools/issues/detail?id=10
-			if(RawContent != null)
-				allParameters.Add(new QueryParameter("raw", RawContent));
+            //if(RawContent != null)
+            //    allParameters.Add(new QueryParameter("raw", RawContent));
 
       allParameters.RemoveAll(param => param.Key == Parameters.OAuth_Signature);
 
