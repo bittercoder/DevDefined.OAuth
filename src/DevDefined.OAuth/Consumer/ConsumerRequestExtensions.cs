@@ -153,14 +153,18 @@ namespace DevDefined.OAuth.Consumer
       }
     }
 
-		public static IConsumerRequest WithRawContent(this IConsumerRequest request, string rawContent, Encoding encoding)
-		{
-            return WithRawContent(request, encoding.GetBytes(rawContent));
-		}
+	public static IConsumerRequest WithRawContent(this IConsumerRequest request, string rawContent, Encoding encoding, bool addHash)
+	{
+            return WithRawContent(request, encoding.GetBytes(rawContent), addHash);
+	}
 
-        public static IConsumerRequest WithRawContent(this IConsumerRequest request, byte[] rawContent)
+        public static IConsumerRequest WithRawContent(this IConsumerRequest request, byte[] rawContent, bool addHash)
         {
             request.Context.RawContent = rawContent;
+            if(addHash)
+            {
+                request.Context.BodyHash = UriUtility.UrlEncode(Convert.ToBase64String(rawContent ?? new byte[0]));
+            }
             return request;
         }
 						
