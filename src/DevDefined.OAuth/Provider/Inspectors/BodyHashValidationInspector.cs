@@ -11,7 +11,8 @@ namespace DevDefined.OAuth.Provider.Inspectors
     {
         public void InspectContext(ProviderPhase phase, IOAuthContext context)
         {
-            if (String.IsNullOrEmpty(context.BodyHash)) return;
+            if (context.SignatureMethod == SignatureMethod.PlainText ||
+                String.IsNullOrEmpty(context.BodyHash)) return;
 
             var computedBodyHash = UriUtility.UrlEncode(Convert.ToBase64String(context.RawContent ?? new byte[0]));
 
