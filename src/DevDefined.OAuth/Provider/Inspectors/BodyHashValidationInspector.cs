@@ -14,13 +14,10 @@ namespace DevDefined.OAuth.Provider.Inspectors
             if (context.SignatureMethod == SignatureMethod.PlainText ||
                 String.IsNullOrEmpty(context.BodyHash)) return;
 
-            var computedBodyHash = UriUtility.UrlEncode(Convert.ToBase64String(context.RawContent ?? new byte[0]));
-
-            if (!context.BodyHash.EqualsInConstantTime(computedBodyHash))
+            if (!context.BodyHash.EqualsInConstantTime(context.GenerateBodyHash()))
             {
                 throw Error.FailedToValidateBodyHash(context);
             }
-               
         }
     }
 }
