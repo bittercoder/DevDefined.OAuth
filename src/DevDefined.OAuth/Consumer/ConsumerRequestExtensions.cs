@@ -163,7 +163,7 @@ namespace DevDefined.OAuth.Consumer
             request.Context.RawContent = rawContent;
             if(addHash)
             {
-                request.Context.BodyHash = UriUtility.UrlEncode(Convert.ToBase64String(rawContent ?? new byte[0]));
+                request.Context.GenerateAndSetBodyHash();
             }
             return request;
         }
