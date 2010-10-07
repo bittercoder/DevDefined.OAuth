@@ -291,7 +291,17 @@ namespace DevDefined.OAuth.Framework
 
       return builder.Uri;
     }
+    
+    public void GenerateAndSetBodyHash()
+    {
+       BodyHash = GenerateBodyHash();  
+    }
 
+    public string GenerateBodyHash()
+    {
+        var hash = SHA1.Create().ComputeHash((RawContent ?? new byte[0]));
+        return UriUtility.UrlEncode(Convert.ToBase64String(hash));  
+    }
 
     public string GenerateSignatureBase()
     {
