@@ -15,7 +15,7 @@ namespace DevDefined.OAuth.Provider.Inspectors
 
             var computedBodyHash = UriUtility.UrlEncode(Convert.ToBase64String(context.RawContent ?? new byte[0]));
 
-            if (context.BodyHash.EqualsInConstantTime(computedBodyHash))
+            if (!context.BodyHash.EqualsInConstantTime(computedBodyHash))
             {
                 throw Error.FailedToValidateBodyHash(context);
             }
