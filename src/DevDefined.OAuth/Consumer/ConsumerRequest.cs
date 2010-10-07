@@ -162,11 +162,11 @@ namespace DevDefined.OAuth.Consumer
           description.Body = UriUtility.UrlEncode(RequestBody);
       }
 			
-      //if (_context.RawContent != null)
-      //{
-      //  description.ContentType = _context.RawContentType;
-      //  description.Body = _context.RawContent;
-      //}
+      else if (_context.RawContent != null)
+      {
+        description.ContentType = _context.RawContentType;
+        description.RawBody = _context.RawContent;
+      }
 			
       if (_context.Headers != null)
       {
