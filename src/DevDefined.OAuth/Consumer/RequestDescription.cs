@@ -14,6 +14,7 @@ namespace DevDefined.OAuth.Consumer
     public string Method { get; set; }
     public string ContentType { get; set; }
     public string Body { get; set; }
+    public byte[] RawBody { get; set; }
     public NameValueCollection Headers { get; private set; }
   }
 }
