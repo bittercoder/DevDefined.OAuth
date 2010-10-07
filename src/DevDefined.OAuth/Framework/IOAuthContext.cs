@@ -32,6 +32,8 @@ namespace DevDefined.OAuth.Framework
     string GenerateOAuthParametersForHeader();
     Uri GenerateUriWithoutOAuthParameters();
     string GenerateSignatureBase();
+    string GenerateBodyHash();
+    void GenerateAndSetBodyHash();
     string ToString();
   }
 }
