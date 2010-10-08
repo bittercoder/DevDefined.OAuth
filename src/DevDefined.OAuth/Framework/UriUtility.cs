@@ -243,7 +243,7 @@ namespace DevDefined.OAuth.Framework
 		public static string NormalizeRequestParameters(IEnumerable<QueryParameter> parameters)
 		{
 			IEnumerable<QueryParameter> orderedParameters = parameters
-				.OrderBy(x => x.Key)
+				.OrderBy(x => x.Key, StringComparer.Ordinal)
 				.ThenBy(x => x.Value)
 				.Select(
 					x => new QueryParameter(x.Key, UrlEncode(x.Value)));

@@ -91,5 +91,13 @@ namespace DevDefined.OAuth.Tests.Framework
 			Assert.Equal("auth_signature", paramter.Key);
 			Assert.Equal("uZF3aYQFtyK0F1FFHY w7/Be m4=", paramter.Value);
 		}
+
+		[Fact]
+		public void NormalizeRequestParameters_ReturnsParametersInOrdinalOrder()
+		{
+			var parameters = new Dictionary<string, string> { {"ZIP","123"}, {"CVV","123"},{"ccid","123"}};
+
+			Assert.Equal("CVV=123&ZIP=123&ccid=123", UriUtility.NormalizeRequestParameters(parameters));
+		}
   }
 }
