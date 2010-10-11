@@ -99,40 +99,39 @@ namespace DevDefined.OAuth.Consumer
           throw new ApplicationException("If-Modified-Since header could not be parsed as a datetime", ex);
       }
 
-      if (HttpWebRequestAlterations != null)
-      {
-          HttpWebRequestAlterations.ForEach(action => action(request));
-      }
-
       if (ProxyServerUri != null)
       {
           request.Proxy = new WebProxy(ProxyServerUri, false);
       }
 
+      if (description.Headers.Count > 0)
+      {
+          foreach (string key in description.Headers.AllKeys)
+          {
+              request.Headers[key] = description.Headers[key];
+          }
+      }
+
       if (description.ContentType == Parameters.HttpFormEncoded)
       {
-        request.ContentType = description.ContentType;
+          request.ContentType = description.ContentType;
+      }
 
+      // We want to do the alterations last of all but before GetRequestStream() when 
+      // it will be to late for the modifications 
+      if (HttpWebRequestAlterations != null)
+      {
+          HttpWebRequestAlterations.ForEach(action => action(request));
+      }
+
+      if (description.ContentType == Parameters.HttpFormEncoded || !string.IsNullOrEmpty(description.Body))
+      {
         using (var writer = new StreamWriter(request.GetRequestStream()))
         {
           writer.Write(description.Body);
         }
       }
-      else if (!string.IsNullOrEmpty(description.Body))
-      {
-          using (var writer = new StreamWriter(request.GetRequestStream()))
-          {
-              writer.Write(description.Body);
-          }
-      }
 
-      if (description.Headers.Count > 0)
-      {
-        foreach (string key in description.Headers.AllKeys)
-        {
-          request.Headers[key] = description.Headers[key];
-        }
-      }
 
       return request;
     }

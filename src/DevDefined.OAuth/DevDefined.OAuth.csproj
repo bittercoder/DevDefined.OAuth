@@ -200,4 +200,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)\clients\DotNet\ThirdParty\DevDefined\"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
