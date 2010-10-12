@@ -31,48 +31,48 @@ using DevDefined.OAuth.Storage;
 
 namespace DevDefined.OAuth.Provider.Inspectors
 {
-  public class SignatureValidationInspector : IContextInspector
-  {
-    readonly IConsumerStore _consumerStore;
-    readonly IOAuthContextSigner _signer;
+	public class SignatureValidationInspector : IContextInspector
+	{
+		readonly IConsumerStore _consumerStore;
+		readonly IOAuthContextSigner _signer;
 
-    public SignatureValidationInspector(IConsumerStore consumerStore)
-      : this(consumerStore, new OAuthContextSigner())
-    {
-    }
+		public SignatureValidationInspector(IConsumerStore consumerStore)
+			: this(consumerStore, new OAuthContextSigner())
+		{
+		}
 
-    public SignatureValidationInspector(IConsumerStore consumerStore, IOAuthContextSigner signer)
-    {
-      _consumerStore = consumerStore;
-      _signer = signer;
-    }
+		public SignatureValidationInspector(IConsumerStore consumerStore, IOAuthContextSigner signer)
+		{
+			_consumerStore = consumerStore;
+			_signer = signer;
+		}
 
-    public virtual void InspectContext(ProviderPhase phase, IOAuthContext context)
-    {
-      SigningContext signingContext = CreateSignatureContextForConsumer(context);
+		public virtual void InspectContext(ProviderPhase phase, IOAuthContext context)
+		{
+			SigningContext signingContext = CreateSignatureContextForConsumer(context);
 
-      if (!_signer.ValidateSignature(context, signingContext))
-      {
-        throw Error.FailedToValidateSignature(context);
-      }
-    }
+			if (!_signer.ValidateSignature(context, signingContext))
+			{
+				throw Error.FailedToValidateSignature(context);
+			}
+		}
 
-    protected virtual bool SignatureMethodRequiresCertificate(string signatureMethod)
-    {
-      return ((signatureMethod != SignatureMethod.HmacSha1) && (signatureMethod != SignatureMethod.PlainText));
-    }
+		protected virtual bool SignatureMethodRequiresCertificate(string signatureMethod)
+		{
+			return ((signatureMethod != SignatureMethod.HmacSha1) && (signatureMethod != SignatureMethod.PlainText));
+		}
 
-    protected virtual SigningContext CreateSignatureContextForConsumer(IOAuthContext context)
-    {
-      var signingContext = new SigningContext {ConsumerSecret = _consumerStore.GetConsumerSecret(context)};
+		protected virtual SigningContext CreateSignatureContextForConsumer(IOAuthContext context)
+		{
+			var signingContext = new SigningContext {ConsumerSecret = _consumerStore.GetConsumerSecret(context)};
 
-      if (SignatureMethodRequiresCertificate(context.SignatureMethod))
-      {
-        X509Certificate2 cert = _consumerStore.GetConsumerCertificate(context);
-        signingContext.Algorithm = cert.PublicKey.Key;
-      }
+			if (SignatureMethodRequiresCertificate(context.SignatureMethod))
+			{
+				X509Certificate2 cert = _consumerStore.GetConsumerCertificate(context);
+				signingContext.Algorithm = cert.PublicKey.Key;
+			}
 
-      return signingContext;
-    }
-  }
+			return signingContext;
+		}
+	}
 }

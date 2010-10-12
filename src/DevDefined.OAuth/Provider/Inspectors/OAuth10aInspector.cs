@@ -1,57 +1,83 @@
-﻿using System;
+﻿#region License
+
+// The MIT License
+//
+// Copyright (c) 2006-2008 DevDefined Limited.
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+#endregion
+
+using System;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage;
 
 namespace DevDefined.OAuth.Provider.Inspectors
 {
-  /// <summary>
-  /// This inspector implements additional behavior required by the 1.0a version of OAuth.
-  /// </summary>
-  public class OAuth10AInspector : IContextInspector
-  {
-    readonly ITokenStore _tokenStore;
+	/// <summary>
+	/// This inspector implements additional behavior required by the 1.0a version of OAuth.
+	/// </summary>
+	public class OAuth10AInspector : IContextInspector
+	{
+		readonly ITokenStore _tokenStore;
 
-    public OAuth10AInspector(ITokenStore tokenStore)
-    {
-      if (tokenStore == null) throw new ArgumentNullException("tokenStore");
-      _tokenStore = tokenStore;
-    }
+		public OAuth10AInspector(ITokenStore tokenStore)
+		{
+			if (tokenStore == null) throw new ArgumentNullException("tokenStore");
+			_tokenStore = tokenStore;
+		}
 
-    public void InspectContext(ProviderPhase phase, IOAuthContext context)
-    {
-      if (phase == ProviderPhase.GrantRequestToken)
-      {
-        ValidateCallbackUrlIsPartOfRequest(context);
-      }
-      else if (phase == ProviderPhase.ExchangeRequestTokenForAccessToken)
-      {
-        ValidateVerifierMatchesStoredVerifier(context);
-      }
-    }
+		public void InspectContext(ProviderPhase phase, IOAuthContext context)
+		{
+			if (phase == ProviderPhase.GrantRequestToken)
+			{
+				ValidateCallbackUrlIsPartOfRequest(context);
+			}
+			else if (phase == ProviderPhase.ExchangeRequestTokenForAccessToken)
+			{
+				ValidateVerifierMatchesStoredVerifier(context);
+			}
+		}
 
-    void ValidateVerifierMatchesStoredVerifier(IOAuthContext context)
-    {
-      string actual = context.Verifier;
+		void ValidateVerifierMatchesStoredVerifier(IOAuthContext context)
+		{
+			string actual = context.Verifier;
 
-      if (string.IsNullOrEmpty(actual))
-      {
-        throw Error.MissingRequiredOAuthParameter(context, Parameters.OAuth_Verifier);
-      }
+			if (string.IsNullOrEmpty(actual))
+			{
+				throw Error.MissingRequiredOAuthParameter(context, Parameters.OAuth_Verifier);
+			}
 
-      string expected = _tokenStore.GetVerificationCodeForRequestToken(context);
+			string expected = _tokenStore.GetVerificationCodeForRequestToken(context);
 
-      if (expected != actual.Trim())
-      {
-        throw Error.RejectedRequiredOAuthParameter(context, Parameters.OAuth_Verifier);
-      }
-    }
+			if (expected != actual.Trim())
+			{
+				throw Error.RejectedRequiredOAuthParameter(context, Parameters.OAuth_Verifier);
+			}
+		}
 
-    static void ValidateCallbackUrlIsPartOfRequest(IOAuthContext context)
-    {
-      if (string.IsNullOrEmpty(context.CallbackUrl))
-      {
-        throw Error.MissingRequiredOAuthParameter(context, Parameters.OAuth_Callback);
-      }
-    }
-  }
+		static void ValidateCallbackUrlIsPartOfRequest(IOAuthContext context)
+		{
+			if (string.IsNullOrEmpty(context.CallbackUrl))
+			{
+				throw Error.MissingRequiredOAuthParameter(context, Parameters.OAuth_Callback);
+			}
+		}
+	}
 }

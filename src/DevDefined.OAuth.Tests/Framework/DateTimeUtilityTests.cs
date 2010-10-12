@@ -30,18 +30,18 @@ using Xunit;
 
 namespace DevDefined.OAuth.Tests.Framework
 {
-  public class DateTimeUtilityTests
-  {
-    [Fact]
-    public void RoundTripEpoch()
-    {
-      var newYears = new DateTime(2008, 1, 1, 0, 0, 0);
+	public class DateTimeUtilityTests
+	{
+		[Fact]
+		public void RoundTripEpoch()
+		{
+			var newYears = new DateTime(2008, 1, 1, 0, 0, 0);
 
-      long epoch = newYears.Epoch();
+			long epoch = newYears.Epoch();
 
-      DateTime fromEpoch = DateTimeUtility.FromEpoch((int) epoch);
+			DateTime fromEpoch = DateTimeUtility.FromEpoch((int) epoch);
 
-      Assert.Equal(newYears, fromEpoch);
-    }
-  }
+			Assert.Equal(newYears, fromEpoch);
+		}
+	}
 }

@@ -32,41 +32,41 @@ using Xunit;
 
 namespace DevDefined.OAuth.Tests.Provider.Inspectors
 {
-  public class ConsumerValidationInspector
-  {
-    [Fact]
-    public void InValidConsumerThrows()
-    {
-      var consumerStore = MockRepository.GenerateStub<IConsumerStore>();
-      
+	public class ConsumerValidationInspector
+	{
+		[Fact]
+		public void InValidConsumerThrows()
+		{
+			var consumerStore = MockRepository.GenerateStub<IConsumerStore>();
+
 			var context = new OAuthContext {ConsumerKey = "key"};
 
-    	consumerStore.Stub(stub => stub.IsConsumer(context)).Return(false);
+			consumerStore.Stub(stub => stub.IsConsumer(context)).Return(false);
 
-      var inspector = new OAuth.Provider.Inspectors.ConsumerValidationInspector(consumerStore);
+			var inspector = new OAuth.Provider.Inspectors.ConsumerValidationInspector(consumerStore);
 
-      var ex = Assert.Throws<OAuthException>(()=>inspector.InspectContext(ProviderPhase.GrantRequestToken, context));
+			var ex = Assert.Throws<OAuthException>(() => inspector.InspectContext(ProviderPhase.GrantRequestToken, context));
 
 			Assert.Equal("Unknown Consumer (Realm: , Key: key)", ex.Message);
-    }
+		}
 
-    [Fact]
-    public void ValidConsumerPassesThrough()
-    {
-      var repository = new MockRepository();
+		[Fact]
+		public void ValidConsumerPassesThrough()
+		{
+			var repository = new MockRepository();
 
-      var consumerStore = repository.StrictMock<IConsumerStore>();
-      var context = new OAuthContext {ConsumerKey = "key"};
+			var consumerStore = repository.StrictMock<IConsumerStore>();
+			var context = new OAuthContext {ConsumerKey = "key"};
 
-      using (repository.Record())
-      {
-        Expect.Call(consumerStore.IsConsumer(context)).Return(true);
-      }
-      using (repository.Playback())
-      {
-        var inspector = new OAuth.Provider.Inspectors.ConsumerValidationInspector(consumerStore);
-        inspector.InspectContext(ProviderPhase.GrantRequestToken, context);
-      }
-    }
-  }
+			using (repository.Record())
+			{
+				Expect.Call(consumerStore.IsConsumer(context)).Return(true);
+			}
+			using (repository.Playback())
+			{
+				var inspector = new OAuth.Provider.Inspectors.ConsumerValidationInspector(consumerStore);
+				inspector.InspectContext(ProviderPhase.GrantRequestToken, context);
+			}
+		}
+	}
 }

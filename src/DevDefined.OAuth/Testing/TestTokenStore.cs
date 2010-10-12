@@ -30,104 +30,104 @@ using DevDefined.OAuth.Storage;
 
 namespace DevDefined.OAuth.Testing
 {
-  public class TestTokenStore : ITokenStore
-  {
-    public const string AccessSecret = "accesssecret";
-    public const string RequestSecret = "requestsecret";
+	public class TestTokenStore : ITokenStore
+	{
+		public const string AccessSecret = "accesssecret";
+		public const string RequestSecret = "requestsecret";
 
-    public TestTokenStore()
-    {
-      CallbackUrl = "http://localhost/callback";
-      VerificationCode = "GzvVb5WjWfHKa/0JuFupaMyn"; // this is a example google oauth verification code      
-    }
+		public TestTokenStore()
+		{
+			CallbackUrl = "http://localhost/callback";
+			VerificationCode = "GzvVb5WjWfHKa/0JuFupaMyn"; // this is a example google oauth verification code      
+		}
 
-    public string CallbackUrl { get; set; }
-    public string VerificationCode { get; set; }
+		public string CallbackUrl { get; set; }
+		public string VerificationCode { get; set; }
 
-    public IToken CreateRequestToken(IOAuthContext context)
-    {
-      EnsureTestConsumer(context);
+		public IToken CreateRequestToken(IOAuthContext context)
+		{
+			EnsureTestConsumer(context);
 
-      return new TokenBase {ConsumerKey = "key", Realm = null, Token = "requestkey", TokenSecret = RequestSecret};
-    }
+			return new TokenBase {ConsumerKey = "key", Realm = null, Token = "requestkey", TokenSecret = RequestSecret};
+		}
 
-    public void ConsumeRequestToken(IOAuthContext requestContext)
-    {
-      EnsureTestConsumer(requestContext);
+		public void ConsumeRequestToken(IOAuthContext requestContext)
+		{
+			EnsureTestConsumer(requestContext);
 
-      if (requestContext.Token != "requestkey")
-        throw new OAuthException(requestContext, OAuthProblems.TokenRejected,
-                                 "The supplied request token is unknown to the provider.");
-    }
+			if (requestContext.Token != "requestkey")
+				throw new OAuthException(requestContext, OAuthProblems.TokenRejected,
+				                         "The supplied request token is unknown to the provider.");
+		}
 
-    public void ConsumeAccessToken(IOAuthContext accessContext)
-    {
-      EnsureTestConsumer(accessContext);
+		public void ConsumeAccessToken(IOAuthContext accessContext)
+		{
+			EnsureTestConsumer(accessContext);
 
-      if (accessContext.Token != "accesskey")
-        throw new OAuthException(accessContext, OAuthProblems.TokenRejected,
-                                 "The supplied access token is unknown to the provider.");
-    }
+			if (accessContext.Token != "accesskey")
+				throw new OAuthException(accessContext, OAuthProblems.TokenRejected,
+				                         "The supplied access token is unknown to the provider.");
+		}
 
-    public IToken GetAccessTokenAssociatedWithRequestToken(IOAuthContext requestContext)
-    {
-      EnsureTestConsumer(requestContext);
+		public IToken GetAccessTokenAssociatedWithRequestToken(IOAuthContext requestContext)
+		{
+			EnsureTestConsumer(requestContext);
 
-      if (requestContext.Token != "requestkey")
-        throw new OAuthException(requestContext, OAuthProblems.TokenRejected, "Expected Token \"requestkey\"");
+			if (requestContext.Token != "requestkey")
+				throw new OAuthException(requestContext, OAuthProblems.TokenRejected, "Expected Token \"requestkey\"");
 
-      return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = AccessSecret};
-    }
+			return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = AccessSecret};
+		}
 
-    public RequestForAccessStatus GetStatusOfRequestForAccess(IOAuthContext requestContext)
-    {
-      if (requestContext.ConsumerKey == "key" && requestContext.Token == "requestkey")
-        return RequestForAccessStatus.Granted;
+		public RequestForAccessStatus GetStatusOfRequestForAccess(IOAuthContext requestContext)
+		{
+			if (requestContext.ConsumerKey == "key" && requestContext.Token == "requestkey")
+				return RequestForAccessStatus.Granted;
 
-      return RequestForAccessStatus.Unknown;
-    }
+			return RequestForAccessStatus.Unknown;
+		}
 
-    public string GetCallbackUrlForToken(IOAuthContext requestContext)
-    {
-      return CallbackUrl;
-    }
+		public string GetCallbackUrlForToken(IOAuthContext requestContext)
+		{
+			return CallbackUrl;
+		}
 
-    public string GetVerificationCodeForRequestToken(IOAuthContext requestContext)
-    {
-      return VerificationCode;
-    }
+		public string GetVerificationCodeForRequestToken(IOAuthContext requestContext)
+		{
+			return VerificationCode;
+		}
 
-    public string GetRequestTokenSecret(IOAuthContext context)
-    {
-      return RequestSecret;
-    }
+		public string GetRequestTokenSecret(IOAuthContext context)
+		{
+			return RequestSecret;
+		}
 
-    public string GetAccessTokenSecret(IOAuthContext context)
-    {
-      return AccessSecret;
-    }
+		public string GetAccessTokenSecret(IOAuthContext context)
+		{
+			return AccessSecret;
+		}
 
-    public IToken RenewAccessToken(IOAuthContext requestContext)
-    {
-      EnsureTestConsumer(requestContext);
-      return new TokenBase { ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = AccessSecret, SessionHandle = requestContext.SessionHandle };
-    }
+		public IToken RenewAccessToken(IOAuthContext requestContext)
+		{
+			EnsureTestConsumer(requestContext);
+			return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = AccessSecret, SessionHandle = requestContext.SessionHandle};
+		}
 
-    public IToken CreateAccessTokenForRequestToken(IOAuthContext requestContext)
-    {
-      EnsureTestConsumer(requestContext);
-      return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = AccessSecret, SessionHandle = "sessionHandle"};
-    }
+		public IToken CreateAccessTokenForRequestToken(IOAuthContext requestContext)
+		{
+			EnsureTestConsumer(requestContext);
+			return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = AccessSecret, SessionHandle = "sessionHandle"};
+		}
 
-    static void EnsureTestConsumer(IConsumer consumer)
-    {
-      if (consumer == null) throw new ArgumentNullException("consumer");
-      if (consumer.Realm != null)
-        throw new OAuthException(consumer as OAuthContext, OAuthProblems.ConsumerKeyRejected,
-                                 "supplied realm was unknown to the provider");
-      if (consumer.ConsumerKey != "key")
-        throw new OAuthException(consumer as OAuthContext, OAuthProblems.ConsumerKeyRejected,
-                                 "supplied consumer key was unknown to the provider");
-    }
-  }
+		static void EnsureTestConsumer(IConsumer consumer)
+		{
+			if (consumer == null) throw new ArgumentNullException("consumer");
+			if (consumer.Realm != null)
+				throw new OAuthException(consumer as OAuthContext, OAuthProblems.ConsumerKeyRejected,
+				                         "supplied realm was unknown to the provider");
+			if (consumer.ConsumerKey != "key")
+				throw new OAuthException(consumer as OAuthContext, OAuthProblems.ConsumerKeyRejected,
+				                         "supplied consumer key was unknown to the provider");
+		}
+	}
 }

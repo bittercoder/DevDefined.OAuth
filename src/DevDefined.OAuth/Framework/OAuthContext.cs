@@ -28,323 +28,328 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using QueryParameter = System.Collections.Generic.KeyValuePair<string, string>;
 
 namespace DevDefined.OAuth.Framework
 {
-  [Serializable]
-  public class OAuthContext : IOAuthContext
-  {
-    readonly BoundParameter _callbackUrl;
-    readonly BoundParameter _consumerKey;
-    readonly BoundParameter _nonce;
-    readonly BoundParameter _signature;
-    readonly BoundParameter _signatureMethod;
-    readonly BoundParameter _timestamp;
-    readonly BoundParameter _token;
-    readonly BoundParameter _tokenSecret;
-    readonly BoundParameter _verifier;
-    readonly BoundParameter _sessionHandle;
-    readonly BoundParameter _version;
-    readonly BoundParameter _bodyHash;
-    NameValueCollection _authorizationHeaderParameters;
-    NameValueCollection _cookies;
-    NameValueCollection _formEncodedParameters;
-    NameValueCollection _headers;
-    string _normalizedRequestUrl;
-    NameValueCollection _queryParameters;
-    Uri _rawUri;
+	[Serializable]
+	public class OAuthContext : IOAuthContext
+	{
+		readonly BoundParameter _bodyHash;
+		readonly BoundParameter _callbackUrl;
+		readonly BoundParameter _consumerKey;
+		readonly BoundParameter _nonce;
+		readonly BoundParameter _sessionHandle;
+		readonly BoundParameter _signature;
+		readonly BoundParameter _signatureMethod;
+		readonly BoundParameter _timestamp;
+		readonly BoundParameter _token;
+		readonly BoundParameter _tokenSecret;
+		readonly BoundParameter _verifier;
+		readonly BoundParameter _version;
+		NameValueCollection _authorizationHeaderParameters;
+		NameValueCollection _cookies;
+		NameValueCollection _formEncodedParameters;
+		NameValueCollection _headers;
+		string _normalizedRequestUrl;
+		NameValueCollection _queryParameters;
+		Uri _rawUri;
 
-    public OAuthContext()
-    {
-      _verifier = new BoundParameter(Parameters.OAuth_Verifier, this);
-      _consumerKey = new BoundParameter(Parameters.OAuth_Consumer_Key, this);
-      _callbackUrl = new BoundParameter(Parameters.OAuth_Callback, this);
-      _nonce = new BoundParameter(Parameters.OAuth_Nonce, this);
-      _signature = new BoundParameter(Parameters.OAuth_Signature, this);
-      _signatureMethod = new BoundParameter(Parameters.OAuth_Signature_Method, this);
-      _timestamp = new BoundParameter(Parameters.OAuth_Timestamp, this);
-      _token = new BoundParameter(Parameters.OAuth_Token, this);
-      _tokenSecret = new BoundParameter(Parameters.OAuth_Token_Secret, this);
-      _version = new BoundParameter(Parameters.OAuth_Version, this);
-      _sessionHandle = new BoundParameter(Parameters.OAuth_Session_Handle, this);
-      _bodyHash = new BoundParameter(Parameters.OAuth_Body_Hash, this);
+		public OAuthContext()
+		{
+			_verifier = new BoundParameter(Parameters.OAuth_Verifier, this);
+			_consumerKey = new BoundParameter(Parameters.OAuth_Consumer_Key, this);
+			_callbackUrl = new BoundParameter(Parameters.OAuth_Callback, this);
+			_nonce = new BoundParameter(Parameters.OAuth_Nonce, this);
+			_signature = new BoundParameter(Parameters.OAuth_Signature, this);
+			_signatureMethod = new BoundParameter(Parameters.OAuth_Signature_Method, this);
+			_timestamp = new BoundParameter(Parameters.OAuth_Timestamp, this);
+			_token = new BoundParameter(Parameters.OAuth_Token, this);
+			_tokenSecret = new BoundParameter(Parameters.OAuth_Token_Secret, this);
+			_version = new BoundParameter(Parameters.OAuth_Version, this);
+			_sessionHandle = new BoundParameter(Parameters.OAuth_Session_Handle, this);
+			_bodyHash = new BoundParameter(Parameters.OAuth_Body_Hash, this);
 
-      FormEncodedParameters = new NameValueCollection();
-      Cookies = new NameValueCollection();
-      Headers = new NameValueCollection();
-      AuthorizationHeaderParameters = new NameValueCollection();
-    }
+			FormEncodedParameters = new NameValueCollection();
+			Cookies = new NameValueCollection();
+			Headers = new NameValueCollection();
+			AuthorizationHeaderParameters = new NameValueCollection();
+		}
 
-    public NameValueCollection Headers
-    {
-      get
-      {
-        if (_headers == null) _headers = new NameValueCollection();
-        return _headers;
-      }
-      set { _headers = value; }
-    }
+		public NameValueCollection Headers
+		{
+			get
+			{
+				if (_headers == null) _headers = new NameValueCollection();
+				return _headers;
+			}
+			set { _headers = value; }
+		}
 
-    public NameValueCollection QueryParameters
-    {
-      get
-      {
-        if (_queryParameters == null) _queryParameters = new NameValueCollection();
-        return _queryParameters;
-      }
-      set { _queryParameters = value; }
-    }
+		public NameValueCollection QueryParameters
+		{
+			get
+			{
+				if (_queryParameters == null) _queryParameters = new NameValueCollection();
+				return _queryParameters;
+			}
+			set { _queryParameters = value; }
+		}
 
-    public NameValueCollection Cookies
-    {
-      get
-      {
-        if (_cookies == null) _cookies = new NameValueCollection();
-        return _cookies;
-      }
-      set { _cookies = value; }
-    }
+		public NameValueCollection Cookies
+		{
+			get
+			{
+				if (_cookies == null) _cookies = new NameValueCollection();
+				return _cookies;
+			}
+			set { _cookies = value; }
+		}
 
-    public NameValueCollection FormEncodedParameters
-    {
-      get
-      {
-        if (_formEncodedParameters == null) _formEncodedParameters = new NameValueCollection();
-        return _formEncodedParameters;
-      }
-      set { _formEncodedParameters = value; }
-    }
+		public NameValueCollection FormEncodedParameters
+		{
+			get
+			{
+				if (_formEncodedParameters == null) _formEncodedParameters = new NameValueCollection();
+				return _formEncodedParameters;
+			}
+			set { _formEncodedParameters = value; }
+		}
 
-    public NameValueCollection AuthorizationHeaderParameters
-    {
-      get
-      {
-        if (_authorizationHeaderParameters == null) _authorizationHeaderParameters = new NameValueCollection();
-        return _authorizationHeaderParameters;
-      }
-      set { _authorizationHeaderParameters = value; }
-    }
+		public NameValueCollection AuthorizationHeaderParameters
+		{
+			get
+			{
+				if (_authorizationHeaderParameters == null) _authorizationHeaderParameters = new NameValueCollection();
+				return _authorizationHeaderParameters;
+			}
+			set { _authorizationHeaderParameters = value; }
+		}
 
 		public byte[] RawContent { get; set; }
 		public string RawContentType { get; set; }
 
-  	public Uri RawUri
-    {
-      get { return _rawUri; }
-      set
-      {
-        _rawUri = value;
+		public Uri RawUri
+		{
+			get { return _rawUri; }
+			set
+			{
+				_rawUri = value;
 
-        NameValueCollection newParameters = HttpUtility.ParseQueryString(_rawUri.Query);
+				NameValueCollection newParameters = HttpUtility.ParseQueryString(_rawUri.Query);
 
-        // TODO: tidy this up, bit clunky
+				// TODO: tidy this up, bit clunky
 
-        foreach (string parameter in newParameters)
-        {
-          QueryParameters[parameter] = newParameters[parameter];
-        }
+				foreach (string parameter in newParameters)
+				{
+					QueryParameters[parameter] = newParameters[parameter];
+				}
 
-      	_normalizedRequestUrl = UriUtility.NormalizeUri(_rawUri);
-      }
-    }
+				_normalizedRequestUrl = UriUtility.NormalizeUri(_rawUri);
+			}
+		}
 
-    public string NormalizedRequestUrl
-    {
-      get { return _normalizedRequestUrl; }
-    }
+		public string NormalizedRequestUrl
+		{
+			get { return _normalizedRequestUrl; }
+		}
 
-    public string RequestMethod { get; set; }
+		public string RequestMethod { get; set; }
 
-    public string Nonce
-    {
-      get { return _nonce.Value; }
-      set { _nonce.Value = value; }
-    }
+		public bool IncludeOAuthRequestBodyHashInSignature { get; set; }
 
-    public string Verifier
-    {
-      get { return _verifier.Value; }
-      set { _verifier.Value = value; }
-    }
+		public string Nonce
+		{
+			get { return _nonce.Value; }
+			set { _nonce.Value = value; }
+		}
 
-    public string SessionHandle
-    {
-        get { return _sessionHandle.Value; }
-        set { _sessionHandle.Value = value; }
-    }
+		public string Verifier
+		{
+			get { return _verifier.Value; }
+			set { _verifier.Value = value; }
+		}
 
-    public string CallbackUrl
-    {
-      get { return _callbackUrl.Value; }
-      set { _callbackUrl.Value = value; }
-    }
+		public string SessionHandle
+		{
+			get { return _sessionHandle.Value; }
+			set { _sessionHandle.Value = value; }
+		}
 
-    public string Signature
-    {
-      get { return _signature.Value; }
-      set { _signature.Value = value; }
-    }
+		public string CallbackUrl
+		{
+			get { return _callbackUrl.Value; }
+			set { _callbackUrl.Value = value; }
+		}
 
-    public string SignatureMethod
-    {
-      get { return _signatureMethod.Value; }
-      set { _signatureMethod.Value = value; }
-    }
+		public string Signature
+		{
+			get { return _signature.Value; }
+			set { _signature.Value = value; }
+		}
 
-    public string Timestamp
-    {
-      get { return _timestamp.Value; }
-      set { _timestamp.Value = value; }
-    }
+		public string SignatureMethod
+		{
+			get { return _signatureMethod.Value; }
+			set { _signatureMethod.Value = value; }
+		}
 
-    public string BodyHash
-    {
-        get { return _bodyHash.Value; }
-        set { _bodyHash.Value = value; }
-    }
+		public string Timestamp
+		{
+			get { return _timestamp.Value; }
+			set { _timestamp.Value = value; }
+		}
 
-    public string Version
-    {
-      get { return _version.Value; }
-      set { _version.Value = value; }
-    }
+		public string BodyHash
+		{
+			get { return _bodyHash.Value; }
+			set { _bodyHash.Value = value; }
+		}
 
-    public bool UseAuthorizationHeader { get; set; }
+		public string Version
+		{
+			get { return _version.Value; }
+			set { _version.Value = value; }
+		}
 
-    public string Realm
-    {
-      get { return AuthorizationHeaderParameters[Parameters.Realm]; }
-      set { AuthorizationHeaderParameters[Parameters.Realm] = value; }
-    }
+		public bool UseAuthorizationHeader { get; set; }
 
-    public string ConsumerKey
-    {
-      get { return _consumerKey.Value; }
-      set { _consumerKey.Value = value; }
-    }
+		public string Realm
+		{
+			get { return AuthorizationHeaderParameters[Parameters.Realm]; }
+			set { AuthorizationHeaderParameters[Parameters.Realm] = value; }
+		}
 
-    public string Token
-    {
-      get { return _token.Value; }
-      set { _token.Value = value; }
-    }
+		public string ConsumerKey
+		{
+			get { return _consumerKey.Value; }
+			set { _consumerKey.Value = value; }
+		}
 
-    public string TokenSecret
-    {
-      get { return _tokenSecret.Value; }
-      set { _tokenSecret.Value = value; }
-    }
+		public string Token
+		{
+			get { return _token.Value; }
+			set { _token.Value = value; }
+		}
 
-    public Uri GenerateUri()
-    {
-      var builder = new UriBuilder(NormalizedRequestUrl);
+		public string TokenSecret
+		{
+			get { return _tokenSecret.Value; }
+			set { _tokenSecret.Value = value; }
+		}
 
-      IEnumerable<QueryParameter> parameters = QueryParameters.ToQueryParametersExcludingTokenSecret();
+		public Uri GenerateUri()
+		{
+			var builder = new UriBuilder(NormalizedRequestUrl);
 
-      builder.Query = UriUtility.FormatQueryString(parameters);
+			IEnumerable<QueryParameter> parameters = QueryParameters.ToQueryParametersExcludingTokenSecret();
 
-      return builder.Uri;
-    }
+			builder.Query = UriUtility.FormatQueryString(parameters);
 
-    public string GenerateUrl()
-    {
-      var builder = new UriBuilder(NormalizedRequestUrl);
+			return builder.Uri;
+		}
 
-      builder.Query = "";
+		public string GenerateUrl()
+		{
+			var builder = new UriBuilder(NormalizedRequestUrl);
 
-      return builder.Uri + "?" + UriUtility.FormatQueryString(QueryParameters);
-    }
+			builder.Query = "";
 
-    public string GenerateOAuthParametersForHeader()
-    {
-      var builder = new StringBuilder();
+			return builder.Uri + "?" + UriUtility.FormatQueryString(QueryParameters);
+		}
 
-      if (Realm != null) builder.Append("realm=\"").Append(Realm).Append("\"");
+		public string GenerateOAuthParametersForHeader()
+		{
+			var builder = new StringBuilder();
 
-      IEnumerable<QueryParameter> parameters = AuthorizationHeaderParameters.ToQueryParametersExcludingTokenSecret();
+			if (Realm != null) builder.Append("realm=\"").Append(Realm).Append("\"");
 
-      foreach (
-        var parameter in parameters.Where(p => p.Key != Parameters.Realm)
-        )
-      {
-        if (builder.Length > 0) builder.Append(",");
-        builder.Append(UriUtility.UrlEncode(parameter.Key)).Append("=\"").Append(
-          UriUtility.UrlEncode(parameter.Value)).Append("\"");
-      }
+			IEnumerable<QueryParameter> parameters = AuthorizationHeaderParameters.ToQueryParametersExcludingTokenSecret();
 
-      builder.Insert(0, "OAuth ");
+			foreach (
+				var parameter in parameters.Where(p => p.Key != Parameters.Realm)
+				)
+			{
+				if (builder.Length > 0) builder.Append(",");
+				builder.Append(UriUtility.UrlEncode(parameter.Key)).Append("=\"").Append(
+					UriUtility.UrlEncode(parameter.Value)).Append("\"");
+			}
 
-      return builder.ToString();
-    }
+			builder.Insert(0, "OAuth ");
 
-    public Uri GenerateUriWithoutOAuthParameters()
-    {
-      var builder = new UriBuilder(NormalizedRequestUrl);
+			return builder.ToString();
+		}
 
-      IEnumerable<QueryParameter> parameters = QueryParameters.ToQueryParameters()
-        .Where(q => !q.Key.StartsWith(Parameters.OAuthParameterPrefix));
+		public Uri GenerateUriWithoutOAuthParameters()
+		{
+			var builder = new UriBuilder(NormalizedRequestUrl);
 
-      builder.Query = UriUtility.FormatQueryString(parameters);
+			IEnumerable<QueryParameter> parameters = QueryParameters.ToQueryParameters()
+				.Where(q => !q.Key.StartsWith(Parameters.OAuthParameterPrefix));
 
-      return builder.Uri;
-    }
-    
-    public void GenerateAndSetBodyHash()
-    {
-       BodyHash = GenerateBodyHash();  
-    }
+			builder.Query = UriUtility.FormatQueryString(parameters);
 
-    public string GenerateBodyHash()
-    {
-        var hash = SHA1.Create().ComputeHash((RawContent ?? new byte[0]));
-        return UriUtility.UrlEncode(Convert.ToBase64String(hash));  
-    }
+			return builder.Uri;
+		}
 
-    public string GenerateSignatureBase()
-    {
-      if (string.IsNullOrEmpty(ConsumerKey))
-      {
-        throw Error.MissingRequiredOAuthParameter(this, Parameters.OAuth_Consumer_Key);
-      }
+		public void GenerateAndSetBodyHash()
+		{
+			BodyHash = GenerateBodyHash();
+		}
 
-      if (string.IsNullOrEmpty(SignatureMethod))
-      {
-        throw Error.MissingRequiredOAuthParameter(this, Parameters.OAuth_Signature_Method);
-      }
+		public string GenerateBodyHash()
+		{
+			byte[] hash = SHA1.Create().ComputeHash((RawContent ?? new byte[0]));
+			return Convert.ToBase64String(hash);
+		}
 
-      if (string.IsNullOrEmpty(RequestMethod))
-      {
-        throw Error.RequestMethodHasNotBeenAssigned("RequestMethod");
-      }
+		public string GenerateSignatureBase()
+		{
+			if (string.IsNullOrEmpty(ConsumerKey))
+			{
+				throw Error.MissingRequiredOAuthParameter(this, Parameters.OAuth_Consumer_Key);
+			}
 
-      var allParameters = new List<QueryParameter>();
+			if (string.IsNullOrEmpty(SignatureMethod))
+			{
+				throw Error.MissingRequiredOAuthParameter(this, Parameters.OAuth_Signature_Method);
+			}
 
-      //fix for issue: http://groups.google.com/group/oauth/browse_thread/thread/42ef5fecc54a7e9a/a54e92b13888056c?hl=en&lnk=gst&q=Signing+PUT+Request#a54e92b13888056c
-      if (FormEncodedParameters != null && RequestMethod == "POST") 
-          allParameters.AddRange(FormEncodedParameters.ToQueryParametersExcludingTokenSecret());
+			if (string.IsNullOrEmpty(RequestMethod))
+			{
+				throw Error.RequestMethodHasNotBeenAssigned("RequestMethod");
+			}
 
-      if (QueryParameters != null) allParameters.AddRange(QueryParameters.ToQueryParametersExcludingTokenSecret());
+			if (IncludeOAuthRequestBodyHashInSignature)
+			{
+				GenerateAndSetBodyHash();
+			}
 
-      if (Cookies != null) allParameters.AddRange(Cookies.ToQueryParametersExcludingTokenSecret());
+			var allParameters = new List<QueryParameter>();
 
-      if (AuthorizationHeaderParameters != null)
-        allParameters.AddRange(AuthorizationHeaderParameters.ToQueryParametersExcludingTokenSecret().Where(q => q.Key != Parameters.Realm));
+			//fix for issue: http://groups.google.com/group/oauth/browse_thread/thread/42ef5fecc54a7e9a/a54e92b13888056c?hl=en&lnk=gst&q=Signing+PUT+Request#a54e92b13888056c
+			if (FormEncodedParameters != null && RequestMethod == "POST")
+				allParameters.AddRange(FormEncodedParameters.ToQueryParametersExcludingTokenSecret());
+
+			if (QueryParameters != null) allParameters.AddRange(QueryParameters.ToQueryParametersExcludingTokenSecret());
+
+			if (Cookies != null) allParameters.AddRange(Cookies.ToQueryParametersExcludingTokenSecret());
+
+			if (AuthorizationHeaderParameters != null)
+				allParameters.AddRange(AuthorizationHeaderParameters.ToQueryParametersExcludingTokenSecret().Where(q => q.Key != Parameters.Realm));
 
 			// patch from http://code.google.com/p/devdefined-tools/issues/detail?id=10
-            //if(RawContent != null)
-            //    allParameters.Add(new QueryParameter("raw", RawContent));
+			//if(RawContent != null)
+			//    allParameters.Add(new QueryParameter("raw", RawContent));
 
-      allParameters.RemoveAll(param => param.Key == Parameters.OAuth_Signature);
+			allParameters.RemoveAll(param => param.Key == Parameters.OAuth_Signature);
 
-      string signatureBase = UriUtility.FormatParameters(RequestMethod, new Uri(NormalizedRequestUrl), allParameters);
+			string signatureBase = UriUtility.FormatParameters(RequestMethod, new Uri(NormalizedRequestUrl), allParameters);
 
-      return signatureBase;
-    }
-
-
-
-  }
+			return signatureBase;
+		}
+	}
 }

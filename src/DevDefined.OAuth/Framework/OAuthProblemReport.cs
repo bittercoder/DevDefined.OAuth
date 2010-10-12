@@ -33,113 +33,113 @@ using System.Web;
 
 namespace DevDefined.OAuth.Framework
 {
-  [Serializable]
-  public class OAuthProblemReport
-  {
-    public OAuthProblemReport()
-    {
-      ParametersRejected = new List<string>();
-      ParametersAbsent = new List<string>();
-    }
+	[Serializable]
+	public class OAuthProblemReport
+	{
+		public OAuthProblemReport()
+		{
+			ParametersRejected = new List<string>();
+			ParametersAbsent = new List<string>();
+		}
 
-    public OAuthProblemReport(NameValueCollection parameters)
-    {
-      Problem = parameters[Parameters.OAuth_Problem];
+		public OAuthProblemReport(NameValueCollection parameters)
+		{
+			Problem = parameters[Parameters.OAuth_Problem];
 
-      ProblemAdvice = parameters[Parameters.OAuth_Problem_Advice];
+			ProblemAdvice = parameters[Parameters.OAuth_Problem_Advice];
 
-      ParametersAbsent = parameters.AllKeys.Any(key => key == Parameters.OAuth_Parameters_Absent)
-                           ? ParseFormattedParameters(parameters[Parameters.OAuth_Parameters_Absent])
-                           : new List<string>();
+			ParametersAbsent = parameters.AllKeys.Any(key => key == Parameters.OAuth_Parameters_Absent)
+			                   	? ParseFormattedParameters(parameters[Parameters.OAuth_Parameters_Absent])
+			                   	: new List<string>();
 
-      ParametersRejected = parameters.AllKeys.Any(key => key == Parameters.OAuth_Parameters_Rejected)
-                             ? ParseFormattedParameters(parameters[Parameters.OAuth_Parameters_Rejected])
-                             : new List<string>();
+			ParametersRejected = parameters.AllKeys.Any(key => key == Parameters.OAuth_Parameters_Rejected)
+			                     	? ParseFormattedParameters(parameters[Parameters.OAuth_Parameters_Rejected])
+			                     	: new List<string>();
 
-      if (parameters.AllKeys.Any(key => key == Parameters.OAuth_Acceptable_Timestamps))
-      {
-        string[] timeStamps = parameters[Parameters.OAuth_Acceptable_Timestamps].Split(new[] {'-'});
-        AcceptableTimeStampsFrom = DateTimeUtility.FromEpoch(Convert.ToInt64(timeStamps[0]));
-        AcceptableTimeStampsTo = DateTimeUtility.FromEpoch(Convert.ToInt64(timeStamps[1]));
-      }
+			if (parameters.AllKeys.Any(key => key == Parameters.OAuth_Acceptable_Timestamps))
+			{
+				string[] timeStamps = parameters[Parameters.OAuth_Acceptable_Timestamps].Split(new[] {'-'});
+				AcceptableTimeStampsFrom = DateTimeUtility.FromEpoch(Convert.ToInt64(timeStamps[0]));
+				AcceptableTimeStampsTo = DateTimeUtility.FromEpoch(Convert.ToInt64(timeStamps[1]));
+			}
 
-      if (parameters.AllKeys.Any(key => key == Parameters.OAuth_Acceptable_Versions))
-      {
-        string[] versions = parameters[Parameters.OAuth_Acceptable_Versions].Split(new[] {'-'});
-        AcceptableVersionFrom = versions[0];
-        AcceptableVersionTo = versions[1];
-      }
-    }
+			if (parameters.AllKeys.Any(key => key == Parameters.OAuth_Acceptable_Versions))
+			{
+				string[] versions = parameters[Parameters.OAuth_Acceptable_Versions].Split(new[] {'-'});
+				AcceptableVersionFrom = versions[0];
+				AcceptableVersionTo = versions[1];
+			}
+		}
 
-    public OAuthProblemReport(string formattedReport)
-      : this(HttpUtility.ParseQueryString(formattedReport))
-    {
-    }
+		public OAuthProblemReport(string formattedReport)
+			: this(HttpUtility.ParseQueryString(formattedReport))
+		{
+		}
 
-    public string AcceptableVersionTo { get; set; }
-    public string AcceptableVersionFrom { get; set; }
-    public List<string> ParametersRejected { get; set; }
-    public List<string> ParametersAbsent { get; set; }
-    public string ProblemAdvice { get; set; }
-    public string Problem { get; set; }
-    public DateTime? AcceptableTimeStampsTo { get; set; }
-    public DateTime? AcceptableTimeStampsFrom { get; set; }
+		public string AcceptableVersionTo { get; set; }
+		public string AcceptableVersionFrom { get; set; }
+		public List<string> ParametersRejected { get; set; }
+		public List<string> ParametersAbsent { get; set; }
+		public string ProblemAdvice { get; set; }
+		public string Problem { get; set; }
+		public DateTime? AcceptableTimeStampsTo { get; set; }
+		public DateTime? AcceptableTimeStampsFrom { get; set; }
 
-    public override string ToString()
-    {
-      if (string.IsNullOrEmpty(Problem)) throw Error.CantBuildProblemReportWhenProblemEmpty();
+		public override string ToString()
+		{
+			if (string.IsNullOrEmpty(Problem)) throw Error.CantBuildProblemReportWhenProblemEmpty();
 
-      var response = new NameValueCollection();
+			var response = new NameValueCollection();
 
-      response[Parameters.OAuth_Problem] = Problem;
+			response[Parameters.OAuth_Problem] = Problem;
 
-      if (!string.IsNullOrEmpty(ProblemAdvice))
-      {
-        response[Parameters.OAuth_Problem_Advice] = ProblemAdvice.Replace("\r\n", "\n").Replace("\r", "\n");
-      }
+			if (!string.IsNullOrEmpty(ProblemAdvice))
+			{
+				response[Parameters.OAuth_Problem_Advice] = ProblemAdvice.Replace("\r\n", "\n").Replace("\r", "\n");
+			}
 
-      if (ParametersAbsent.Count > 0)
-      {
-        response[Parameters.OAuth_Parameters_Absent] = FormatParameterNames(ParametersAbsent);
-      }
+			if (ParametersAbsent.Count > 0)
+			{
+				response[Parameters.OAuth_Parameters_Absent] = FormatParameterNames(ParametersAbsent);
+			}
 
-      if (ParametersRejected.Count > 0)
-      {
-        response[Parameters.OAuth_Parameters_Rejected] = FormatParameterNames(ParametersRejected);
-      }
+			if (ParametersRejected.Count > 0)
+			{
+				response[Parameters.OAuth_Parameters_Rejected] = FormatParameterNames(ParametersRejected);
+			}
 
-      if (AcceptableTimeStampsFrom.HasValue && AcceptableTimeStampsTo.HasValue)
-      {
-        response[Parameters.OAuth_Acceptable_Timestamps] = string.Format("{0}-{1}",
-                                                                         AcceptableTimeStampsFrom.Value.Epoch(),
-                                                                         AcceptableTimeStampsTo.Value.Epoch());
-      }
+			if (AcceptableTimeStampsFrom.HasValue && AcceptableTimeStampsTo.HasValue)
+			{
+				response[Parameters.OAuth_Acceptable_Timestamps] = string.Format("{0}-{1}",
+				                                                                 AcceptableTimeStampsFrom.Value.Epoch(),
+				                                                                 AcceptableTimeStampsTo.Value.Epoch());
+			}
 
-      if (!(string.IsNullOrEmpty(AcceptableVersionFrom) || string.IsNullOrEmpty(AcceptableVersionTo)))
-      {
-        response[Parameters.OAuth_Acceptable_Versions] = string.Format("{0}-{1}", AcceptableVersionFrom,
-                                                                       AcceptableVersionTo);
-      }
+			if (!(string.IsNullOrEmpty(AcceptableVersionFrom) || string.IsNullOrEmpty(AcceptableVersionTo)))
+			{
+				response[Parameters.OAuth_Acceptable_Versions] = string.Format("{0}-{1}", AcceptableVersionFrom,
+				                                                               AcceptableVersionTo);
+			}
 
-      return UriUtility.FormatQueryString(response);
-    }
+			return UriUtility.FormatQueryString(response);
+		}
 
-    static string FormatParameterNames(IEnumerable<string> names)
-    {
-      var builder = new StringBuilder();
+		static string FormatParameterNames(IEnumerable<string> names)
+		{
+			var builder = new StringBuilder();
 
-      foreach (string name in names)
-      {
-        if (builder.Length > 0) builder.Append("&");
-        builder.Append(UriUtility.UrlEncode(name));
-      }
+			foreach (string name in names)
+			{
+				if (builder.Length > 0) builder.Append("&");
+				builder.Append(UriUtility.UrlEncode(name));
+			}
 
-      return builder.ToString();
-    }
+			return builder.ToString();
+		}
 
-    static List<string> ParseFormattedParameters(string formattedList)
-    {
-      return formattedList.Split(new[] {'&'}, StringSplitOptions.RemoveEmptyEntries).ToList();
-    }
-  }
+		static List<string> ParseFormattedParameters(string formattedList)
+		{
+			return formattedList.Split(new[] {'&'}, StringSplitOptions.RemoveEmptyEntries).ToList();
+		}
+	}
 }

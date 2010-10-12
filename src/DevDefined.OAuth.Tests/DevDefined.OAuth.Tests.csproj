@@ -85,6 +85,7 @@
     <Compile Include="Framework\OAuthProblemReportTests.cs" />
     <Compile Include="Framework\UriUtilityTests.cs" />
     <Compile Include="Provider\FriendsterTests.cs" />
+    <Compile Include="Provider\Inspectors\BodyHashValidationInspectorTests.cs" />
     <Compile Include="Provider\Inspectors\ConsumerValidationInspector.cs" />
     <Compile Include="Provider\Inspectors\NonceStoreInspector.cs" />
     <Compile Include="Provider\Inspectors\SignatureValidationInspectorTests.cs" />

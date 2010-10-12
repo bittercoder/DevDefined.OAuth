@@ -29,43 +29,43 @@ using System.Linq;
 
 namespace DevDefined.OAuth.Framework.Signing
 {
-  public class OAuthContextSigner : IOAuthContextSigner
-  {
-    readonly List<IContextSignatureImplementation> _implementations =
-      new List<IContextSignatureImplementation>();
+	public class OAuthContextSigner : IOAuthContextSigner
+	{
+		readonly List<IContextSignatureImplementation> _implementations =
+			new List<IContextSignatureImplementation>();
 
-    public OAuthContextSigner(params IContextSignatureImplementation[] implementations)
-    {
-      if (implementations != null) _implementations.AddRange(implementations);
-    }
+		public OAuthContextSigner(params IContextSignatureImplementation[] implementations)
+		{
+			if (implementations != null) _implementations.AddRange(implementations);
+		}
 
-    public OAuthContextSigner()
-      : this(
-        new RsaSha1SignatureImplementation(), new HmacSha1SignatureImplementation(),
-        new PlainTextSignatureImplementation())
-    {
-    }
+		public OAuthContextSigner()
+			: this(
+				new RsaSha1SignatureImplementation(), new HmacSha1SignatureImplementation(),
+				new PlainTextSignatureImplementation())
+		{
+		}
 
-    public void SignContext(IOAuthContext authContext, SigningContext signingContext)
-    {
-      signingContext.SignatureBase = authContext.GenerateSignatureBase();
-      FindImplementationForAuthContext(authContext).SignContext(authContext, signingContext);
-    }
+		public void SignContext(IOAuthContext authContext, SigningContext signingContext)
+		{
+			signingContext.SignatureBase = authContext.GenerateSignatureBase();
+			FindImplementationForAuthContext(authContext).SignContext(authContext, signingContext);
+		}
 
-    public bool ValidateSignature(IOAuthContext authContext, SigningContext signingContext)
-    {
-      signingContext.SignatureBase = authContext.GenerateSignatureBase();
-      return FindImplementationForAuthContext(authContext).ValidateSignature(authContext, signingContext);
-    }
+		public bool ValidateSignature(IOAuthContext authContext, SigningContext signingContext)
+		{
+			signingContext.SignatureBase = authContext.GenerateSignatureBase();
+			return FindImplementationForAuthContext(authContext).ValidateSignature(authContext, signingContext);
+		}
 
-    IContextSignatureImplementation FindImplementationForAuthContext(IOAuthContext authContext)
-    {
-      IContextSignatureImplementation impl =
-        _implementations.FirstOrDefault(i => i.MethodName == authContext.SignatureMethod);
+		IContextSignatureImplementation FindImplementationForAuthContext(IOAuthContext authContext)
+		{
+			IContextSignatureImplementation impl =
+				_implementations.FirstOrDefault(i => i.MethodName == authContext.SignatureMethod);
 
-      if (impl != null) return impl;
+			if (impl != null) return impl;
 
-      throw Error.UnknownSignatureMethod(authContext.SignatureMethod);
-    }
-  }
+			throw Error.UnknownSignatureMethod(authContext.SignatureMethod);
+		}
+	}
 }

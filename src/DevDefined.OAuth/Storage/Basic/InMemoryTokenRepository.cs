@@ -29,23 +29,23 @@ using DevDefined.OAuth.Framework;
 
 namespace DevDefined.OAuth.Storage.Basic
 {
-  /// <summary>
-  /// In-Memory implementation of a token repository
-  /// </summary>
-  /// <typeparam name="T"></typeparam>
-  public class InMemoryTokenRepository<T> : ITokenRepository<T>
-    where T : TokenBase
-  {
-    readonly Dictionary<string, T> _tokens = new Dictionary<string, T>();
+	/// <summary>
+	/// In-Memory implementation of a token repository
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public class InMemoryTokenRepository<T> : ITokenRepository<T>
+		where T : TokenBase
+	{
+		readonly Dictionary<string, T> _tokens = new Dictionary<string, T>();
 
-    public T GetToken(string token)
-    {      
-      return _tokens[token];
-    }
+		public T GetToken(string token)
+		{
+			return _tokens[token];
+		}
 
-    public void SaveToken(T token)
-    {
-      _tokens[token.Token] = token;
-    }
-  }
+		public void SaveToken(T token)
+		{
+			_tokens[token.Token] = token;
+		}
+	}
 }

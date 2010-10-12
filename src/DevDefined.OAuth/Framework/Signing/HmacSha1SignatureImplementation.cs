@@ -31,54 +31,54 @@ using DevDefined.OAuth.Utility;
 
 namespace DevDefined.OAuth.Framework.Signing
 {
-  public class HmacSha1SignatureImplementation : IContextSignatureImplementation
-  {
-    public string MethodName
-    {
-      get { return SignatureMethod.HmacSha1; }
-    }
+	public class HmacSha1SignatureImplementation : IContextSignatureImplementation
+	{
+		public string MethodName
+		{
+			get { return SignatureMethod.HmacSha1; }
+		}
 
-    public void SignContext(IOAuthContext authContext, SigningContext signingContext)
-    {
-      authContext.Signature = GenerateSignature(authContext, signingContext);
-    }
+		public void SignContext(IOAuthContext authContext, SigningContext signingContext)
+		{
+			authContext.Signature = GenerateSignature(authContext, signingContext);
+		}
 
-    public bool ValidateSignature(IOAuthContext authContext, SigningContext signingContext)
-    {
-    	return authContext.Signature.EqualsInConstantTime(GenerateSignature(authContext, signingContext));
-    }
+		public bool ValidateSignature(IOAuthContext authContext, SigningContext signingContext)
+		{
+			return authContext.Signature.EqualsInConstantTime(GenerateSignature(authContext, signingContext));
+		}
 
-    static string GenerateSignature(IToken authContext, SigningContext signingContext)
-    {
-      string consumerSecret = (signingContext.ConsumerSecret != null)
-                                ? UriUtility.UrlEncode(signingContext.ConsumerSecret)
-                                : "";
-      string tokenSecret = (authContext.TokenSecret != null)
-                             ? UriUtility.UrlEncode(authContext.TokenSecret)
-                             : null;
-      string hashSource = string.Format("{0}&{1}", consumerSecret, tokenSecret);
+		static string GenerateSignature(IToken authContext, SigningContext signingContext)
+		{
+			string consumerSecret = (signingContext.ConsumerSecret != null)
+			                        	? UriUtility.UrlEncode(signingContext.ConsumerSecret)
+			                        	: "";
+			string tokenSecret = (authContext.TokenSecret != null)
+			                     	? UriUtility.UrlEncode(authContext.TokenSecret)
+			                     	: null;
+			string hashSource = string.Format("{0}&{1}", consumerSecret, tokenSecret);
 
-      var hashAlgorithm = new HMACSHA1 {Key = Encoding.ASCII.GetBytes(hashSource)};
+			var hashAlgorithm = new HMACSHA1 {Key = Encoding.ASCII.GetBytes(hashSource)};
 
-      return ComputeHash(hashAlgorithm, signingContext.SignatureBase);
-    }
+			return ComputeHash(hashAlgorithm, signingContext.SignatureBase);
+		}
 
-    static string ComputeHash(HashAlgorithm hashAlgorithm, string data)
-    {
-      if (hashAlgorithm == null)
-      {
-        throw new ArgumentNullException("hashAlgorithm");
-      }
+		static string ComputeHash(HashAlgorithm hashAlgorithm, string data)
+		{
+			if (hashAlgorithm == null)
+			{
+				throw new ArgumentNullException("hashAlgorithm");
+			}
 
-      if (string.IsNullOrEmpty(data))
-      {
-        throw new ArgumentNullException("data");
-      }
+			if (string.IsNullOrEmpty(data))
+			{
+				throw new ArgumentNullException("data");
+			}
 
-      byte[] dataBuffer = Encoding.ASCII.GetBytes(data);
-      byte[] hashBytes = hashAlgorithm.ComputeHash(dataBuffer);
+			byte[] dataBuffer = Encoding.ASCII.GetBytes(data);
+			byte[] hashBytes = hashAlgorithm.ComputeHash(dataBuffer);
 
-      return Convert.ToBase64String(hashBytes);
-    }
-  }
+			return Convert.ToBase64String(hashBytes);
+		}
+	}
 }

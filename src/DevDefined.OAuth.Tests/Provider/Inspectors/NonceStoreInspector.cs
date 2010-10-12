@@ -32,36 +32,36 @@ using Xunit;
 
 namespace DevDefined.OAuth.Tests.Provider.Inspectors
 {
-  public class NonceStoreInspectorTests
-  {
-    [Fact]
-    public void InspectContextForRepeatedNonceThrows()
-    {
-      var nonceStore = MockRepository.GenerateStub<INonceStore>();
+	public class NonceStoreInspectorTests
+	{
+		[Fact]
+		public void InspectContextForRepeatedNonceThrows()
+		{
+			var nonceStore = MockRepository.GenerateStub<INonceStore>();
 
-      var context = new OAuthContext {Nonce = "1"};
+			var context = new OAuthContext {Nonce = "1"};
 
-    	nonceStore.Stub(stub => stub.RecordNonceAndCheckIsUnique(context, "1")).Return(false);
-			
+			nonceStore.Stub(stub => stub.RecordNonceAndCheckIsUnique(context, "1")).Return(false);
+
 			var inspector = new NonceStoreInspector(nonceStore);
 
-    	var ex = Assert.Throws<OAuthException>(() => inspector.InspectContext(ProviderPhase.GrantRequestToken, context));
+			var ex = Assert.Throws<OAuthException>(() => inspector.InspectContext(ProviderPhase.GrantRequestToken, context));
 
 			Assert.Equal("The nonce value \"1\" has already been used", ex.Message);
-    }
+		}
 
-    [Fact]
-    public void InspectContextForUniqueNoncePasses()
-    {
-      var nonceStore = MockRepository.GenerateStub<INonceStore>();
+		[Fact]
+		public void InspectContextForUniqueNoncePasses()
+		{
+			var nonceStore = MockRepository.GenerateStub<INonceStore>();
 
-      var context = new OAuthContext {Nonce = "2"};
+			var context = new OAuthContext {Nonce = "2"};
 
-			nonceStore.Stub(stub=>stub.RecordNonceAndCheckIsUnique(context, "2")).Return(true);
-      
+			nonceStore.Stub(stub => stub.RecordNonceAndCheckIsUnique(context, "2")).Return(true);
+
 			var inspector = new NonceStoreInspector(nonceStore);
 
-    	Assert.DoesNotThrow(() => inspector.InspectContext(ProviderPhase.GrantRequestToken, context));      
-    }
-  }
+			Assert.DoesNotThrow(() => inspector.InspectContext(ProviderPhase.GrantRequestToken, context));
+		}
+	}
 }

@@ -32,73 +32,72 @@ using DevDefined.OAuth.Utility;
 
 namespace DevDefined.OAuth.Consumer
 {
-  [Serializable]
-  public class OAuthConsumerContext : IOAuthConsumerContext
-  {
-    INonceGenerator _nonceGenerator = new GuidNonceGenerator();
-    IOAuthContextSigner _signer = new OAuthContextSigner();
+	[Serializable]
+	public class OAuthConsumerContext : IOAuthConsumerContext
+	{
+		INonceGenerator _nonceGenerator = new GuidNonceGenerator();
+		IOAuthContextSigner _signer = new OAuthContextSigner();
 
-    public OAuthConsumerContext()
-    {
-      SignatureMethod = Framework.SignatureMethod.PlainText;
-    }
+		public OAuthConsumerContext()
+		{
+			SignatureMethod = Framework.SignatureMethod.PlainText;
+		}
 
-    public IOAuthContextSigner Signer
-    {
-      get { return _signer; }
-      set { _signer = value; }
-    }
+		public IOAuthContextSigner Signer
+		{
+			get { return _signer; }
+			set { _signer = value; }
+		}
 
-    public INonceGenerator NonceGenerator
-    {
-      get { return _nonceGenerator; }
-      set { _nonceGenerator = value; }
-    }
+		public INonceGenerator NonceGenerator
+		{
+			get { return _nonceGenerator; }
+			set { _nonceGenerator = value; }
+		}
 
-    public string Realm { get; set; }
-    public string ConsumerKey { get; set; }
-    public string ConsumerSecret { get; set; }
-    public string SignatureMethod { get; set; }
-    public AsymmetricAlgorithm Key { get; set; }
-    public bool UseHeaderForOAuthParameters { get; set; }
-    public string UserAgent { get; set; }
+		public string Realm { get; set; }
+		public string ConsumerKey { get; set; }
+		public string ConsumerSecret { get; set; }
+		public string SignatureMethod { get; set; }
+		public AsymmetricAlgorithm Key { get; set; }
+		public bool UseHeaderForOAuthParameters { get; set; }
+		public string UserAgent { get; set; }
 
-    public void SignContext(IOAuthContext context)
-    {
-      EnsureStateIsValid();
+		public void SignContext(IOAuthContext context)
+		{
+			EnsureStateIsValid();
 
-
-      context.UseAuthorizationHeader = UseHeaderForOAuthParameters;
-      context.Nonce = _nonceGenerator.GenerateNonce(context);
-      context.ConsumerKey = ConsumerKey;
-      context.Realm = Realm;
-      context.SignatureMethod = SignatureMethod;
+			context.UseAuthorizationHeader = UseHeaderForOAuthParameters;
+			context.Nonce = _nonceGenerator.GenerateNonce(context);
+			context.ConsumerKey = ConsumerKey;
+			context.Realm = Realm;
+			context.SignatureMethod = SignatureMethod;
 			context.Timestamp = Clock.EpochString;
-      context.Version = "1.0";
+			context.Version = "1.0";
 
-      context.Nonce = NonceGenerator.GenerateNonce(context);
+			context.Nonce = NonceGenerator.GenerateNonce(context);
 
-      string signatureBase = context.GenerateSignatureBase();
+			string signatureBase = context.GenerateSignatureBase();
 
-      _signer.SignContext(context,
-                          new SigningContext
-                            {Algorithm = Key, SignatureBase = signatureBase, ConsumerSecret = ConsumerSecret});
-    }
+			_signer.SignContext(context,
+			                    new SigningContext
+			                    	{Algorithm = Key, SignatureBase = signatureBase, ConsumerSecret = ConsumerSecret});
+		}
 
-    public void SignContextWithToken(IOAuthContext context, IToken token)
-    {
-      context.Token = token.Token;
-      context.TokenSecret = token.TokenSecret;
+		public void SignContextWithToken(IOAuthContext context, IToken token)
+		{
+			context.Token = token.Token;
+			context.TokenSecret = token.TokenSecret;
 
-      SignContext(context);
-    }
+			SignContext(context);
+		}
 
-    void EnsureStateIsValid()
-    {
-      if (string.IsNullOrEmpty(ConsumerKey)) throw Error.EmptyConsumerKey();
-      if (string.IsNullOrEmpty(SignatureMethod)) throw Error.UnknownSignatureMethod(SignatureMethod);
-      if ((SignatureMethod == Framework.SignatureMethod.RsaSha1)
-          && (Key == null)) throw Error.ForRsaSha1SignatureMethodYouMustSupplyAssymetricKeyParameter();
-    }
-  }
+		void EnsureStateIsValid()
+		{
+			if (string.IsNullOrEmpty(ConsumerKey)) throw Error.EmptyConsumerKey();
+			if (string.IsNullOrEmpty(SignatureMethod)) throw Error.UnknownSignatureMethod(SignatureMethod);
+			if ((SignatureMethod == Framework.SignatureMethod.RsaSha1)
+			    && (Key == null)) throw Error.ForRsaSha1SignatureMethodYouMustSupplyAssymetricKeyParameter();
+		}
+	}
 }

@@ -30,132 +30,130 @@ using Xunit;
 
 namespace DevDefined.OAuth.Tests.Framework
 {
-  public class OAuthProblemReportTests
-  {
-    [Fact]
-    public void FormatMissingParameterReport()
-    {
-      var report = new OAuthProblemReport
-        {
-          Problem = OAuthProblems.ParameterAbset,
-          ParametersAbsent = {Parameters.OAuth_Nonce}
-        };
+	public class OAuthProblemReportTests
+	{
+		[Fact]
+		public void FormatMissingParameterReport()
+		{
+			var report = new OAuthProblemReport
+			             	{
+			             		Problem = OAuthProblems.ParameterAbset,
+			             		ParametersAbsent = {Parameters.OAuth_Nonce}
+			             	};
 
+			Assert.Equal("oauth_problem=parameter_absent&oauth_parameters_absent=oauth_nonce", report.ToString());
+		}
 
-      Assert.Equal("oauth_problem=parameter_absent&oauth_parameters_absent=oauth_nonce", report.ToString());
-    }
+		[Fact]
+		public void FormatRejectedParameterReport()
+		{
+			var report = new OAuthProblemReport
+			             	{
+			             		Problem = OAuthProblems.ParameterRejected,
+			             		ParametersRejected = {Parameters.OAuth_Timestamp}
+			             	};
 
-    [Fact]
-    public void FormatRejectedParameterReport()
-    {
-      var report = new OAuthProblemReport
-        {
-          Problem = OAuthProblems.ParameterRejected,
-          ParametersRejected = {Parameters.OAuth_Timestamp}
-        };
+			Assert.Equal("oauth_problem=parameter_rejected&oauth_parameters_rejected=oauth_timestamp",
+			             report.ToString());
+		}
 
-      Assert.Equal("oauth_problem=parameter_rejected&oauth_parameters_rejected=oauth_timestamp",
-                      report.ToString());
-    }
+		[Fact]
+		public void FormatReportWithAdvice()
+		{
+			var report = new OAuthProblemReport
+			             	{
+			             		Problem = OAuthProblems.ConsumerKeyRefused,
+			             		ProblemAdvice = "The supplied consumer key has been black-listed due to complaints."
+			             	};
 
-    [Fact]
-    public void FormatReportWithAdvice()
-    {
-      var report = new OAuthProblemReport
-        {
-          Problem = OAuthProblems.ConsumerKeyRefused,
-          ProblemAdvice = "The supplied consumer key has been black-listed due to complaints."
-        };
+			Assert.Equal(
+				"oauth_problem=consumer_key_refused&oauth_problem_advice=The%20supplied%20consumer%20key%20has%20been%20black-listed%20due%20to%20complaints.",
+				report.ToString());
+		}
 
-      Assert.Equal(
-        "oauth_problem=consumer_key_refused&oauth_problem_advice=The%20supplied%20consumer%20key%20has%20been%20black-listed%20due%20to%20complaints.",
-        report.ToString());
-    }
+		[Fact]
+		public void FormatTimestampRangeReport()
+		{
+			var report = new OAuthProblemReport
+			             	{
+			             		Problem = OAuthProblems.TimestampRefused,
+			             		AcceptableTimeStampsFrom = new DateTime(2008, 1, 1),
+			             		AcceptableTimeStampsTo = new DateTime(2009, 1, 1)
+			             	};
 
-    [Fact]
-    public void FormatTimestampRangeReport()
-    {
-      var report = new OAuthProblemReport
-        {
-          Problem = OAuthProblems.TimestampRefused,
-          AcceptableTimeStampsFrom = new DateTime(2008, 1, 1),
-          AcceptableTimeStampsTo = new DateTime(2009, 1, 1)
-        };
+			Assert.Equal("oauth_problem=timestamp_refused&oauth_acceptable_timestamps=1199098800-1230721200",
+			             report.ToString());
+		}
 
+		[Fact]
+		public void FormatVersionRangeReport()
+		{
+			var report = new OAuthProblemReport
+			             	{
+			             		Problem = OAuthProblems.VersionRejected,
+			             		AcceptableVersionFrom = "1.0",
+			             		AcceptableVersionTo = "2.0"
+			             	};
 
-      Assert.Equal("oauth_problem=timestamp_refused&oauth_acceptable_timestamps=1199098800-1230721200",
-                      report.ToString());
-    }
+			Assert.Equal("oauth_problem=version_rejected&oauth_acceptable_versions=1.0-2.0", report.ToString());
+		}
 
-    [Fact]
-    public void FormatVersionRangeReport()
-    {
-      var report = new OAuthProblemReport
-        {
-          Problem = OAuthProblems.VersionRejected,
-          AcceptableVersionFrom = "1.0",
-          AcceptableVersionTo = "2.0"
-        };
+		[Fact]
+		public void PopulateFromFormattedMissingParameterReport()
+		{
+			string formatted = "oauth_problem=parameter_absent&oauth_parameters_absent=oauth_nonce";
 
-      Assert.Equal("oauth_problem=version_rejected&oauth_acceptable_versions=1.0-2.0", report.ToString());
-    }
+			var report = new OAuthProblemReport(formatted);
 
-    [Fact]
-    public void PopulateFromFormattedMissingParameterReport()
-    {
-      string formatted = "oauth_problem=parameter_absent&oauth_parameters_absent=oauth_nonce";
+			Assert.Equal(OAuthProblems.ParameterAbset, report.Problem);
+			Assert.Contains(Parameters.OAuth_Nonce, report.ParametersAbsent);
+		}
 
-      var report = new OAuthProblemReport(formatted);
+		[Fact]
+		public void PopulateFromFormattedRejectedParameterReport()
+		{
+			string formatted = "oauth_problem=parameter_rejected&oauth_parameters_rejected=oauth_timestamp";
 
-      Assert.Equal(OAuthProblems.ParameterAbset, report.Problem);
-      Assert.Contains(Parameters.OAuth_Nonce, report.ParametersAbsent);
-    }
+			var report = new OAuthProblemReport(formatted);
 
-    [Fact]
-    public void PopulateFromFormattedRejectedParameterReport()
-    {
-      string formatted = "oauth_problem=parameter_rejected&oauth_parameters_rejected=oauth_timestamp";
+			Assert.Equal(OAuthProblems.ParameterRejected, report.Problem);
+			Assert.Contains(Parameters.OAuth_Timestamp, report.ParametersRejected);
+		}
 
-      var report = new OAuthProblemReport(formatted);
+		[Fact]
+		public void PopulateFromFormattedReportWithAdvice()
+		{
+			string formatted =
+				"oauth_problem=consumer_key_refused&oauth_problem_advice=The%20supplied%20consumer%20key%20has%20been%20black-listed%20due%20to%20complaints.";
 
-      Assert.Equal(OAuthProblems.ParameterRejected, report.Problem);
-      Assert.Contains(Parameters.OAuth_Timestamp, report.ParametersRejected);
-    }
+			var report = new OAuthProblemReport(formatted);
 
-    [Fact]
-    public void PopulateFromFormattedReportWithAdvice()
-    {
-      string formatted =
-        "oauth_problem=consumer_key_refused&oauth_problem_advice=The%20supplied%20consumer%20key%20has%20been%20black-listed%20due%20to%20complaints.";
+			Assert.Equal(report.Problem, OAuthProblems.ConsumerKeyRefused);
+			Assert.Equal("The supplied consumer key has been black-listed due to complaints.", report.ProblemAdvice);
+		}
 
-      var report = new OAuthProblemReport(formatted);
+		[Fact]
+		public void PopulateFromFormattedTimestampRangeReport()
+		{
+			string formatted = "oauth_problem=timestamp_refused&oauth_acceptable_timestamps=1199098800-1230721200";
 
-      Assert.Equal(report.Problem, OAuthProblems.ConsumerKeyRefused);
-      Assert.Equal("The supplied consumer key has been black-listed due to complaints.", report.ProblemAdvice);
-    }
+			var report = new OAuthProblemReport(formatted);
 
-    [Fact]
-    public void PopulateFromFormattedTimestampRangeReport()
-    {
-      string formatted = "oauth_problem=timestamp_refused&oauth_acceptable_timestamps=1199098800-1230721200";
+			Assert.Equal(OAuthProblems.TimestampRefused, report.Problem);
+			Assert.Equal(new DateTime(2008, 1, 1), report.AcceptableTimeStampsFrom);
+			Assert.Equal(new DateTime(2009, 1, 1), report.AcceptableTimeStampsTo);
+		}
 
-      var report = new OAuthProblemReport(formatted);
+		[Fact]
+		public void PopulateFromFormattedVersionRangeReport()
+		{
+			string formatted = "oauth_problem=version_rejected&oauth_acceptable_versions=1.0-2.0";
 
-      Assert.Equal(OAuthProblems.TimestampRefused, report.Problem);
-      Assert.Equal(new DateTime(2008, 1, 1), report.AcceptableTimeStampsFrom);
-      Assert.Equal(new DateTime(2009, 1, 1), report.AcceptableTimeStampsTo);
-    }
+			var report = new OAuthProblemReport(formatted);
 
-    [Fact]
-    public void PopulateFromFormattedVersionRangeReport()
-    {
-      string formatted = "oauth_problem=version_rejected&oauth_acceptable_versions=1.0-2.0";
-
-      var report = new OAuthProblemReport(formatted);
-
-      Assert.Equal(OAuthProblems.VersionRejected, report.Problem);
-      Assert.Equal("1.0", report.AcceptableVersionFrom);
-      Assert.Equal("2.0", report.AcceptableVersionTo);
-    }
-  }
+			Assert.Equal(OAuthProblems.VersionRejected, report.Problem);
+			Assert.Equal("1.0", report.AcceptableVersionFrom);
+			Assert.Equal("2.0", report.AcceptableVersionTo);
+		}
+	}
 }

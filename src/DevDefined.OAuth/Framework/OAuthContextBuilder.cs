@@ -83,12 +83,12 @@ namespace DevDefined.OAuth.Framework
 			              		QueryParameters = GetCleanedNameValueCollection(request.QueryString),
 			              	};
 
-            if (request.InputStream.Length > 0)
-            {
-                context.RawContent = new byte[request.InputStream.Length];
-                request.InputStream.Read(context.RawContent, 0, context.RawContent.Length);
-                request.InputStream.Position = 0;
-            }
+			if (request.InputStream.Length > 0)
+			{
+				context.RawContent = new byte[request.InputStream.Length];
+				request.InputStream.Read(context.RawContent, 0, context.RawContent.Length);
+				request.InputStream.Position = 0;
+			}
 
 			if (request.Headers.AllKeys.Contains("Authorization"))
 			{
@@ -97,18 +97,6 @@ namespace DevDefined.OAuth.Framework
 			}
 
 			return context;
-		}
-
-		static NameValueCollection GetCleanedNameValueCollection(NameValueCollection requestQueryString)
-		{
-			NameValueCollection nvc = new NameValueCollection(requestQueryString);
-
-			if (nvc.HasKeys())
-			{
-				nvc.Remove(null);
-			}
-
-			return nvc;
 		}
 
 		public IOAuthContext FromWebRequest(HttpWebRequest request, Stream rawBody)
@@ -137,6 +125,18 @@ namespace DevDefined.OAuth.Framework
 			}
 
 			return context;
+		}
+
+		static NameValueCollection GetCleanedNameValueCollection(NameValueCollection requestQueryString)
+		{
+			var nvc = new NameValueCollection(requestQueryString);
+
+			if (nvc.HasKeys())
+			{
+				nvc.Remove(null);
+			}
+
+			return nvc;
 		}
 
 		#endregion
