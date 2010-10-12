@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Net;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Utility;
+using System.Text;
 
 namespace DevDefined.OAuth.Consumer
 {
@@ -152,11 +153,20 @@ namespace DevDefined.OAuth.Consumer
       }
     }
 
-		public static IConsumerRequest WithRawContent(this IConsumerRequest request, string rawContent)
-		{
-			request.Context.RawContent = rawContent;
-			return request;
-		}
+	public static IConsumerRequest WithRawContent(this IConsumerRequest request, string rawContent, Encoding encoding, bool addHash)
+	{
+            return WithRawContent(request, encoding.GetBytes(rawContent), addHash);
+	}
+
+        public static IConsumerRequest WithRawContent(this IConsumerRequest request, byte[] rawContent, bool addHash)
+        {
+            request.Context.RawContent = rawContent;
+            if(addHash)
+            {
+                request.Context.GenerateAndSetBodyHash();
+            }
+            return request;
+        }
 						
 		public static IConsumerRequest WithRawContentType (this IConsumerRequest request, string rawContentType)
 		{

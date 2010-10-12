@@ -106,6 +106,11 @@ namespace DevDefined.OAuth.Framework
       return new OAuthException(context, OAuthProblems.SignatureInvalid, "Failed to validate signature");
     }
 
+    public static Exception FailedToValidateBodyHash(IOAuthContext context)
+    {
+        return new OAuthException(context, OAuthProblems.BodyHashInvalid, "Failed to validate body hash");
+    }
+
     public static Exception UnknownConsumerKey(IOAuthContext context)
     {
       return new OAuthException(context, OAuthProblems.ConsumerKeyUnknown,

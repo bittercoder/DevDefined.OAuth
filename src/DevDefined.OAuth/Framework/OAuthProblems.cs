@@ -38,6 +38,7 @@ namespace DevDefined.OAuth.Framework
     public const string PermissionDenied = "permission_denied";
     public const string PermissionUnknown = "permission_unknown";
     public const string SignatureInvalid = "signature_invalid";
+    public const string BodyHashInvalid = "body_hash_invalid";
     public const string SignatureMethodRejected = "signature_method_rejected";
     public const string TimestampRefused = "timestamp_refused";
     public const string TokenExpired = "token_expired";

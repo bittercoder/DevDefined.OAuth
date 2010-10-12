@@ -49,6 +49,7 @@ namespace DevDefined.OAuth.Framework
     public const string OAuth_Session_Handle = "oauth_session_handle";
     public const string OAuth_Expires_In = "oauth_expires_in";
     public const string OAuth_Authorization_Expires_In = "oauth_authorization_expires_in";
+    public const string OAuth_Body_Hash = "oauth_body_hash";
     public const string OAuthParameterPrefix = "oauth_";
     public const string Realm = "realm";
     public const string HttpFormEncoded = "application/x-www-form-urlencoded; charset=utf-8";

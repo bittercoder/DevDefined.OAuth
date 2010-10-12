@@ -102,7 +102,7 @@ namespace DevDefined.OAuth.Consumer
           request.Proxy = new WebProxy(ProxyServerUri, false);
       }
 
-			if (description.Body != null)
+      if (!string.IsNullOrEmpty(description.Body))
       {
         request.ContentType = description.ContentType;
 
@@ -111,11 +111,13 @@ namespace DevDefined.OAuth.Consumer
           writer.Write(description.Body);
         }
       }
-      else if (!string.IsNullOrEmpty(description.Body))
+      else if (description.RawBody != null && description.RawBody.Length > 0)
       {
-          using (var writer = new StreamWriter(request.GetRequestStream()))
+          request.ContentType = description.ContentType;
+
+          using (var writer = new BinaryWriter(request.GetRequestStream()))
           {
-              writer.Write(description.Body);
+              writer.Write(description.RawBody);
           }
       }
 
@@ -162,11 +164,11 @@ namespace DevDefined.OAuth.Consumer
           description.Body = UriUtility.UrlEncode(RequestBody);
       }
 			
-			if (_context.RawContent != null)
-			{
-				description.ContentType = _context.RawContentType;
-				description.Body = _context.RawContent;
-			}
+      else if (_context.RawContent != null)
+      {
+        description.ContentType = _context.RawContentType;
+        description.RawBody = _context.RawContent;
+      }
 			
       if (_context.Headers != null)
       {
