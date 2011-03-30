@@ -86,7 +86,7 @@ namespace DevDefined.OAuth.Tests.Framework
 		{
 			string signatureInHeader = "auth_signature=\"uZF3aYQFtyK0F1FFHY+w7/Be+m4=\"";
 
-			KeyValuePair paramter = UriUtility.ParseAuthorizationHeaderKeyValuePair(signatureInHeader);
+			var paramter = UriUtility.ParseAuthorizationHeaderKeyValuePair(signatureInHeader);
 
 			Assert.Equal("auth_signature", paramter.Key);
 			Assert.Equal("uZF3aYQFtyK0F1FFHY w7/Be m4=", paramter.Value);
