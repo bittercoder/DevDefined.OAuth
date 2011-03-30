@@ -88,9 +88,8 @@ Downloads/Releases
 
 You can download releases from the [google code site][14].
 
-
-  [1]: http://github.com/bittercoder/DevDefined.OAuth/raw/master/artifacts/DevDefinedOAuthTitle.png
-  [2]: http://github.com/bittercoder/DevDefined.OAuth/raw/master/artifacts/Oauth_diagram.png
+  [1]: https://github.com/bittercoder/DevDefined.OAuth/raw/master/artifacts/DevDefinedOAuthTitle.png
+  [2]: https://github.com/bittercoder/DevDefined.OAuth/raw/master/artifacts/Oauth_diagram.png
   [3]: http://www.oauth.net/
   [4]: http://wiki.oauth.net/
   [5]: http://dotnetkicks.com/webservices/OAuth_for_Beginners
