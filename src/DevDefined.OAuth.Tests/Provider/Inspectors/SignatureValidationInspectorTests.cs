@@ -90,8 +90,8 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
 
 			using (repository.Record())
 			{
-				Expect.Call(consumerStore.GetConsumerCertificate(context)).Return(
-					TestCertificates.OAuthTestCertificate());
+				Expect.Call(consumerStore.GetConsumerPublicKey(context)).Return(
+					TestCertificates.OAuthTestCertificate().PublicKey.Key);
 				Expect.Call(signer.ValidateSignature(null, null)).IgnoreArguments().Return(true);
 			}
 			using (repository.Playback())

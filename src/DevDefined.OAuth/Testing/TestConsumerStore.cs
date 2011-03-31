@@ -25,6 +25,7 @@
 #endregion
 
 using System;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage;
@@ -54,9 +55,9 @@ namespace DevDefined.OAuth.Testing
 			throw new NotImplementedException();
 		}
 
-		public X509Certificate2 GetConsumerCertificate(IConsumer consumer)
+		public AsymmetricAlgorithm GetConsumerPublicKey(IConsumer consumer)
 		{
-			return TestCertificates.OAuthTestCertificate();
+			return TestCertificates.OAuthTestCertificate().PublicKey.Key;
 		}
 	}
 }

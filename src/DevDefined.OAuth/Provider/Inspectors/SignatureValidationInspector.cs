@@ -68,8 +68,7 @@ namespace DevDefined.OAuth.Provider.Inspectors
 
 			if (SignatureMethodRequiresCertificate(context.SignatureMethod))
 			{
-				X509Certificate2 cert = _consumerStore.GetConsumerCertificate(context);
-				signingContext.Algorithm = cert.PublicKey.Key;
+				signingContext.Algorithm = _consumerStore.GetConsumerPublicKey(context);				
 			}
 
 			return signingContext;
