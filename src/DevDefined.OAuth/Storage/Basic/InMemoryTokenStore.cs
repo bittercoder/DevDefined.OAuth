@@ -78,8 +78,7 @@ namespace DevDefined.OAuth.Storage.Basic
 
 			if (accessToken.ExpireyDate < Clock.Now)
 			{
-				throw new OAuthException(accessContext, OAuthProblems.TokenExpired,
-				                         "Token has expired (they're only valid for 1 minute)");
+				throw new OAuthException(accessContext, OAuthProblems.TokenExpired, "Token has expired");
 			}
 		}
 
