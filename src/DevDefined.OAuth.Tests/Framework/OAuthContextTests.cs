@@ -108,8 +108,6 @@ namespace DevDefined.OAuth.Tests.Framework
         XAuthPassword = "twitter-xauth"
       };
 
-      // consumer secret - 9z6157pUbOBqtbm0A0q4r29Y2EYzIHlUwbF4Cl9c
-
       Assert.Equal(
         "POST&https%3A%2F%2Fapi.twitter.com%2Foauth%2Faccess_token&oauth_consumer_key%3DJvyS7DO2qd6NNTsXJ4E7zA%26oauth_nonce%3D6AN2dKRzxyGhmIXUKSmp1JcB4pckM8rD3frKMTmVAo%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1284565601%26oauth_version%3D1.0%26x_auth_mode%3Dclient_auth%26x_auth_password%3Dtwitter-xauth%26x_auth_username%3Doauth_test_exec",
         context.GenerateSignatureBase());
