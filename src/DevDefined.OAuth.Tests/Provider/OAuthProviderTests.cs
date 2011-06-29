@@ -48,7 +48,8 @@ namespace DevDefined.OAuth.Tests.Provider
 			                             new SignatureValidationInspector(consumerStore),
 			                             new NonceStoreInspector(nonceStore),
 			                             new TimestampRangeInspector(new TimeSpan(1, 0, 0)),
-			                             new ConsumerValidationInspector(consumerStore));
+			                             new ConsumerValidationInspector(consumerStore),
+                                   new XAuthValidationInspector(ValidateXAuthMode, AuthenticateXAuthUsernameAndPassword));
 		}
 
 		static IOAuthSession CreateConsumer(string signatureMethod)
@@ -67,6 +68,16 @@ namespace DevDefined.OAuth.Tests.Provider
 
 			return session;
 		}
+
+    public bool ValidateXAuthMode(string authMode)
+    {
+      return authMode == "client_auth";
+    }
+
+    public bool AuthenticateXAuthUsernameAndPassword(string username, string password)
+    {
+      return username == "username" && password == "password";
+    }
 
 		[Fact]
 		public void AccessProtectedResource()
@@ -191,5 +202,16 @@ namespace DevDefined.OAuth.Tests.Provider
 			var ex = Assert.Throws<OAuthException>(() => provider.ExchangeRequestTokenForAccessToken(context));
 			Assert.Equal("The oauth_token_secret must not be transmitted to the provider.", ex.Message);
 		}
-	}
+
+    [Fact]
+    public void GetAccessTokenUsingXAuth()
+    {
+      IOAuthSession session = CreateConsumer(SignatureMethod.HmacSha1);
+      IOAuthContext context = session.BuildGetAccessTokenUsingXAuthContext("GET", "client_auth", "username", "password").Context;
+      context.TokenSecret = null;
+      IToken accessToken = provider.GetAccessTokenUsingXAuth(context);
+      Assert.Equal("accesskey", accessToken.Token);
+      Assert.Equal("accesssecret", accessToken.TokenSecret);
+    }
+  }
 }

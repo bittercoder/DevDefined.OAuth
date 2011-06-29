@@ -226,12 +226,12 @@ namespace DevDefined.OAuth.Framework
 
     public static Exception EmptyXAuthUsername(IOAuthContext context)
     {
-      throw new OAuthException(context, OAuthProblems.ParameterRejected, "The x_auth_username parameter is invalid");
+      throw new OAuthException(context, OAuthProblems.ParameterRejected, "The x_auth_username parameter must be present");
     }
 
 	  public static Exception EmptyXAuthPassword(IOAuthContext context)
 	  {
-      throw new OAuthException(context, OAuthProblems.ParameterRejected, "The x_auth_password parameter is invalid");
+      throw new OAuthException(context, OAuthProblems.ParameterRejected, "The x_auth_password parameter must be present");
     }
 
     public static Exception FailedXAuthAuthentication(IOAuthContext context)
