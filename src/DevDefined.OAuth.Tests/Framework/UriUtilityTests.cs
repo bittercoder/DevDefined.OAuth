@@ -35,13 +35,14 @@ namespace DevDefined.OAuth.Tests.Framework
 	public class UriUtilityTests
 	{
 		[Fact]
-		public void GetHeaderParameters()
+		public void GetHeaderParameters_ReturnsAllParameters()
 		{
 			List<QueryParameter> parameters =
-				UriUtility.GetHeaderParameters("OAuth realm=\"http:\\somerealm.com\", oauth_consumer_key=\"consumerKey\"");
+				UriUtility.GetHeaderParameters("OAuth realm=\"http:\\\\somerealm.com\", oauth_consumer_key=\"consumerKey\"");
 
-			Assert.Equal(1, parameters.Count);
+			Assert.Equal(2, parameters.Count);
 			Assert.Equal("consumerKey", parameters.Single(p => p.Key == "oauth_consumer_key").Value);
+			Assert.Equal(@"http:\\somerealm.com", parameters.Single(p => p.Key == "realm").Value);
 		}
 
 		[Fact]
@@ -59,7 +60,6 @@ namespace DevDefined.OAuth.Tests.Framework
 			List<QueryParameter> parameters =
 				UriUtility.GetHeaderParameters("OAuth realm=\"http:\\somerealm.com\", oauth_consumer_key=\"\"");
 
-			Assert.Equal(1, parameters.Count);
 			Assert.Equal("", parameters.Single(p => p.Key == "oauth_consumer_key").Value);
 		}
 

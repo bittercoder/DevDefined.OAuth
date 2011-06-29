@@ -50,7 +50,7 @@ namespace DevDefined.Oauth.IntegrationTests.Consumer
         };
 
       return new OAuthSession(consumerContext, "https://www.google.com/accounts/OAuthGetRequestToken",
-                              "https://www.google.com/accounts/accounts/OAuthAuthorizeToken",
+                              "https://www.google.com/accounts/OAuthAuthorizeToken",
                               "https://www.google.com/accounts/OAuthGetAccessToken ")
         .WithQueryParameters(new {scope = "https://www.google.com/m8/feeds"})
         .RequiresCallbackConfirmation();

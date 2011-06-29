@@ -36,7 +36,6 @@ namespace DevDefined.OAuth.Framework
 {
 	public static class UriUtility
 	{
-		const string AuthorizationHeaderRealmParameter = "realm";
 		const string OAuthAuthorizationHeaderStart = "OAuth";
 		static readonly string[] HexEscapedUriRfc3986CharsToEscape;
 		static readonly string[] QuoteCharacters = new[] {"\"", "'"};
@@ -122,11 +121,8 @@ namespace DevDefined.OAuth.Framework
 				foreach (string s in p)
 				{
 					if (string.IsNullOrEmpty(s)) continue;
-					QueryParameter parameter = ParseAuthorizationHeaderKeyValuePair(s);
-					if (parameter.Key != AuthorizationHeaderRealmParameter)
-					{
-						result.Add(parameter);
-					}
+					QueryParameter parameter = ParseAuthorizationHeaderKeyValuePair(s);					
+					result.Add(parameter);
 				}
 			}
 

@@ -36,8 +36,6 @@ namespace DevDefined.OAuth.Framework
 {
 	public class OAuthContextBuilder : IOAuthContextBuilder
 	{
-		#region IOAuthContextBuilder Members
-
 		public IOAuthContext FromUrl(string httpMethod, string url)
 		{
 			if (string.IsNullOrEmpty(url)) throw new ArgumentNullException("url");
@@ -90,11 +88,7 @@ namespace DevDefined.OAuth.Framework
 				request.InputStream.Position = 0;
 			}
 
-			if (request.Headers.AllKeys.Contains("Authorization"))
-			{
-				context.AuthorizationHeaderParameters = UriUtility.GetHeaderParameters(request.Headers["Authorization"]).ToNameValueCollection();
-				context.UseAuthorizationHeader = true;
-			}
+			ParseAuthorizationHeader(request.Headers, context);
 
 			return context;
 		}
@@ -124,6 +118,8 @@ namespace DevDefined.OAuth.Framework
 				context.FormEncodedParameters = HttpUtility.ParseQueryString(body);
 			}
 
+			ParseAuthorizationHeader(request.Headers, context);
+
 			return context;
 		}
 
@@ -138,8 +134,6 @@ namespace DevDefined.OAuth.Framework
 
 			return nvc;
 		}
-
-		#endregion
 
 		static Uri CleanUri(Uri uri)
 		{
@@ -187,6 +181,15 @@ namespace DevDefined.OAuth.Framework
 			}
 
 			return cookieCollection;
+		}
+
+		static void ParseAuthorizationHeader(NameValueCollection headers, OAuthContext context)
+		{
+			if (headers.AllKeys.Contains("Authorization"))
+			{
+				context.AuthorizationHeaderParameters = UriUtility.GetHeaderParameters(headers["Authorization"]).ToNameValueCollection();
+				context.UseAuthorizationHeader = true;
+			}
 		}
 	}
 }
