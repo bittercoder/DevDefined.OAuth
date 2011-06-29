@@ -91,6 +91,13 @@ namespace DevDefined.OAuth.Provider
 			return _tokenStore.RenewAccessToken(context);
 		}
 
+    public IToken GetAccessTokenUsingXAuth(IOAuthContext context)
+    {
+      InspectRequest(ProviderPhase.GetAccessTokenUsingXAuth, context);
+
+      return _tokenStore.GetAccessTokenUsingXAuth(context);
+    }
+
 		void AssertContextDoesNotIncludeToken(IOAuthContext context)
 		{
 			if (context.Token != null)

@@ -176,7 +176,37 @@ namespace DevDefined.OAuth.Storage.Basic
 			return token;
 		}
 
-		static void UseUpRequestToken(IOAuthContext requestContext, RequestToken requestToken)
+    public IToken GetAccessTokenUsingXAuth(IOAuthContext context)
+    {
+      if (context == null) {
+        throw new ArgumentNullException("context");
+      }
+
+      var requestToken = CreateRequestToken(context) as RequestToken;
+      if (requestToken == null) {
+        throw new Exception("Error creating request token");
+      }
+
+      var accessToken = new AccessToken
+        {
+          ConsumerKey = requestToken.ConsumerKey,
+          ExpireyDate = DateTime.UtcNow.AddDays(20),
+          Realm = requestToken.Realm,
+          Token = Guid.NewGuid().ToString(),
+          TokenSecret = Guid.NewGuid().ToString(),
+          UserName = Guid.NewGuid().ToString(),
+        };
+
+      requestToken.AccessDenied = false;
+      requestToken.AccessToken = accessToken;
+
+      _accessTokenRepository.SaveToken(accessToken);
+      _requestTokenRepository.SaveToken(requestToken);
+
+      return accessToken;
+    }
+
+	  static void UseUpRequestToken(IOAuthContext requestContext, RequestToken requestToken)
 		{
 			if (requestToken.UsedUp)
 			{

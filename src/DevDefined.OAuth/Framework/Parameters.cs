@@ -53,5 +53,8 @@ namespace DevDefined.OAuth.Framework
 		public const string OAuth_Verifier = "oauth_verifier";
 		public const string OAuth_Version = "oauth_version";
 		public const string Realm = "realm";
+    public const string XAuthMode = "x_auth_mode";
+    public const string XAuthUsername = "x_auth_username";
+    public const string XAuthPassword = "x_auth_password";
 	}
 }

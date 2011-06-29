@@ -97,5 +97,12 @@ namespace DevDefined.OAuth.Storage
 		/// <param name="requestContext">The request context.</param>
 		/// <returns>Return a new access token with the same oauth_session_handle as the near-expired session token</returns>
 		IToken RenewAccessToken(IOAuthContext requestContext);
+
+    /// <summary>
+    /// Gets the access token using X auth.
+    /// </summary>
+    /// <param name="context">The context.</param>
+    /// <returns></returns>
+	  IToken GetAccessTokenUsingXAuth(IOAuthContext context);
 	}
 }
