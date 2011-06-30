@@ -76,7 +76,7 @@ namespace DevDefined.OAuth.Storage.Basic
       var accessToken = new AccessToken
         {
           ConsumerKey = context.ConsumerKey,
-          ExpireyDate = DateTime.UtcNow.AddDays(20),
+          ExpiryDate = DateTime.UtcNow.AddDays(20),
           Realm = context.Realm,
           Token = Guid.NewGuid().ToString(),
           TokenSecret = Guid.NewGuid().ToString(),
@@ -103,7 +103,7 @@ namespace DevDefined.OAuth.Storage.Basic
 		{
 			AccessToken accessToken = GetAccessToken(accessContext);
 
-			if (accessToken.ExpireyDate < Clock.Now)
+			if (accessToken.ExpiryDate < Clock.Now)
 			{
 				throw new OAuthException(accessContext, OAuthProblems.TokenExpired, "Token has expired");
 			}

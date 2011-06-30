@@ -37,7 +37,7 @@ namespace DevDefined.OAuth.Tests.Framework
 		{
 			var report = new OAuthProblemReport
 			             	{
-			             		Problem = OAuthProblems.ParameterAbset,
+			             		Problem = OAuthProblems.ParameterAbsent,
 			             		ParametersAbsent = {Parameters.OAuth_Nonce}
 			             	};
 
@@ -105,7 +105,7 @@ namespace DevDefined.OAuth.Tests.Framework
 
 			var report = new OAuthProblemReport(formatted);
 
-			Assert.Equal(OAuthProblems.ParameterAbset, report.Problem);
+			Assert.Equal(OAuthProblems.ParameterAbsent, report.Problem);
 			Assert.Contains(Parameters.OAuth_Nonce, report.ParametersAbsent);
 		}
 
