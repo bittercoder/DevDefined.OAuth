@@ -204,12 +204,12 @@ namespace DevDefined.OAuth.Tests.Provider
 		}
 
     [Fact]
-    public void GetAccessTokenUsingXAuth()
+    public void AccessTokenWithHmacSha1()
     {
       IOAuthSession session = CreateConsumer(SignatureMethod.HmacSha1);
-      IOAuthContext context = session.BuildGetAccessTokenUsingXAuthContext("GET", "client_auth", "username", "password").Context;
+      IOAuthContext context = session.BuildAccessTokenContext("GET", "client_auth", "username", "password").Context;
       context.TokenSecret = null;
-      IToken accessToken = provider.GetAccessTokenUsingXAuth(context);
+      IToken accessToken = provider.CreateAccessToken(context);
       Assert.Equal("accesskey", accessToken.Token);
       Assert.Equal("accesssecret", accessToken.TokenSecret);
     }

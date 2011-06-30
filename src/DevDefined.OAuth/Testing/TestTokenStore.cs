@@ -113,7 +113,7 @@ namespace DevDefined.OAuth.Testing
 			return new TokenBase {ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = AccessSecret, SessionHandle = requestContext.SessionHandle};
 		}
 
-	  public IToken GetAccessTokenUsingXAuth(IOAuthContext context)
+	  public IToken CreateAccessToken(IOAuthContext context)
 	  {
       EnsureTestConsumer(context);
       return new TokenBase { ConsumerKey = "key", Realm = null, Token = "accesskey", TokenSecret = AccessSecret, SessionHandle = "sessionHandle" };

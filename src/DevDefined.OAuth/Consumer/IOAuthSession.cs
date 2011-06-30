@@ -48,7 +48,7 @@ namespace DevDefined.OAuth.Consumer
     IToken GetAccessTokenUsingXAuth(string authMode, string username, string password);
     IConsumerRequest BuildRequestTokenContext(string method);
 		IConsumerRequest BuildExchangeRequestTokenForAccessTokenContext(IToken requestToken, string method, string verificationCode);
-    IConsumerRequest BuildGetAccessTokenUsingXAuthContext(string method, string authMode, string username, string password);
+    IConsumerRequest BuildAccessTokenContext(string method, string xAuthMode, string xAuthUsername, string xAuthPassword);
     string GetUserAuthorizationUrlForToken(IToken token, string callbackUrl);
 		string GetUserAuthorizationUrlForToken(IToken token);
 		IOAuthSession WithFormParameters(IDictionary dictionary);

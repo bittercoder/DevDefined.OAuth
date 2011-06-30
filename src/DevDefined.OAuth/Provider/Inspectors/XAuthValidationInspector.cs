@@ -16,7 +16,7 @@ namespace DevDefined.OAuth.Provider.Inspectors
 
     public void InspectContext(ProviderPhase phase, IOAuthContext context)
     {
-      if (phase != ProviderPhase.GetAccessTokenUsingXAuth) {
+      if (phase != ProviderPhase.CreateAccessToken) {
         return;
       }
 

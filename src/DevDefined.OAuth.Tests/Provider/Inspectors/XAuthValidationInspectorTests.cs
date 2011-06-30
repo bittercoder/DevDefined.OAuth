@@ -23,7 +23,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       var context = new OAuthContext { XAuthMode = string.Empty };
 
       var inspector = new XAuthValidationInspector(ValidateXAuthMode, this.AuthenticateXAuthUsernameAndPassword);
-      var ex = Assert.Throws<OAuthException>(() => inspector.InspectContext(ProviderPhase.GetAccessTokenUsingXAuth, context));
+      var ex = Assert.Throws<OAuthException>(() => inspector.InspectContext(ProviderPhase.CreateAccessToken, context));
       Assert.Equal("The x_auth_mode parameter must be present", ex.Message);
     }
 
@@ -33,7 +33,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       var context = new OAuthContext { XAuthMode = "test_mode" };
 
       var inspector = new XAuthValidationInspector(ValidateXAuthMode, this.AuthenticateXAuthUsernameAndPassword);
-      var ex = Assert.Throws<OAuthException>(() => inspector.InspectContext(ProviderPhase.GetAccessTokenUsingXAuth, context));
+      var ex = Assert.Throws<OAuthException>(() => inspector.InspectContext(ProviderPhase.CreateAccessToken, context));
       Assert.Equal("The x_auth_mode parameter is invalid", ex.Message);
     }
 
@@ -43,7 +43,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       var context = new OAuthContext { XAuthMode = "client_auth" };
 
       var inspector = new XAuthValidationInspector(ValidateXAuthMode, this.AuthenticateXAuthUsernameAndPassword);
-      var ex = Assert.Throws<OAuthException>(() => inspector.InspectContext(ProviderPhase.GetAccessTokenUsingXAuth, context));
+      var ex = Assert.Throws<OAuthException>(() => inspector.InspectContext(ProviderPhase.CreateAccessToken, context));
       Assert.Equal("The x_auth_username parameter must be present", ex.Message);
     }
 
@@ -53,7 +53,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       var context = new OAuthContext { XAuthMode = "client_auth", XAuthUsername = "username" };
 
       var inspector = new XAuthValidationInspector(ValidateXAuthMode, this.AuthenticateXAuthUsernameAndPassword);
-      var ex = Assert.Throws<OAuthException>(() => inspector.InspectContext(ProviderPhase.GetAccessTokenUsingXAuth, context));
+      var ex = Assert.Throws<OAuthException>(() => inspector.InspectContext(ProviderPhase.CreateAccessToken, context));
       Assert.Equal("The x_auth_password parameter must be present", ex.Message);
     }
 
@@ -63,7 +63,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       var context = new OAuthContext { XAuthMode = "client_auth", XAuthUsername = "Joe", XAuthPassword = "Bloggs" };
 
       var inspector = new XAuthValidationInspector(ValidateXAuthMode, this.AuthenticateXAuthUsernameAndPassword);
-      var ex = Assert.Throws<OAuthException>(() => inspector.InspectContext(ProviderPhase.GetAccessTokenUsingXAuth, context));
+      var ex = Assert.Throws<OAuthException>(() => inspector.InspectContext(ProviderPhase.CreateAccessToken, context));
       Assert.Equal("Authentication failed with the specified username and password", ex.Message);
     }
 
@@ -73,7 +73,7 @@ namespace DevDefined.OAuth.Tests.Provider.Inspectors
       var context = new OAuthContext { XAuthMode = "client_auth", XAuthUsername = "username", XAuthPassword = "password" };
 
       var inspector = new XAuthValidationInspector(ValidateXAuthMode, this.AuthenticateXAuthUsernameAndPassword);
-      Assert.DoesNotThrow(() => inspector.InspectContext(ProviderPhase.GetAccessTokenUsingXAuth, context));
+      Assert.DoesNotThrow(() => inspector.InspectContext(ProviderPhase.CreateAccessToken, context));
     }
   }
 }

@@ -191,13 +191,13 @@ namespace DevDefined.OAuth.Consumer
 				.SignWithToken(requestToken);
 		}
 
-	  public IConsumerRequest BuildGetAccessTokenUsingXAuthContext(string method, string authMode, string username, string password)
+	  public IConsumerRequest BuildAccessTokenContext(string method, string xAuthMode, string xAuthUsername, string xAuthPassword)
 	  {
       return Request()
         .ForMethod(method)
-        .AlterContext(context => context.XAuthMode = authMode)
-        .AlterContext(context => context.XAuthUsername = username)
-        .AlterContext(context => context.XAuthPassword = password)
+        .AlterContext(context => context.XAuthMode = xAuthMode)
+        .AlterContext(context => context.XAuthUsername = xAuthUsername)
+        .AlterContext(context => context.XAuthPassword = xAuthPassword)
         .ForUri(AccessTokenUri)
         .SignWithoutToken();
     }
