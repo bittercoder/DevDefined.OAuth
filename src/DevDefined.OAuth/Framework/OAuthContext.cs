@@ -76,9 +76,9 @@ namespace DevDefined.OAuth.Framework
       _sessionHandle = new BoundParameter(Parameters.OAuth_Session_Handle, this);
       _bodyHash = new BoundParameter(Parameters.OAuth_Body_Hash, this);
 
-      _xAuthMode = new BoundParameter(Parameters.XAuthMode, this);
       _xAuthUsername = new BoundParameter(Parameters.XAuthUsername, this);
       _xAuthPassword = new BoundParameter(Parameters.XAuthPassword, this);
+      _xAuthMode = new BoundParameter(Parameters.XAuthMode, this);
 
       FormEncodedParameters = new NameValueCollection();
       Cookies = new NameValueCollection();
@@ -313,7 +313,7 @@ namespace DevDefined.OAuth.Framework
 			var builder = new UriBuilder(NormalizedRequestUrl);
 
 			IEnumerable<QueryParameter> parameters = QueryParameters.ToQueryParameters()
-				.Where(q => !q.Key.StartsWith(Parameters.OAuthParameterPrefix));
+				.Where(q => !q.Key.StartsWith(Parameters.OAuthParameterPrefix) && !q.Key.StartsWith(Parameters.XAuthParameterPrefix));
 
 			builder.Query = UriUtility.FormatQueryString(parameters);
 

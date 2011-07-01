@@ -195,9 +195,9 @@ namespace DevDefined.OAuth.Consumer
 	  {
       return Request()
         .ForMethod(method)
-        .AlterContext(context => context.XAuthMode = xAuthMode)
         .AlterContext(context => context.XAuthUsername = xAuthUsername)
         .AlterContext(context => context.XAuthPassword = xAuthPassword)
+        .AlterContext(context => context.XAuthMode = xAuthMode)
         .ForUri(AccessTokenUri)
         .SignWithoutToken();
     }
