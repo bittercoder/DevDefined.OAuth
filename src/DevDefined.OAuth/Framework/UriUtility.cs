@@ -78,7 +78,7 @@ namespace DevDefined.OAuth.Framework
 				string[] p = parameters.Split('&');
 				foreach (string s in p)
 				{
-					if (!string.IsNullOrEmpty(s) && !s.StartsWith(Parameters.OAuthParameterPrefix))
+					if (!string.IsNullOrEmpty(s) && !s.StartsWith(Parameters.OAuthParameterPrefix) && !s.StartsWith(Parameters.XAuthParameterPrefix))
 					{
 						if (s.IndexOf('=') > -1)
 						{

@@ -37,7 +37,14 @@ namespace DevDefined.OAuth.Storage
 		/// <returns></returns>
 		IToken CreateRequestToken(IOAuthContext context);
 
-		/// <summary>
+    /// <summary>
+    /// Create an access token using xAuth.
+    /// </summary>
+    /// <param name="context">The context.</param>
+    /// <returns></returns>
+    IToken CreateAccessToken(IOAuthContext context);
+
+    /// <summary>
 		/// Should consume a use of the request token, throwing a <see cref="OAuthException" /> on failure.
 		/// </summary>
 		/// <param name="requestContext"></param>

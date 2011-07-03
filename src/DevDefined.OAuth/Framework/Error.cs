@@ -35,7 +35,7 @@ namespace DevDefined.OAuth.Framework
 	{
 		public static Exception MissingRequiredOAuthParameter(IOAuthContext context, string parameterName)
 		{
-			var exception = new OAuthException(context, OAuthProblems.ParameterAbset,
+			var exception = new OAuthException(context, OAuthProblems.ParameterAbsent,
 			                                   string.Format("Missing required parameter : {0}", parameterName));
 
 			exception.Report.ParametersAbsent.Add(parameterName);
@@ -213,5 +213,30 @@ namespace DevDefined.OAuth.Framework
 		{
 			throw new OAuthException(context, OAuthProblems.ParameterRejected, "Encountered unexpected oauth_body_hash value in form-encoded request");
 		}
+
+    public static Exception EmptyXAuthMode(IOAuthContext context)
+    {
+      throw new OAuthException(context, OAuthProblems.ParameterAbsent, "The x_auth_mode parameter must be present");
+    }
+
+    public static Exception InvalidXAuthMode(IOAuthContext context)
+	  {
+      throw new OAuthException(context, OAuthProblems.ParameterRejected, "The x_auth_mode parameter is invalid");
+    }
+
+    public static Exception EmptyXAuthUsername(IOAuthContext context)
+    {
+      throw new OAuthException(context, OAuthProblems.ParameterAbsent, "The x_auth_username parameter must be present");
+    }
+
+	  public static Exception EmptyXAuthPassword(IOAuthContext context)
+	  {
+      throw new OAuthException(context, OAuthProblems.ParameterAbsent, "The x_auth_password parameter must be present");
+    }
+
+    public static Exception FailedXAuthAuthentication(IOAuthContext context)
+    {
+      throw new OAuthException(context, OAuthProblems.ParameterRejected, "Authentication failed with the specified username and password");
+    }
 	}
 }

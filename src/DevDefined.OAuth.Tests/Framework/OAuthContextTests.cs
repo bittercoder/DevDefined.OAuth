@@ -87,5 +87,30 @@ namespace DevDefined.OAuth.Tests.Framework
 
 			Assert.Equal("2jmj7l5rSw0yVb/vlWAYkK/YBwk=", context.GenerateBodyHash());
 		}
-	}
+
+    [Fact]
+    public void generate_signature_with_xauth()
+    {
+      // generate a signature base, as per the twitter example
+      // http://dev.twitter.com/pages/xauth
+
+      var context = new OAuthContext
+      {
+        RawUri = new Uri("https://api.twitter.com/oauth/access_token"),
+        RequestMethod = "POST",
+        ConsumerKey = "JvyS7DO2qd6NNTsXJ4E7zA",
+        SignatureMethod = "HMAC-SHA1",
+        Timestamp = "1284565601",
+        Version = "1.0",
+        Nonce = "6AN2dKRzxyGhmIXUKSmp1JcB4pckM8rD3frKMTmVAo",
+        XAuthMode = "client_auth",
+        XAuthUsername = "oauth_test_exec",
+        XAuthPassword = "twitter-xauth"
+      };
+
+      Assert.Equal(
+        "POST&https%3A%2F%2Fapi.twitter.com%2Foauth%2Faccess_token&oauth_consumer_key%3DJvyS7DO2qd6NNTsXJ4E7zA%26oauth_nonce%3D6AN2dKRzxyGhmIXUKSmp1JcB4pckM8rD3frKMTmVAo%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1284565601%26oauth_version%3D1.0%26x_auth_mode%3Dclient_auth%26x_auth_password%3Dtwitter-xauth%26x_auth_username%3Doauth_test_exec",
+        context.GenerateSignatureBase());
+    }
+  }
 }

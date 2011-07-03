@@ -51,6 +51,10 @@ namespace DevDefined.OAuth.Framework
 		string Verifier { get; set; }
 		string BodyHash { get; set; }
 
+    string XAuthMode { get; set; }
+    string XAuthUsername { get; set; }
+    string XAuthPassword { get; set; }
+
 		bool UseAuthorizationHeader { get; set; }
 		bool IncludeOAuthRequestBodyHashInSignature { get; set; }
 

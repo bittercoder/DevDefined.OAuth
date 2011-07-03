@@ -34,7 +34,7 @@ namespace DevDefined.OAuth.Framework
 		public const string ConsumerKeyRejected = "consumer_key_rejected";
 		public const string ConsumerKeyUnknown = "consumer_key_unknown";
 		public const string NonceUsed = "nonce_used";
-		public const string ParameterAbset = "parameter_absent";
+		public const string ParameterAbsent = "parameter_absent";
 		public const string ParameterRejected = "parameter_rejected";
 		public const string PermissionDenied = "permission_denied";
 		public const string PermissionUnknown = "permission_unknown";
