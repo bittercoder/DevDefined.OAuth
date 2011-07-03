@@ -32,5 +32,6 @@ namespace DevDefined.OAuth.Provider.Inspectors
 		ExchangeRequestTokenForAccessToken,
 		AccessProtectedResourceRequest,
 		RenewAccessToken,
+	  CreateAccessToken
 	}
 }

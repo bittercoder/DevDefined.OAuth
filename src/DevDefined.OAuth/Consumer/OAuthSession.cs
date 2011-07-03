@@ -167,7 +167,12 @@ namespace DevDefined.OAuth.Consumer
 			return token;
 		}
 
-		public IConsumerRequest BuildRequestTokenContext(string method)
+	  public IToken GetAccessTokenUsingXAuth(string authMode, string username, string password)
+	  {
+	    throw new NotImplementedException();
+	  }
+
+	  public IConsumerRequest BuildRequestTokenContext(string method)
 		{
 			return Request()
 				.ForMethod(method)
@@ -186,7 +191,18 @@ namespace DevDefined.OAuth.Consumer
 				.SignWithToken(requestToken);
 		}
 
-		public string GetUserAuthorizationUrlForToken(IToken token)
+	  public IConsumerRequest BuildAccessTokenContext(string method, string xAuthMode, string xAuthUsername, string xAuthPassword)
+	  {
+      return Request()
+        .ForMethod(method)
+        .AlterContext(context => context.XAuthUsername = xAuthUsername)
+        .AlterContext(context => context.XAuthPassword = xAuthPassword)
+        .AlterContext(context => context.XAuthMode = xAuthMode)
+        .ForUri(AccessTokenUri)
+        .SignWithoutToken();
+    }
+
+	  public string GetUserAuthorizationUrlForToken(IToken token)
 		{
 			return GetUserAuthorizationUrlForToken(token, null);
 		}

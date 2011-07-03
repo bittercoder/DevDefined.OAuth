@@ -50,7 +50,10 @@ namespace DevDefined.OAuth.Framework
 		readonly BoundParameter _tokenSecret;
 		readonly BoundParameter _verifier;
 		readonly BoundParameter _version;
-		NameValueCollection _authorizationHeaderParameters;
+    readonly BoundParameter _xAuthMode;
+    readonly BoundParameter _xAuthUsername;
+    readonly BoundParameter _xAuthPassword;
+    NameValueCollection _authorizationHeaderParameters;
 		NameValueCollection _cookies;
 		NameValueCollection _formEncodedParameters;
 		NameValueCollection _headers;
@@ -58,26 +61,30 @@ namespace DevDefined.OAuth.Framework
 		NameValueCollection _queryParameters;
 		Uri _rawUri;
 
-		public OAuthContext()
-		{
-			_verifier = new BoundParameter(Parameters.OAuth_Verifier, this);
-			_consumerKey = new BoundParameter(Parameters.OAuth_Consumer_Key, this);
-			_callbackUrl = new BoundParameter(Parameters.OAuth_Callback, this);
-			_nonce = new BoundParameter(Parameters.OAuth_Nonce, this);
-			_signature = new BoundParameter(Parameters.OAuth_Signature, this);
-			_signatureMethod = new BoundParameter(Parameters.OAuth_Signature_Method, this);
-			_timestamp = new BoundParameter(Parameters.OAuth_Timestamp, this);
-			_token = new BoundParameter(Parameters.OAuth_Token, this);
-			_tokenSecret = new BoundParameter(Parameters.OAuth_Token_Secret, this);
-			_version = new BoundParameter(Parameters.OAuth_Version, this);
-			_sessionHandle = new BoundParameter(Parameters.OAuth_Session_Handle, this);
-			_bodyHash = new BoundParameter(Parameters.OAuth_Body_Hash, this);
+    public OAuthContext()
+    {
+      _verifier = new BoundParameter(Parameters.OAuth_Verifier, this);
+      _consumerKey = new BoundParameter(Parameters.OAuth_Consumer_Key, this);
+      _callbackUrl = new BoundParameter(Parameters.OAuth_Callback, this);
+      _nonce = new BoundParameter(Parameters.OAuth_Nonce, this);
+      _signature = new BoundParameter(Parameters.OAuth_Signature, this);
+      _signatureMethod = new BoundParameter(Parameters.OAuth_Signature_Method, this);
+      _timestamp = new BoundParameter(Parameters.OAuth_Timestamp, this);
+      _token = new BoundParameter(Parameters.OAuth_Token, this);
+      _tokenSecret = new BoundParameter(Parameters.OAuth_Token_Secret, this);
+      _version = new BoundParameter(Parameters.OAuth_Version, this);
+      _sessionHandle = new BoundParameter(Parameters.OAuth_Session_Handle, this);
+      _bodyHash = new BoundParameter(Parameters.OAuth_Body_Hash, this);
 
-			FormEncodedParameters = new NameValueCollection();
-			Cookies = new NameValueCollection();
-			Headers = new NameValueCollection();
-			AuthorizationHeaderParameters = new NameValueCollection();
-		}
+      _xAuthUsername = new BoundParameter(Parameters.XAuthUsername, this);
+      _xAuthPassword = new BoundParameter(Parameters.XAuthPassword, this);
+      _xAuthMode = new BoundParameter(Parameters.XAuthMode, this);
+
+      FormEncodedParameters = new NameValueCollection();
+      Cookies = new NameValueCollection();
+      Headers = new NameValueCollection();
+      AuthorizationHeaderParameters = new NameValueCollection();
+    }
 
 		public NameValueCollection Headers
 		{
@@ -241,7 +248,25 @@ namespace DevDefined.OAuth.Framework
 			set { _tokenSecret.Value = value; }
 		}
 
-		public Uri GenerateUri()
+    public string XAuthMode
+    {
+      get { return _xAuthMode.Value; }
+      set { _xAuthMode.Value = value; }
+    }
+
+    public string XAuthUsername
+    {
+      get { return _xAuthUsername.Value; }
+      set { _xAuthUsername.Value = value; }
+    }
+
+    public string XAuthPassword
+    {
+      get { return _xAuthPassword.Value; }
+      set { _xAuthPassword.Value = value; }
+    }
+
+    public Uri GenerateUri()
 		{
 			var builder = new UriBuilder(NormalizedRequestUrl);
 
@@ -288,7 +313,7 @@ namespace DevDefined.OAuth.Framework
 			var builder = new UriBuilder(NormalizedRequestUrl);
 
 			IEnumerable<QueryParameter> parameters = QueryParameters.ToQueryParameters()
-				.Where(q => !q.Key.StartsWith(Parameters.OAuthParameterPrefix));
+				.Where(q => !q.Key.StartsWith(Parameters.OAuthParameterPrefix) && !q.Key.StartsWith(Parameters.XAuthParameterPrefix));
 
 			builder.Query = UriUtility.FormatQueryString(parameters);
 

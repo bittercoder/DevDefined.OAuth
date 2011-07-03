@@ -61,6 +61,33 @@ namespace DevDefined.OAuth.Storage.Basic
 			return token;
 		}
 
+    /// <summary>
+    /// Create an access token using xAuth.
+    /// </summary>
+    /// <param name="context">The context.</param>
+    /// <returns></returns>
+    public IToken CreateAccessToken(IOAuthContext context)
+    {
+      if (context == null)
+      {
+        throw new ArgumentNullException("context");
+      }
+
+      var accessToken = new AccessToken
+        {
+          ConsumerKey = context.ConsumerKey,
+          ExpiryDate = DateTime.UtcNow.AddDays(20),
+          Realm = context.Realm,
+          Token = Guid.NewGuid().ToString(),
+          TokenSecret = Guid.NewGuid().ToString(),
+          UserName = Guid.NewGuid().ToString(),
+        };
+
+      _accessTokenRepository.SaveToken(accessToken);
+
+      return accessToken;
+    }
+
 		public void ConsumeRequestToken(IOAuthContext requestContext)
 		{
 			if (requestContext == null) throw new ArgumentNullException("requestContext");
@@ -76,7 +103,7 @@ namespace DevDefined.OAuth.Storage.Basic
 		{
 			AccessToken accessToken = GetAccessToken(accessContext);
 
-			if (accessToken.ExpireyDate < Clock.Now)
+			if (accessToken.ExpiryDate < Clock.Now)
 			{
 				throw new OAuthException(accessContext, OAuthProblems.TokenExpired, "Token has expired");
 			}
@@ -176,7 +203,7 @@ namespace DevDefined.OAuth.Storage.Basic
 			return token;
 		}
 
-		static void UseUpRequestToken(IOAuthContext requestContext, RequestToken requestToken)
+	  static void UseUpRequestToken(IOAuthContext requestContext, RequestToken requestToken)
 		{
 			if (requestToken.UsedUp)
 			{
