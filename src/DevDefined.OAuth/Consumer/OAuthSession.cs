@@ -42,8 +42,17 @@ namespace DevDefined.OAuth.Consumer
 		readonly NameValueCollection _queryParameters = new NameValueCollection();
 		IConsumerRequestFactory _consumerRequestFactory = DefaultConsumerRequestFactory.Instance;
 
-		public OAuthSession(IOAuthConsumerContext consumerContext, Uri requestTokenUri, Uri userAuthorizeUri,
-		                    Uri accessTokenUri)
+        public OAuthSession(IOAuthConsumerContext consumerContext)
+            : this(consumerContext, (Uri)null, null, null, null)
+        {            
+        }
+
+        public OAuthSession(IOAuthConsumerContext consumerContext, Uri endPointUri)
+            : this(consumerContext, endPointUri, endPointUri, endPointUri, null)
+        {            
+        }
+        
+		public OAuthSession(IOAuthConsumerContext consumerContext, Uri requestTokenUri, Uri userAuthorizeUri, Uri accessTokenUri)
 			: this(consumerContext, requestTokenUri, userAuthorizeUri, accessTokenUri, null)
 		{
 		}

@@ -170,5 +170,13 @@ namespace DevDefined.OAuth.Tests.Consumer
 
 			Assert.Contains("oauth_body_hash=\"Lve95gjOVATpfV8EL5X4nxwjKHE%3D\"", description.Headers[Parameters.OAuth_Authorization_Header]);
 		}
+
+        [Fact]
+        public void create_session_using_context_only_constructor_does_not_throw()
+        {
+            var session = new OAuthSession(new OAuthConsumerContext());
+
+            Assert.NotNull(session);
+        }
 	}
 }
