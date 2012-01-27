@@ -177,8 +177,19 @@ namespace DevDefined.OAuth.Consumer
 		}
 
 	  public IToken GetAccessTokenUsingXAuth(string authMode, string username, string password)
-	  {
-	    throw new NotImplementedException();
+      {
+         TokenBase token = BuildAccessTokenContext("GET", authMode, username, password)
+                .Select(collection =>
+                        new TokenBase
+                        {
+                           ConsumerKey = ConsumerContext.ConsumerKey,
+                           Token = ParseResponseParameter(collection, Parameters.OAuth_Token),
+                           TokenSecret = ParseResponseParameter(collection, Parameters.OAuth_Token_Secret),
+                           SessionHandle = ParseResponseParameter(collection, Parameters.OAuth_Session_Handle)
+                        });
+
+         AccessToken = token;
+         return token;
 	  }
 
 	  public IConsumerRequest BuildRequestTokenContext(string method)
