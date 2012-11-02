@@ -547,7 +547,9 @@ namespace DevDefined.OAuth.KeyInterop
 
 			try
 			{
+#pragma warning disable 0219
 				byte b = GetNextOctet();
+#pragma warning restore 0219
 
 				int length = GetLength();
 				if (length > RemainingBytes())
