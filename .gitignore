@@ -12,3 +12,4 @@ release/
 $SSH_ENV
 
 /src/GlobalAssemblyInfo.cs
+.DS_Store

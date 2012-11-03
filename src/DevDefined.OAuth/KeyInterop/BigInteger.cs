@@ -2367,7 +2367,9 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
 
 		BigInteger t = p_sub1 >> s;
 
+#pragma warning disable 0219
 		int bits = thisVal.bitCount();
+#pragma warning restore 0219
 		BigInteger a = 2;
 
 		// b = a^t mod p
