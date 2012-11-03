@@ -42,7 +42,8 @@ namespace DevDefined.OAuth.Consumer
 		int? Timeout { get; set; }
 		string RequestBody { get; set; }
 		XDocument ToDocument();
-		byte[] ToBytes();
+      byte[] ToBytes();
+      HttpWebRequest ToWebRequest();
 		HttpWebResponse ToWebResponse();
 		NameValueCollection ToBodyParameters();
 		RequestDescription GetRequestDescription();
