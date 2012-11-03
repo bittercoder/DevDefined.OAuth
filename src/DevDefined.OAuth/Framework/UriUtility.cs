@@ -49,7 +49,15 @@ namespace DevDefined.OAuth.Framework
 		// see http://stackoverflow.com/questions/846487/how-to-get-uri-escapedatastring-to-comply-with-rfc-3986 for details
 		static string EscapeUriDataStringRfc3986(string value)
 		{
-			var escaped = new StringBuilder(Uri.EscapeDataString(value));
+			// Fix for the exception Uri.EscapeDataString throws when the string is longer than 32766
+			// Microsoft documentation http://msdn.microsoft.com/en-us/library/system.uri.escapedatastring.aspx
+			var escaped = new StringBuilder();
+			const int maxChunkSize = 32766;
+			for (int i = 0; i <= value.Length; i += maxChunkSize)
+			{
+				string substring = value.Substring(i, Math.Min(value.Length - i, maxChunkSize));
+				escaped.Append(Uri.EscapeDataString(substring));
+			}
 
 			for (int i = 0; i < UriRfc3986CharsToEscape.Length; i++)
 			{
