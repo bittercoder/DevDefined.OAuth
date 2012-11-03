@@ -39,6 +39,7 @@ namespace DevDefined.OAuth.Consumer
 		Uri ProxyServerUri { get; set; }
 		Action<string> ResponseBodyAction { get; set; }
 		string AcceptsType { get; set; }
+		int? Timeout { get; set; }
 		string RequestBody { get; set; }
 		XDocument ToDocument();
 		byte[] ToBytes();

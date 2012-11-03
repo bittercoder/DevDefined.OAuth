@@ -213,5 +213,15 @@ namespace DevDefined.OAuth.Consumer
 			request.Context.RawContentType = rawContentType;
 			return request;
 		}
+
+		/// <summary>
+		/// Override the default request timeout in milliseconds.
+		/// Sets the <see cref="System.Net.HttpWebRequest.Timeout"/> property.
+		/// </summary>
+		public static IConsumerRequest WithTimeout(this IConsumerRequest request, int timeout)
+		{
+			request.Timeout = timeout;
+			return request;
+		}
 	}
 }

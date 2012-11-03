@@ -194,6 +194,12 @@ namespace DevDefined.OAuth.Consumer
 
 		public string AcceptsType { get; set; }
 
+		/// <summary>
+		/// Override the default request timeout in milliseconds.
+		/// Sets the <see cref="System.Net.HttpWebRequest.Timeout"/> property.
+		/// </summary>
+		public int? Timeout { get; set; }
+
 		public string RequestBody { get; set; }
 
 		public virtual HttpWebRequest ToWebRequest()
@@ -203,6 +209,9 @@ namespace DevDefined.OAuth.Consumer
 			var request = (HttpWebRequest) WebRequest.Create(description.Url);
 			request.Method = description.Method;
 			request.UserAgent = _consumerContext.UserAgent;
+
+			if (Timeout.HasValue)
+				request.Timeout = Timeout.Value;
 
 			if (!string.IsNullOrEmpty(AcceptsType))
 			{
