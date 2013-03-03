@@ -36,7 +36,20 @@ namespace DevDefined.OAuth.Framework
 {
 	public class OAuthContextBuilder : IOAuthContextBuilder
 	{
-		public IOAuthContext FromUrl(string httpMethod, string url)
+	    readonly Func<Uri, Uri> _uriAdjuster;
+	    readonly Func<Uri, Uri> _emptyUriAdjuster = (uri) => uri;
+
+	    public OAuthContextBuilder(Func<Uri, Uri> uriAdjuster)
+	    {
+	        _uriAdjuster = uriAdjuster ?? _emptyUriAdjuster;
+	    }
+
+	    public OAuthContextBuilder()
+	        : this(null)
+	    {
+	    }
+
+	    public virtual IOAuthContext FromUrl(string httpMethod, string url)
 		{
 			if (string.IsNullOrEmpty(url)) throw new ArgumentNullException("url");
 
@@ -50,7 +63,7 @@ namespace DevDefined.OAuth.Framework
 			return FromUri(httpMethod, uri);
 		}
 
-		public IOAuthContext FromUri(string httpMethod, Uri uri)
+		public virtual IOAuthContext FromUri(string httpMethod, Uri uri)
 		{
 			uri = CleanUri(uri);
 
@@ -59,17 +72,17 @@ namespace DevDefined.OAuth.Framework
 
 			return new OAuthContext
 			       	{
-			       		RawUri = uri,
+			       		RawUri = CleanUri(uri),
 			       		RequestMethod = httpMethod
 			       	};
 		}
 
-		public IOAuthContext FromHttpRequest(HttpRequest request)
+		public virtual IOAuthContext FromHttpRequest(HttpRequest request)
 		{
 			return FromHttpRequest(new HttpRequestWrapper(request));
 		}
 
-		public IOAuthContext FromHttpRequest(HttpRequestBase request)
+		public virtual IOAuthContext FromHttpRequest(HttpRequestBase request)
 		{
 			var context = new OAuthContext
 			              	{
@@ -93,7 +106,7 @@ namespace DevDefined.OAuth.Framework
 			return context;
 		}
 
-		public IOAuthContext FromWebRequest(HttpWebRequest request, Stream rawBody)
+		public virtual IOAuthContext FromWebRequest(HttpWebRequest request, Stream rawBody)
 		{
 			using (var reader = new StreamReader(rawBody))
 			{
@@ -101,7 +114,7 @@ namespace DevDefined.OAuth.Framework
 			}
 		}
 
-		public IOAuthContext FromWebRequest(HttpWebRequest request, string body)
+		public virtual IOAuthContext FromWebRequest(HttpWebRequest request, string body)
 		{
 			var context = new OAuthContext
 			              	{
@@ -123,7 +136,7 @@ namespace DevDefined.OAuth.Framework
 			return context;
 		}
 
-		static NameValueCollection GetCleanedNameValueCollection(NameValueCollection requestQueryString)
+        protected virtual NameValueCollection GetCleanedNameValueCollection(NameValueCollection requestQueryString)
 		{
 			var nvc = new NameValueCollection(requestQueryString);
 
@@ -135,26 +148,32 @@ namespace DevDefined.OAuth.Framework
 			return nvc;
 		}
 
-		static Uri CleanUri(Uri uri)
-		{
-			// this is a fix for OpenSocial platforms sometimes appending an empty query string parameter
-			// to their url.
+        protected virtual Uri CleanUri(Uri uri)
+        {
+            var adjustedUri = _uriAdjuster(uri);
+            return RemoveEmptyQueryStringParameterIntroducedBySomeOpenSocialPlatformImplementations(adjustedUri);
+        }
 
-			string originalUrl = uri.OriginalString;
-			return originalUrl.EndsWith("&") ? new Uri(originalUrl.Substring(0, originalUrl.Length - 1)) : uri;
-		}
+	    static Uri RemoveEmptyQueryStringParameterIntroducedBySomeOpenSocialPlatformImplementations(Uri adjustedUri)
+	    {
+            // this is a fix for OpenSocial platforms sometimes appending an empty query string parameter
+            // to their url.
 
-		static NameValueCollection CollectCookies(WebRequest request)
+	        string originalUrl = adjustedUri.OriginalString;
+	        return originalUrl.EndsWith("&") ? new Uri(originalUrl.Substring(0, originalUrl.Length - 1)) : adjustedUri;
+	    }
+
+	    protected virtual NameValueCollection CollectCookies(WebRequest request)
 		{
 			return CollectCookiesFromHeaderString(request.Headers[HttpRequestHeader.Cookie]);
 		}
 
-		static NameValueCollection CollectCookies(HttpRequestBase request)
+		protected virtual NameValueCollection CollectCookies(HttpRequestBase request)
 		{
 			return CollectCookiesFromHeaderString(request.Headers["Set-Cookie"]);
 		}
 
-		static NameValueCollection CollectCookiesFromHeaderString(string cookieHeader)
+        protected virtual NameValueCollection CollectCookiesFromHeaderString(string cookieHeader)
 		{
 			var cookieCollection = new NameValueCollection();
 
@@ -183,7 +202,7 @@ namespace DevDefined.OAuth.Framework
 			return cookieCollection;
 		}
 
-		static void ParseAuthorizationHeader(NameValueCollection headers, OAuthContext context)
+        protected virtual void ParseAuthorizationHeader(NameValueCollection headers, OAuthContext context)
 		{
 			if (headers.AllKeys.Contains("Authorization"))
 			{
