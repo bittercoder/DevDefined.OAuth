@@ -32,124 +32,124 @@ using DevDefined.OAuth.Storage;
 
 namespace DevDefined.OAuth.Provider
 {
-	public class OAuthProvider : IOAuthProvider
-	{
-		readonly List<IContextInspector> _inspectors = new List<IContextInspector>();
-		readonly ITokenStore _tokenStore;
-
-		public OAuthProvider(ITokenStore tokenStore, params IContextInspector[] inspectors)
-		{
-			RequiresCallbackUrlInRequest = true;
-
-			if (tokenStore == null) throw new ArgumentNullException("tokenStore");
-			_tokenStore = tokenStore;
-
-			if (inspectors != null) _inspectors.AddRange(inspectors);
-		}
-
-		public bool RequiresCallbackUrlInRequest { get; set; }
-
-		public virtual IToken GrantRequestToken(IOAuthContext context)
-		{
-			AssertContextDoesNotIncludeToken(context);
-
-			InspectRequest(ProviderPhase.GrantRequestToken, context);
-
-			return _tokenStore.CreateRequestToken(context);
-		}
-
-		public virtual IToken ExchangeRequestTokenForAccessToken(IOAuthContext context)
-		{
-			InspectRequest(ProviderPhase.ExchangeRequestTokenForAccessToken, context);
-
-			_tokenStore.ConsumeRequestToken(context);
-
-			switch (_tokenStore.GetStatusOfRequestForAccess(context))
-			{
-				case RequestForAccessStatus.Granted:
-					break;
-				case RequestForAccessStatus.Unknown:
-					throw Error.ConsumerHasNotBeenGrantedAccessYet(context);
-				default:
-					throw Error.ConsumerHasBeenDeniedAccess(context);
-			}
-
-			return _tokenStore.GetAccessTokenAssociatedWithRequestToken(context);
-		}
-
-		public virtual void AccessProtectedResourceRequest(IOAuthContext context)
-		{
-			InspectRequest(ProviderPhase.AccessProtectedResourceRequest, context);
-
-			_tokenStore.ConsumeAccessToken(context);
-		}
-
-		public IToken RenewAccessToken(IOAuthContext context)
-		{
-			InspectRequest(ProviderPhase.RenewAccessToken, context);
-
-			return _tokenStore.RenewAccessToken(context);
-		}
-
-    public IToken CreateAccessToken(IOAuthContext context)
+    public class OAuthProvider : IOAuthProvider
     {
-      InspectRequest(ProviderPhase.CreateAccessToken, context);
+        readonly List<IContextInspector> _inspectors = new List<IContextInspector>();
+        readonly ITokenStore _tokenStore;
 
-      return _tokenStore.CreateAccessToken(context);
+        public OAuthProvider(ITokenStore tokenStore, params IContextInspector[] inspectors)
+        {
+            RequiresCallbackUrlInRequest = true;
+
+            if (tokenStore == null) throw new ArgumentNullException("tokenStore");
+            _tokenStore = tokenStore;
+
+            if (inspectors != null) _inspectors.AddRange(inspectors);
+        }
+
+        public bool RequiresCallbackUrlInRequest { get; set; }
+
+        public virtual IToken GrantRequestToken(IOAuthContext context)
+        {
+            AssertContextDoesNotIncludeToken(context);
+
+            InspectRequest(ProviderPhase.GrantRequestToken, context);
+
+            return _tokenStore.CreateRequestToken(context);
+        }
+
+        public virtual IToken ExchangeRequestTokenForAccessToken(IOAuthContext context)
+        {
+            InspectRequest(ProviderPhase.ExchangeRequestTokenForAccessToken, context);
+
+            _tokenStore.ConsumeRequestToken(context);
+
+            switch (_tokenStore.GetStatusOfRequestForAccess(context))
+            {
+                case RequestForAccessStatus.Granted:
+                    break;
+                case RequestForAccessStatus.Unknown:
+                    throw Error.ConsumerHasNotBeenGrantedAccessYet(context);
+                default:
+                    throw Error.ConsumerHasBeenDeniedAccess(context);
+            }
+
+            return _tokenStore.GetAccessTokenAssociatedWithRequestToken(context);
+        }
+
+        public virtual void AccessProtectedResourceRequest(IOAuthContext context)
+        {
+            InspectRequest(ProviderPhase.AccessProtectedResourceRequest, context);
+
+            _tokenStore.ConsumeAccessToken(context);
+        }
+
+        public IToken RenewAccessToken(IOAuthContext context)
+        {
+            InspectRequest(ProviderPhase.RenewAccessToken, context);
+
+            return _tokenStore.RenewAccessToken(context);
+        }
+
+        public IToken CreateAccessToken(IOAuthContext context)
+        {
+            InspectRequest(ProviderPhase.CreateAccessToken, context);
+
+            return _tokenStore.CreateAccessToken(context);
+        }
+
+        void AssertContextDoesNotIncludeToken(IOAuthContext context)
+        {
+            if (context.Token != null)
+            {
+                throw Error.RequestForTokenMustNotIncludeTokenInContext(context);
+            }
+        }
+
+        public void AddInspector(IContextInspector inspector)
+        {
+            _inspectors.Add(inspector);
+        }
+
+        protected virtual void InspectRequest(ProviderPhase phase, IOAuthContext context)
+        {
+            AssertContextDoesNotIncludeTokenSecret(context);
+
+            AddStoredTokenSecretToContext(context, phase);
+
+            ApplyInspectors(context, phase);
+        }
+
+        void ApplyInspectors(IOAuthContext context, ProviderPhase phase)
+        {
+            foreach (IContextInspector inspector in _inspectors)
+            {
+                inspector.InspectContext(phase, context);
+            }
+        }
+
+        void AddStoredTokenSecretToContext(IOAuthContext context, ProviderPhase phase)
+        {
+            if (phase == ProviderPhase.ExchangeRequestTokenForAccessToken)
+            {
+                string secret = _tokenStore.GetRequestTokenSecret(context);
+                context.TokenSecret = secret;
+            }
+
+            else if (phase == ProviderPhase.AccessProtectedResourceRequest || phase == ProviderPhase.RenewAccessToken)
+            {
+                string secret = _tokenStore.GetAccessTokenSecret(context);
+
+                context.TokenSecret = secret;
+            }
+        }
+
+        static void AssertContextDoesNotIncludeTokenSecret(IOAuthContext context)
+        {
+            if (!string.IsNullOrEmpty(context.TokenSecret))
+            {
+                throw new OAuthException(context, OAuthProblems.ParameterRejected, "The oauth_token_secret must not be transmitted to the provider.");
+            }
+        }
     }
-
-		void AssertContextDoesNotIncludeToken(IOAuthContext context)
-		{
-			if (context.Token != null)
-			{
-				throw Error.RequestForTokenMustNotIncludeTokenInContext(context);
-			}
-		}
-
-		public void AddInspector(IContextInspector inspector)
-		{
-			_inspectors.Add(inspector);
-		}
-
-		protected virtual void InspectRequest(ProviderPhase phase, IOAuthContext context)
-		{
-			AssertContextDoesNotIncludeTokenSecret(context);
-
-			AddStoredTokenSecretToContext(context, phase);
-
-			ApplyInspectors(context, phase);
-		}
-
-		void ApplyInspectors(IOAuthContext context, ProviderPhase phase)
-		{
-			foreach (IContextInspector inspector in _inspectors)
-			{
-				inspector.InspectContext(phase, context);
-			}
-		}
-
-		void AddStoredTokenSecretToContext(IOAuthContext context, ProviderPhase phase)
-		{
-			if (phase == ProviderPhase.ExchangeRequestTokenForAccessToken)
-			{
-				string secret = _tokenStore.GetRequestTokenSecret(context);
-				context.TokenSecret = secret;
-			}
-
-			else if (phase == ProviderPhase.AccessProtectedResourceRequest || phase == ProviderPhase.RenewAccessToken)
-			{
-				string secret = _tokenStore.GetAccessTokenSecret(context);
-
-				context.TokenSecret = secret;
-			}
-		}
-
-		static void AssertContextDoesNotIncludeTokenSecret(IOAuthContext context)
-		{
-			if (!string.IsNullOrEmpty(context.TokenSecret))
-			{
-				throw new OAuthException(context, OAuthProblems.ParameterRejected, "The oauth_token_secret must not be transmitted to the provider.");
-			}
-		}
-	}
 }
