@@ -42,6 +42,7 @@ namespace DevDefined.OAuth.Consumer
 		IConsumerRequest Request();
 		IConsumerRequest Request(IToken accessToken);
 		IToken GetRequestToken();
+		IToken GetRequestToken(string method);
 		IToken ExchangeRequestTokenForAccessToken(IToken requestToken);
 		IToken ExchangeRequestTokenForAccessToken(IToken requestToken, string verificationCode);
 		IToken ExchangeRequestTokenForAccessToken(IToken requestToken, string method, string verificationCode);
