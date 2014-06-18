@@ -37,7 +37,7 @@ namespace DevDefined.OAuth.Consumer
 		Uri AccessTokenUri { get; set; }
 		Uri UserAuthorizeUri { get; set; }
 		Uri ProxyServerUri { get; set; }
-        Uri CallbackUri { get; set; }
+		Uri CallbackUri { get; set; }
 		IToken AccessToken { get; set; }
 		Action<string> ResponseBodyAction { get; set; }
 		IConsumerRequest Request();
