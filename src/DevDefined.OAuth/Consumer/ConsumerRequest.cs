@@ -235,6 +235,14 @@ namespace DevDefined.OAuth.Consumer
 			{
 				request.Proxy = new WebProxy(ProxyServerUri, false);
 			}
+			
+			if (description.Headers.Count > 0)
+			{
+				foreach (string key in description.Headers.AllKeys)
+				{
+					request.Headers[key] = description.Headers[key];
+				}
+			}
 
 			if (!string.IsNullOrEmpty(description.Body))
 			{
@@ -252,14 +260,6 @@ namespace DevDefined.OAuth.Consumer
 				using (var writer = new BinaryWriter(request.GetRequestStream()))
 				{
 					writer.Write(description.RawBody);
-				}
-			}
-
-			if (description.Headers.Count > 0)
-			{
-				foreach (string key in description.Headers.AllKeys)
-				{
-					request.Headers[key] = description.Headers[key];
 				}
 			}
 
