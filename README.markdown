@@ -1,7 +1,7 @@
 Important Notice
 ================
 
-This library is no longer actively maintained, and the author does not provide any support.
+**This library is no longer actively maintained, and the author does not provide any support.**
 
 
 ![DevDefined.OAuth logo][1]
