@@ -74,15 +74,22 @@ namespace DevDefined.OAuth.Tests.Framework
 		[Fact]
 		public void FormatTimestampRangeReport()
 		{
+			var fromTimestamp = new DateTime(2008, 1, 1);
+			var fromTimestampEpoch = fromTimestamp.Epoch();
+			
+			var toTimestamp = new DateTime(2009, 1, 1);
+			var toStampEpoch = toTimestamp.Epoch();
+			
 			var report = new OAuthProblemReport
-			             	{
-			             		Problem = OAuthProblems.TimestampRefused,
-			             		AcceptableTimeStampsFrom = new DateTime(2008, 1, 1),
-			             		AcceptableTimeStampsTo = new DateTime(2009, 1, 1)
-			             	};
+			{
+				Problem = OAuthProblems.TimestampRefused,
+				AcceptableTimeStampsFrom = fromTimestamp,
+				AcceptableTimeStampsTo = toTimestamp
+			};
 
-			Assert.Equal("oauth_problem=timestamp_refused&oauth_acceptable_timestamps=1199098800-1230721200",
-			             report.ToString());
+			Assert.Equal(
+				$"oauth_problem=timestamp_refused&oauth_acceptable_timestamps={fromTimestampEpoch}-{toStampEpoch}",
+				report.ToString());
 		}
 
 		[Fact]
@@ -135,13 +142,19 @@ namespace DevDefined.OAuth.Tests.Framework
 		[Fact]
 		public void PopulateFromFormattedTimestampRangeReport()
 		{
-			string formatted = "oauth_problem=timestamp_refused&oauth_acceptable_timestamps=1199098800-1230721200";
+			var fromTimestamp = new DateTime(2008, 1, 1);
+			var fromTimestampEpoch = fromTimestamp.Epoch();
+			
+			var toTimestamp = new DateTime(2009, 1, 1);
+			var toStampEpoch = toTimestamp.Epoch();
+			
+			string formatted = $"oauth_problem=timestamp_refused&oauth_acceptable_timestamps={fromTimestampEpoch}-{toStampEpoch}";
 
 			var report = new OAuthProblemReport(formatted);
 
 			Assert.Equal(OAuthProblems.TimestampRefused, report.Problem);
-			Assert.Equal(new DateTime(2008, 1, 1), report.AcceptableTimeStampsFrom);
-			Assert.Equal(new DateTime(2009, 1, 1), report.AcceptableTimeStampsTo);
+			Assert.Equal(fromTimestamp, report.AcceptableTimeStampsFrom);
+			Assert.Equal(toTimestamp, report.AcceptableTimeStampsTo);
 		}
 
 		[Fact]
